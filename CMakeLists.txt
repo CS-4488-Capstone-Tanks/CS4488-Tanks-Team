@@ -37,11 +37,15 @@ set(CMAKE_AUTOMOC ON)
 
 enable_testing()
 
+# Tell CMake to also process GLM's cmake file
+# now we can link against the target defined in that file
+add_subdirectory(external/glm)
+
 # Create our executable
 add_executable(tanks main.cpp)
 
 # Declare the system libraries we need to link with
-target_link_libraries(tanks PRIVATE ${QT_LIBRARIES})
+target_link_libraries(tanks PRIVATE ${QT_LIBRARIES} glm::glm)
 
 # Declare the locations of the system headers for those libraries we'll need
-target_include_directories(tanks PRIVATE ${QT_INCLUDES})
+target_include_directories(tanks PRIVATE ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR}/external/glm)
