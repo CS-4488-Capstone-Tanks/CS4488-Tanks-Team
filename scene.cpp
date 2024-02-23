@@ -1,9 +1,9 @@
 #include "scene.h"
 
-Scene::Scene(QObject *parent)
+Scene::Scene(float dT, QObject *parent)
     : QObject{parent}
 {
-
+    deltaTime = dT;
 }
 
 void Scene::start()
