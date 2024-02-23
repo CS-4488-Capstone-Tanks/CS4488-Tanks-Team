@@ -6,22 +6,15 @@ GameObject::GameObject(QObject *parent)
 
 }
 
-void GameObject::doStart()
-{
+void GameObject::doStart(){}
+void GameObject::doUpdate(float deltaTime){}
 
+vec3 GameObject::getPosition()
+{
+    return position;
 }
 
-void GameObject::doUpdate()
+vec3 GameObject::getDirection()
 {
-
-}
-
-glm::vec3 GameObject::getPosition()
-{
-
-}
-
-glm::vec3 GameObject::getDirection()
-{
-
+    return direction;
 }

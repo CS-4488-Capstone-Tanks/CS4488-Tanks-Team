@@ -8,15 +8,16 @@ Scene::Scene(QObject *parent)
 
 void Scene::start()
 {
-
+    gameState.startState();
 }
 
-void Scene::pauseClock()
+void Scene::setPaused(bool p)
 {
-
+    isPaused = p;
 }
 
 void Scene::update()
 {
-    gameState.updateState(deltaTime);
+    if (!isPaused)
+        gameState.updateState(deltaTime);
 }

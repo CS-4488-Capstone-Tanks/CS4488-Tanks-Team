@@ -13,11 +13,11 @@ public:
     explicit Scene(QObject *parent = nullptr);
     void start();
     // void keyPress();
-    void pauseClock();
+    void setPaused(bool isPaused);
 private:
     // NetworkManager networkManager
     GameState gameState;
-    float deltaTime;
+    float deltaTime; // This should probably be initialized in game.h, where the QTimer is
     bool isPaused;
 
 signals:
