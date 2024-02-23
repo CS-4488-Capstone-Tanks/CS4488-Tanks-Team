@@ -42,7 +42,10 @@ enable_testing()
 add_subdirectory(external/glm)
 
 # Create our executable
-add_executable(tanks main.cpp)
+add_executable(tanks main.cpp
+    scene.h scene.cpp
+    gamestate.h gamestate.cpp
+    gameobject.h gameobject.cpp)
 
 # Declare the system libraries we need to link with
 target_link_libraries(tanks PRIVATE ${QT_LIBRARIES} glm::glm)
