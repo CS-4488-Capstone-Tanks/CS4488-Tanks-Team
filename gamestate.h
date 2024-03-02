@@ -12,9 +12,10 @@ public:
     void startState();
     void updateState(float deltaTime);
     void readState(std::string file);
-    void addObject();
+    void addObject(GameObject *const obj);
 private:
     std::vector<GameObject*> objs;
+    int nextFreeEntityID = 0;
     void removeObject(uint32_t entityID);
 };
 

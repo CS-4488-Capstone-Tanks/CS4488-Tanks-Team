@@ -45,7 +45,9 @@ add_subdirectory(external/glm)
 add_executable(tanks main.cpp
     scene.h scene.cpp
     gamestate.h gamestate.cpp
-    gameobject.h gameobject.cpp)
+    gameobject.h gameobject.cpp
+    gameobjecttype.h
+)
 
 # Declare the system libraries we need to link with
 target_link_libraries(tanks PRIVATE ${QT_LIBRARIES} glm::glm)

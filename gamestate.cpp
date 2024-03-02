@@ -24,11 +24,16 @@ void GameState::readState(std::string file)
 
 }
 
-void GameState::addObject()
+void GameState::addObject(GameObject *const obj)
 {
-
+    obj->setEntityID(nextFreeEntityID++);
+    objs.push_back(obj);
 }
 
+/**
+ * Remove a GameObject from the GameState.
+ * @param entityID
+ */
 void GameState::removeObject(uint32_t entityID)
 {
 
