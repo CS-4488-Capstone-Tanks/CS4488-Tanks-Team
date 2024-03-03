@@ -130,6 +130,8 @@ Renderer::Mesh Renderer::meshFromFile(const char* path) {
 void Renderer::meshDestroy(Renderer::Mesh& mesh) {
     glDeleteVertexArrays(1, &mesh.vao);
     glDeleteBuffers(1, &mesh.vbo);
+
+    mesh = {};
 }
 
 unsigned int Renderer::shaderFromSource(const char* vertex, const char* fragment) {
@@ -394,9 +396,7 @@ void Renderer::initializeGL() {
 Renderer::~Renderer() {
     // Clean up after yourself
     for(auto& kvpair : meshes) {
-        Mesh m = kvpair.second;
-        glDeleteVertexArrays(1, &m.vao);
-        glDeleteBuffers(1, &m.vbo);
+        meshDestroy(kvpair.second);
     }
 
     meshes.clear();
