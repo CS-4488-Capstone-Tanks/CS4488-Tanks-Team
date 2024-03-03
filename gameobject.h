@@ -26,9 +26,9 @@ public:
        or other properties over time.
      * @param float deltaTime: The time elapsed since the last update in
         seconds(?). This is a fixed value. Example: If you increment a
-        property every frame by a number, its units will be
+        property every frame by a number, its "speed" will be measured in
         units-per-frame (or meters-per-frame if you wish). If you want to
-        work in units-per-second, multiply by deltaTime to convert to
+        work in units-per-second, multiply "speed" by deltaTime to convert to
         units-per-frame.
      */
     virtual void doUpdate(float deltaTime);

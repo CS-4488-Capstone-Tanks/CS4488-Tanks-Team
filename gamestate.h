@@ -14,11 +14,25 @@ public:
     GameState();
     void startState();
     void updateState(float deltaTime);
+
+    /**
+     * Given a the name of a .json state file, this method will load the state.
+        Note that the state file must be located in the "/assets/levels/"
+        directory. Do not include ".json" in the filename.
+     * @param filename
+     */
     void loadState(QString filename);
     void addObject(GameObject *const obj);
+
+
 private:
     std::vector<GameObject*> objs;
     int nextFreeEntityID = 0;
+
+    /**
+     * Remove a GameObject from the GameState.
+     * @param entityID
+     */
     void removeObject(uint32_t entityID);
 };
 
