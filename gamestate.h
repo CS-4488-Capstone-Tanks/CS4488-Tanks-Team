@@ -1,8 +1,11 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 
-#include <string>
 #include <vector>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QFile>
 #include "gameobject.h"
 
 class GameState
@@ -11,7 +14,7 @@ public:
     GameState();
     void startState();
     void updateState(float deltaTime);
-    void readState(std::string file);
+    void loadState(QString filename);
     void addObject(GameObject *const obj);
 private:
     std::vector<GameObject*> objs;

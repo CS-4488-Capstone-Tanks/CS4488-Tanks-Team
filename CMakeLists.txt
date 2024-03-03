@@ -47,6 +47,7 @@ add_executable(tanks main.cpp
     gamestate.h gamestate.cpp
     gameobject.h gameobject.cpp
     gameobjecttype.h
+    jsonhelpers.h jsonhelpers.cpp
 )
 
 # Declare the system libraries we need to link with
