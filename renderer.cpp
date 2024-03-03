@@ -293,43 +293,32 @@ void Renderer::paintGL() {
     for(auto& cmd : lastFrame) {
         mvp = vp * cmd.transform;
 
+        Mesh m{};
+
         switch(cmd.type) {
             case DrawCommandType::Player:
-            {
-                Mesh m = meshes["tank"];                                            // find the mesh we care about
-                glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));  // set our mvp matrix for this draw
-                glDrawArrays(GL_TRIANGLES, 0, m.vertexCount);                       // execute a draw call
+                m = meshes["tank"];            // find the mesh we care about
                 break;
-            }
             case DrawCommandType::Enemy:
-            {
-                Mesh m = meshes["tank"];
-                glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));
-                glDrawArrays(GL_TRIANGLES, 0, m.vertexCount);
+                m = meshes["tank"];
                 break;
-            }
             case DrawCommandType::Obstacle:
-            {
-                Mesh m = meshes["obstacle"];
-                glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));
-                glDrawArrays(GL_TRIANGLES, 0, m.vertexCount);
+                m = meshes["obstacle"];
                 break;
-            }
             case DrawCommandType::Bullet:
-            {
-                Mesh m = meshes["bullet"];
-                glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));
-                glDrawArrays(GL_TRIANGLES, 0, m.vertexCount);
+                m = meshes["bullet"];
                 break;
-            }
         }
+
+        glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));  // set our mvp matrix for this draw
+        glDrawArrays(GL_TRIANGLES, 0, m.vertexCount);                       // execute a draw call
     }
 }
 
 void Renderer::resizeGL(int w, int h) {
     QOpenGLWidget::resizeGL(w, h);
 
-    // If the window size changes, we have to recreate the projection
+    // If the window size changes, we have to recreate the projection. See initializeGL for details
     projection = glm::perspective(
         glm::radians(cameraFOVDegrees),
         (float)w / float(h),

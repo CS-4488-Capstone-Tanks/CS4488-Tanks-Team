@@ -69,3 +69,10 @@ target_include_directories(tanks PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/external/glm
     ${CMAKE_CURRENT_SOURCE_DIR}/external/assimp/include
 )
+
+# Add a post-build step to copy over the assets folder
+add_custom_command(TARGET tanks POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets"
+    "$<TARGET_FILE_DIR:tanks>/assets"
+)
