@@ -1,6 +1,13 @@
 #include "renderer.h"
 
+#include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
+#include <iostream>
+#include <filesystem>
 
 
 static const char* texturedVertexSource = R"(
@@ -36,8 +43,18 @@ void main() {
 Renderer::Mesh Renderer::meshFromFile(const char* path) {
     Mesh m{};
 
-    // TODO: once assimp is linked, load the model from the file and handle
-    // processing the vertex attributes/uploading the data
+    Assimp::Importer importer;
+    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate);
+
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
+        std::string msg = "Failed to load mesh: ";
+        msg += path;
+        throw std::runtime_error(msg);
+    }
+
+    if (scene->mNumMeshes > 1) {
+        std::cout << "WARN: Model file " << path << " has more than 1 mesh, only the first will be used\n";
+    }
 
     // Create the vertex array and buffer
     glGenVertexArrays(1, &m.vao);
@@ -47,6 +64,65 @@ Renderer::Mesh Renderer::meshFromFile(const char* path) {
     glBindVertexArray(m.vao);
     glBindBuffer(GL_ARRAY_BUFFER, m.vbo);
 
+    const aiMesh* mesh = scene->mMeshes[0];
+
+    // OpenGL now needs all that data in one big buffer. Easier to interleave it now,
+    // then deal with the math of storing them separately
+
+    std::vector<float> interleavedBuffer;
+    for(size_t i = 0; i < mesh->mNumVertices; i++) {
+        if (mesh->HasPositions()) {
+            interleavedBuffer.push_back(mesh->mVertices[i].x);
+            interleavedBuffer.push_back(mesh->mVertices[i].y);
+            interleavedBuffer.push_back(mesh->mVertices[i].z);
+        }
+        if (mesh->HasTextureCoords(0)) { // Assuming the first set of texture coordinates
+            interleavedBuffer.push_back(mesh->mTextureCoords[0][i].x);
+            interleavedBuffer.push_back(mesh->mTextureCoords[0][i].y);
+        }
+        if (mesh->HasNormals()) {
+            interleavedBuffer.push_back(mesh->mNormals[i].x);
+            interleavedBuffer.push_back(mesh->mNormals[i].y);
+            interleavedBuffer.push_back(mesh->mNormals[i].z);
+        }
+    }
+
+    // Upload our data to the GPU
+    // Store it in the array buffer
+    // Pass how big our data is, and the pointer to it
+    // Lastly, it won't change often, so we use static draw
+    glBufferData(GL_ARRAY_BUFFER, interleavedBuffer.size() * sizeof(float), interleavedBuffer.data(), GL_STATIC_DRAW);
+
+    size_t bufferOffset = 0;
+
+    if (mesh->HasPositions()) {
+        // Tell the vertex array that we want to:
+        // Enable attribute 0
+        // Which has three components (a vec3)
+        // of type float
+        // that is not normalized
+        // has total data size per element of 3 * sizeof(float)
+        // and starts at a certain offset in the buffer
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)bufferOffset);
+        glEnableVertexAttribArray(0);
+        bufferOffset += 3 * sizeof(float);
+    }
+
+    if (mesh->HasTextureCoords(0)) {
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)bufferOffset);
+        glEnableVertexAttribArray(1);
+        bufferOffset += 2 * sizeof(float);
+    }
+
+    if (mesh->HasNormals()) {
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)bufferOffset);
+        glEnableVertexAttribArray(2);
+    }
+
+    // Unbind our VAO so we don't accidentally modify it later
+    glBindVertexArray(0);
+
+    m.vertexCount = mesh->mNumVertices;
 
     return m;
 }
@@ -207,19 +283,41 @@ void Renderer::paintGL() {
     // Use the appropriate shader for drawing
     glUseProgram(texturedShader);
 
+    // Get the numeric identifier of our uniform, for uploading data to
+    int mvpLocation = glGetUniformLocation(texturedShader, "mvp");
+
     for(auto& cmd : lastFrame) {
         mvp = vp * cmd.transform;
 
         switch(cmd.type) {
-            // TODO: I can't handle drawing meshes until I have more info about how meshes are loaded
             case DrawCommandType::Player:
+            {
+                Mesh m = meshes["tank"];                                            // find the mesh we care about
+                glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));  // set our mvp matrix for this draw
+                glDrawArrays(GL_TRIANGLES, 0, m.vertexCount);                       // execute a draw call
                 break;
+            }
             case DrawCommandType::Enemy:
+            {
+                Mesh m = meshes["tank"];
+                glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));
+                glDrawArrays(GL_TRIANGLES, 0, m.vertexCount);
                 break;
+            }
             case DrawCommandType::Obstacle:
+            {
+                Mesh m = meshes["obstacle"];
+                glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));
+                glDrawArrays(GL_TRIANGLES, 0, m.vertexCount);
                 break;
+            }
             case DrawCommandType::Bullet:
+            {
+                Mesh m = meshes["bullet"];
+                glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));
+                glDrawArrays(GL_TRIANGLES, 0, m.vertexCount);
                 break;
+            }
         }
     }
 }
@@ -263,6 +361,27 @@ void Renderer::initializeGL() {
 
     try {
         texturedShader = shaderFromSource(texturedVertexSource, texturedFragmentSource);
+
+        // Ensure the data exists as an empty mesh, so at worst, if the meshes aren't on disk, we just
+        // don't draw them instead of crashing or something
+        meshes["tank"] = {};
+        meshes["obstacle"] = {};
+        meshes["bullet"] = {};
+
+        if (std::filesystem::exists("assets/models")) {
+            for(const auto& entry : std::filesystem::directory_iterator("assets/models")) {
+                if (entry.is_regular_file()) {
+                    const auto& path = entry.path();
+
+                    Mesh loaded = meshFromFile(path.c_str());
+
+                    meshes[path.stem()] = loaded;
+                }
+            }
+        }
+        else {
+            throw std::runtime_error("No assets/models directory is available. Can't draw any 3D meshes");
+        }
     }
     catch (std::exception& ex) {
         std::string msg = "The following error occurred while initializing the renderer:\n\n";
@@ -270,4 +389,15 @@ void Renderer::initializeGL() {
 
         throw std::runtime_error(msg);
     }
+}
+
+Renderer::~Renderer() {
+    // Clean up after yourself
+    for(auto& kvpair : meshes) {
+        Mesh m = kvpair.second;
+        glDeleteVertexArrays(1, &m.vao);
+        glDeleteBuffers(1, &m.vbo);
+    }
+
+    meshes.clear();
 }

@@ -35,7 +35,10 @@ class Renderer : public QOpenGLWidget, public QOpenGLExtraFunctions {
     struct Mesh {
         unsigned int vao;
         unsigned int vbo;
+        int vertexCount;
     };
+
+    std::unordered_map<std::string, Mesh> meshes;
 
 
     // The list of draw commands for the last complete frame, and the currently being built frame
@@ -70,6 +73,8 @@ class Renderer : public QOpenGLWidget, public QOpenGLExtraFunctions {
     static const float constexpr backgroundBlue = 0.0f;
 
 public:
+    ~Renderer() override;
+
     /**
      * Draw an object to the screen
      * @param object the object to draw
