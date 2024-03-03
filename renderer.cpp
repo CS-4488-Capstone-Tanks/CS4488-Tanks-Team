@@ -10,6 +10,8 @@
 #include <filesystem>
 
 
+//#include "gameobject.h"
+
 static const char* texturedVertexSource = R"(
 #version 450
 
@@ -227,16 +229,16 @@ void Renderer::drawObject(GameObject* object) {
 
     /* TODO: uncomment this once objects are implemented
     switch(object->getType()) {
-        case Player:
+        case GameObjectType::PlayerTank:
             cmd.type = DrawCommandType::Player;
             break;
-        case Enemy:
+        case GameObjectType::EnemyTank:
             cmd.type = DrawCommandType::Enemy;
             break;
-        case Bullet:
+        case GameObjectType::Projectile:
             cmd.type = DrawCommandType::Bullet;
             break;
-        case Obstacle:
+        case GameObjectType::Obstacle:
             cmd.type = DrawCommandType::Obstacle;
             break;
     }
