@@ -1,14 +1,14 @@
 #include "gamestate.h"
 #include "jsonhelpers.h"
 
-const QString LEVELS_PATH = "/assets/levels/";
+const char LEVELS_PATH[] = "/assets/levels/";
 
-const QString PLAYER_KEY = "playerTank";
-const QString ENEMY_KEY = "enemyTank";
-const QString OBSTACLES_KEY = "obstacles";
+const char PLAYER_KEY[] = "playerTank";
+const char ENEMY_KEY[] = "enemyTank";
+const char OBSTACLES_KEY[] = "obstacles";
 
-const QString POS_KEY = "position";
-const QString DIR_KEY = "direction";
+const char POS_KEY[] = "position";
+const char DIR_KEY[] = "direction";
 
 GameState::GameState()
 {
@@ -29,12 +29,6 @@ void GameState::updateState(float deltaTime)
     }
 }
 
-/**
- * Given a the name of a state file, this method will load the state.
-    Note that the state file must be located in the "/assets/levels/"
-    directory. Do not include ".json" in the filename.
- * @param filename
- */
 void GameState::loadState(QString filename)
 {
     QFile stateFile(LEVELS_PATH + filename + ".json");
@@ -87,10 +81,6 @@ void GameState::addObject(GameObject *const obj)
     objs.push_back(obj);
 }
 
-/**
- * Remove a GameObject from the GameState.
- * @param entityID
- */
 void GameState::removeObject(uint32_t entityID)
 {
 
