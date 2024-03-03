@@ -40,15 +40,10 @@ class Renderer : public QOpenGLWidget, public QOpenGLExtraFunctions {
 
     std::unordered_map<std::string, Mesh> meshes;
 
-
     // The list of draw commands for the last complete frame, and the currently being built frame
     // They are separate to ensure it never draws a half frame
     std::vector<DrawCommand> lastFrame;
     std::vector<DrawCommand> curFrame;
-
-    Mesh tank;
-    Mesh bullet;
-    Mesh obstacle;
 
     unsigned int playerTexture;
     unsigned int enemyTexture;
@@ -56,6 +51,7 @@ class Renderer : public QOpenGLWidget, public QOpenGLExtraFunctions {
     unsigned int texturedShader;
 
     bool usingPeriscope;
+    static const glm::vec3 constexpr cameraTopPosition = glm::vec3(0, 10, -5);
 
     glm::mat4 view;
     glm::mat4 projection;

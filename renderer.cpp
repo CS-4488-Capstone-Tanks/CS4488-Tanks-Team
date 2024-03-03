@@ -217,7 +217,7 @@ void Renderer::togglePeriscope() {
     usingPeriscope = !usingPeriscope;
 
     if (!usingPeriscope) {
-        // TODO: handle setting the camera to its top down view, once we know where the coordinates for that are
+        view = glm::lookAt(cameraTopPosition, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
     }
 }
 
@@ -252,6 +252,8 @@ void Renderer::drawObject(GameObject* object) {
     cmd.transform[1] = glm::vec4(worldUp, 0.0f);
     cmd.transform[2] = glm::vec4(objectForward, 0.0f);
     cmd.transform[3] = glm::vec4(pos, 1.0f);
+
+    cmd.forwardPoint = pos + glm::normalize(objectForward);
     */
 
     curFrame.emplace_back(cmd);
@@ -356,8 +358,7 @@ void Renderer::initializeGL() {
         100.0f
     );
 
-    // Leave the view as the identity matrix for now
-    view = glm::mat4(1.0f);
+    view = glm::lookAt(cameraTopPosition, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 
     usingPeriscope = false;
 
