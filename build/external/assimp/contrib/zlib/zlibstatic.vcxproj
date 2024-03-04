@@ -1,0 +1,406 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{97127ADD-05F9-3D05-A1A8-B536EDA0BA26}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>zlibstatic</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">zlibstatic.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">zlibstaticd</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">zlibstatic.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">zlibstatic</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">zlibstatic.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">zlibstatic</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">zlibstatic.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">zlibstatic</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\zlibstatic_autogen\include_Debug;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\code;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\.;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /bigobj</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4244</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_DEBUG;ASSIMP_BUILD_NO_M3D_IMPORTER;ASSIMP_BUILD_NO_M3D_EXPORTER;WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE;NO_FSEEKO;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;ASSIMP_BUILD_NO_M3D_IMPORTER;ASSIMP_BUILD_NO_M3D_EXPORTER;WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE;NO_FSEEKO;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\zlibstatic_autogen\include_Debug;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\code;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\.;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\zlibstatic_autogen\include_Debug;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\code;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\.;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PreBuildEvent>
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message>Automatic MOC for target zlibstatic</Message>
+      <Command>setlocal
+cd F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib
+if %errorlevel% neq 0 goto :cmEnd
+F:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E cmake_autogen F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/CMakeFiles/zlibstatic_autogen.dir/AutogenInfo.json Debug
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PreBuildEvent>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\zlibstatic_autogen\include_Release;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\code;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\.;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /bigobj</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <DisableSpecificWarnings>4244</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;ASSIMP_BUILD_NO_M3D_IMPORTER;ASSIMP_BUILD_NO_M3D_EXPORTER;WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE;NO_FSEEKO;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;ASSIMP_BUILD_NO_M3D_IMPORTER;ASSIMP_BUILD_NO_M3D_EXPORTER;WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE;NO_FSEEKO;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\zlibstatic_autogen\include_Release;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\code;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\.;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\zlibstatic_autogen\include_Release;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\code;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\.;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PreBuildEvent>
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message>Automatic MOC for target zlibstatic</Message>
+      <Command>setlocal
+cd F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib
+if %errorlevel% neq 0 goto :cmEnd
+F:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E cmake_autogen F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/CMakeFiles/zlibstatic_autogen.dir/AutogenInfo.json Release
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PreBuildEvent>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\zlibstatic_autogen\include_MinSizeRel;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\code;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\.;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /bigobj</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <DisableSpecificWarnings>4244</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;ASSIMP_BUILD_NO_M3D_IMPORTER;ASSIMP_BUILD_NO_M3D_EXPORTER;WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE;NO_FSEEKO;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;ASSIMP_BUILD_NO_M3D_IMPORTER;ASSIMP_BUILD_NO_M3D_EXPORTER;WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE;NO_FSEEKO;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\zlibstatic_autogen\include_MinSizeRel;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\code;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\.;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\zlibstatic_autogen\include_MinSizeRel;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\code;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\.;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PreBuildEvent>
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message>Automatic MOC for target zlibstatic</Message>
+      <Command>setlocal
+cd F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib
+if %errorlevel% neq 0 goto :cmEnd
+F:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E cmake_autogen F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/CMakeFiles/zlibstatic_autogen.dir/AutogenInfo.json MinSizeRel
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PreBuildEvent>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\zlibstatic_autogen\include_RelWithDebInfo;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\code;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\.;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /bigobj</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4244</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;ASSIMP_BUILD_NO_M3D_IMPORTER;ASSIMP_BUILD_NO_M3D_EXPORTER;WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE;NO_FSEEKO;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;ASSIMP_BUILD_NO_M3D_IMPORTER;ASSIMP_BUILD_NO_M3D_EXPORTER;WIN32_LEAN_AND_MEAN;UNICODE;_UNICODE;NO_FSEEKO;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\zlibstatic_autogen\include_RelWithDebInfo;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\code;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\.;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\zlibstatic_autogen\include_RelWithDebInfo;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\include;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\code;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\.;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PreBuildEvent>
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message>Automatic MOC for target zlibstatic</Message>
+      <Command>setlocal
+cd F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib
+if %errorlevel% neq 0 goto :cmEnd
+F:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E cmake_autogen F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/CMakeFiles/zlibstatic_autogen.dir/AutogenInfo.json RelWithDebInfo
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PreBuildEvent>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SF:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team -BF:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build --check-stamp-file F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-3.28\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckTypeSize.cmake;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\zconf.h.cmakein;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\zlib.pc.cmakein;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SF:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team -BF:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build --check-stamp-file F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-3.28\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckTypeSize.cmake;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\zconf.h.cmakein;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\zlib.pc.cmakein;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SF:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team -BF:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build --check-stamp-file F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Program Files\CMake\share\cmake-3.28\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckTypeSize.cmake;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\zconf.h.cmakein;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\zlib.pc.cmakein;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SF:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team -BF:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build --check-stamp-file F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Program Files\CMake\share\cmake-3.28\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-3.28\Modules\CheckTypeSize.cmake;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\zconf.h.cmakein;F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\zlib.pc.cmakein;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\zlibstatic_autogen\mocs_compilation_Debug.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\adler32.c" />
+    <ClCompile Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\compress.c" />
+    <ClCompile Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\crc32.c" />
+    <ClCompile Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\deflate.c" />
+    <ClCompile Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\gzclose.c" />
+    <ClCompile Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\gzlib.c" />
+    <ClCompile Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\gzread.c" />
+    <ClCompile Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\gzwrite.c" />
+    <ClCompile Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\inflate.c" />
+    <ClCompile Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\infback.c" />
+    <ClCompile Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\inftrees.c" />
+    <ClCompile Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\inffast.c" />
+    <ClCompile Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\trees.c" />
+    <ClCompile Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\uncompr.c" />
+    <ClCompile Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\zutil.c" />
+    <ClInclude Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\zconf.h" />
+    <ClInclude Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\zlib.h" />
+    <ClInclude Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\crc32.h" />
+    <ClInclude Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\deflate.h" />
+    <ClInclude Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\gzguts.h" />
+    <ClInclude Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\inffast.h" />
+    <ClInclude Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\inffixed.h" />
+    <ClInclude Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\inflate.h" />
+    <ClInclude Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\inftrees.h" />
+    <ClInclude Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\trees.h" />
+    <ClInclude Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\external\assimp\contrib\zlib\zutil.h" />
+    <ClCompile Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\zlibstatic_autogen\mocs_compilation_Release.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\zlibstatic_autogen\mocs_compilation_MinSizeRel.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\external\assimp\contrib\zlib\zlibstatic_autogen\mocs_compilation_RelWithDebInfo.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\ZERO_CHECK.vcxproj">
+      <Project>{E716738E-50B0-3EB6-899E-C271BB5AF935}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

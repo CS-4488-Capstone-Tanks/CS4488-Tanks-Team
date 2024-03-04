@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\_deps\catch2-subbuild\CMakeFiles\1d3fcfb575c25b46c42d1427dafcb32d\catch2-populate-mkdir.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\_deps\catch2-subbuild\CMakeFiles\1d3fcfb575c25b46c42d1427dafcb32d\catch2-populate-download.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\_deps\catch2-subbuild\CMakeFiles\1d3fcfb575c25b46c42d1427dafcb32d\catch2-populate-update.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\_deps\catch2-subbuild\CMakeFiles\1d3fcfb575c25b46c42d1427dafcb32d\catch2-populate-patch.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\_deps\catch2-subbuild\CMakeFiles\1d3fcfb575c25b46c42d1427dafcb32d\catch2-populate-configure.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\_deps\catch2-subbuild\CMakeFiles\1d3fcfb575c25b46c42d1427dafcb32d\catch2-populate-build.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\_deps\catch2-subbuild\CMakeFiles\1d3fcfb575c25b46c42d1427dafcb32d\catch2-populate-install.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\_deps\catch2-subbuild\CMakeFiles\1d3fcfb575c25b46c42d1427dafcb32d\catch2-populate-test.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\_deps\catch2-subbuild\CMakeFiles\d4e3a5df01b3ce8b11efc2128961cf23\catch2-populate-complete.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\_deps\catch2-subbuild\CMakeFiles\e78d39198717d739a3a5f3c935463223\catch2-populate.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\_deps\catch2-subbuild\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="F:\GitHub\CS3321-high-rollers\CS4488-Tanks-Team\build\_deps\catch2-subbuild\CMakeFiles\catch2-populate" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{DAAD55F1-FC9D-3CC4-B908-91D0BAFB89DF}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

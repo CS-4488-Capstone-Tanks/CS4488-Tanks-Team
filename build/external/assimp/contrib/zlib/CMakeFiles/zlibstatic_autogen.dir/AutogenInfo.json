@@ -1,0 +1,312 @@
+{
+	"BUILD_DIR" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/zlibstatic_autogen",
+	"CMAKE_BINARY_DIR" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build",
+	"CMAKE_CURRENT_BINARY_DIR" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib",
+	"CMAKE_CURRENT_SOURCE_DIR" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib",
+	"CMAKE_EXECUTABLE" : "C:/Program Files/CMake/bin/cmake.exe",
+	"CMAKE_LIST_FILES" : 
+	[
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/CMakeLists.txt",
+		"C:/Program Files/CMake/share/cmake-3.28/Modules/CheckTypeSize.cmake",
+		"C:/Program Files/CMake/share/cmake-3.28/Modules/CheckIncludeFile.cmake",
+		"C:/Program Files/CMake/share/cmake-3.28/Modules/CheckIncludeFileCXX.cmake",
+		"C:/Program Files/CMake/share/cmake-3.28/Modules/CheckFunctionExists.cmake",
+		"C:/Program Files/CMake/share/cmake-3.28/Modules/CheckIncludeFile.cmake",
+		"C:/Program Files/CMake/share/cmake-3.28/Modules/CheckCSourceCompiles.cmake",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/zlib.pc.cmakein",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/zconf.h.cmakein"
+	],
+	"CMAKE_SOURCE_DIR" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team",
+	"DEP_FILE" : "",
+	"DEP_FILE_RULE_NAME" : "",
+	"HEADERS" : 
+	[
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/zconf.h",
+			"Mu",
+			"EJRQKI7XPS/moc_zconf.cpp",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/crc32.h",
+			"Mu",
+			"EWIEGA46WW/moc_crc32.cpp",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/deflate.h",
+			"Mu",
+			"EWIEGA46WW/moc_deflate.cpp",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/gzguts.h",
+			"Mu",
+			"EWIEGA46WW/moc_gzguts.cpp",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/inffast.h",
+			"Mu",
+			"EWIEGA46WW/moc_inffast.cpp",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/inffixed.h",
+			"Mu",
+			"EWIEGA46WW/moc_inffixed.cpp",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/inflate.h",
+			"Mu",
+			"EWIEGA46WW/moc_inflate.cpp",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/inftrees.h",
+			"Mu",
+			"EWIEGA46WW/moc_inftrees.cpp",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/trees.h",
+			"Mu",
+			"EWIEGA46WW/moc_trees.cpp",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/zlib.h",
+			"Mu",
+			"EWIEGA46WW/moc_zlib.cpp",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/zutil.h",
+			"Mu",
+			"EWIEGA46WW/moc_zutil.cpp",
+			null
+		]
+	],
+	"HEADER_EXTENSIONS" : [ "h", "hh", "h++", "hm", "hpp", "hxx", "in", "txx" ],
+	"INCLUDE_DIR" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/zlibstatic_autogen/include",
+	"INCLUDE_DIR_Debug" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/zlibstatic_autogen/include_Debug",
+	"INCLUDE_DIR_MinSizeRel" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/zlibstatic_autogen/include_MinSizeRel",
+	"INCLUDE_DIR_RelWithDebInfo" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/zlibstatic_autogen/include_RelWithDebInfo",
+	"INCLUDE_DIR_Release" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/zlibstatic_autogen/include_Release",
+	"MOC_COMPILATION_FILE" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/zlibstatic_autogen/mocs_compilation.cpp",
+	"MOC_COMPILATION_FILE_Debug" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/zlibstatic_autogen/mocs_compilation_Debug.cpp",
+	"MOC_COMPILATION_FILE_MinSizeRel" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/zlibstatic_autogen/mocs_compilation_MinSizeRel.cpp",
+	"MOC_COMPILATION_FILE_RelWithDebInfo" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/zlibstatic_autogen/mocs_compilation_RelWithDebInfo.cpp",
+	"MOC_COMPILATION_FILE_Release" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/zlibstatic_autogen/mocs_compilation_Release.cpp",
+	"MOC_DEFINITIONS" : [],
+	"MOC_DEFINITIONS_Debug" : 
+	[
+		"ASSIMP_BUILD_NO_M3D_EXPORTER",
+		"ASSIMP_BUILD_NO_M3D_IMPORTER",
+		"NO_FSEEKO",
+		"UNICODE",
+		"WIN32",
+		"WIN32_LEAN_AND_MEAN",
+		"_CRT_NONSTDC_NO_DEPRECATE",
+		"_CRT_SECURE_NO_DEPRECATE",
+		"_UNICODE"
+	],
+	"MOC_DEFINITIONS_MinSizeRel" : 
+	[
+		"ASSIMP_BUILD_NO_M3D_EXPORTER",
+		"ASSIMP_BUILD_NO_M3D_IMPORTER",
+		"NO_FSEEKO",
+		"UNICODE",
+		"WIN32",
+		"WIN32_LEAN_AND_MEAN",
+		"_CRT_NONSTDC_NO_DEPRECATE",
+		"_CRT_SECURE_NO_DEPRECATE",
+		"_UNICODE"
+	],
+	"MOC_DEFINITIONS_RelWithDebInfo" : 
+	[
+		"ASSIMP_BUILD_NO_M3D_EXPORTER",
+		"ASSIMP_BUILD_NO_M3D_IMPORTER",
+		"NO_FSEEKO",
+		"UNICODE",
+		"WIN32",
+		"WIN32_LEAN_AND_MEAN",
+		"_CRT_NONSTDC_NO_DEPRECATE",
+		"_CRT_SECURE_NO_DEPRECATE",
+		"_UNICODE"
+	],
+	"MOC_DEFINITIONS_Release" : 
+	[
+		"ASSIMP_BUILD_NO_M3D_EXPORTER",
+		"ASSIMP_BUILD_NO_M3D_IMPORTER",
+		"NO_FSEEKO",
+		"UNICODE",
+		"WIN32",
+		"WIN32_LEAN_AND_MEAN",
+		"_CRT_NONSTDC_NO_DEPRECATE",
+		"_CRT_SECURE_NO_DEPRECATE",
+		"_UNICODE"
+	],
+	"MOC_DEPEND_FILTERS" : 
+	[
+		[
+			"Q_PLUGIN_METADATA",
+			"[\n][ \t]*Q_PLUGIN_METADATA[ \t]*\\([^\\)]*FILE[ \t]*\"([^\"]+)\""
+		]
+	],
+	"MOC_INCLUDES" : [],
+	"MOC_INCLUDES_Debug" : 
+	[
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/include",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/include",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/code",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team"
+	],
+	"MOC_INCLUDES_MinSizeRel" : 
+	[
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/include",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/include",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/code",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team"
+	],
+	"MOC_INCLUDES_RelWithDebInfo" : 
+	[
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/include",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/include",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/code",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team"
+	],
+	"MOC_INCLUDES_Release" : 
+	[
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/include",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/include",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/code",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib",
+		"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team"
+	],
+	"MOC_MACRO_NAMES" : 
+	[
+		"Q_OBJECT",
+		"Q_GADGET",
+		"Q_NAMESPACE",
+		"Q_NAMESPACE_EXPORT",
+		"Q_GADGET_EXPORT"
+	],
+	"MOC_OPTIONS" : [],
+	"MOC_PATH_PREFIX" : false,
+	"MOC_PREDEFS_CMD" : [],
+	"MOC_PREDEFS_FILE" : "",
+	"MOC_RELAXED_MODE" : false,
+	"MOC_SKIP" : [],
+	"MULTI_CONFIG" : true,
+	"PARALLEL" : 8,
+	"PARSE_CACHE_FILE" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/CMakeFiles/zlibstatic_autogen.dir/ParseCache.txt",
+	"PARSE_CACHE_FILE_Debug" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/CMakeFiles/zlibstatic_autogen.dir/ParseCache_Debug.txt",
+	"PARSE_CACHE_FILE_MinSizeRel" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/CMakeFiles/zlibstatic_autogen.dir/ParseCache_MinSizeRel.txt",
+	"PARSE_CACHE_FILE_RelWithDebInfo" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/CMakeFiles/zlibstatic_autogen.dir/ParseCache_RelWithDebInfo.txt",
+	"PARSE_CACHE_FILE_Release" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/CMakeFiles/zlibstatic_autogen.dir/ParseCache_Release.txt",
+	"QT_MOC_EXECUTABLE" : "E:/Qt/6.6.2/mingw_64/./bin/moc.exe",
+	"QT_UIC_EXECUTABLE" : "",
+	"QT_VERSION_MAJOR" : 6,
+	"QT_VERSION_MINOR" : 6,
+	"SETTINGS_FILE" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/CMakeFiles/zlibstatic_autogen.dir/AutogenUsed.txt",
+	"SETTINGS_FILE_Debug" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/CMakeFiles/zlibstatic_autogen.dir/AutogenUsed_Debug.txt",
+	"SETTINGS_FILE_MinSizeRel" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/CMakeFiles/zlibstatic_autogen.dir/AutogenUsed_MinSizeRel.txt",
+	"SETTINGS_FILE_RelWithDebInfo" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/CMakeFiles/zlibstatic_autogen.dir/AutogenUsed_RelWithDebInfo.txt",
+	"SETTINGS_FILE_Release" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/external/assimp/contrib/zlib/CMakeFiles/zlibstatic_autogen.dir/AutogenUsed_Release.txt",
+	"SOURCES" : 
+	[
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/adler32.c",
+			"Mu",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/compress.c",
+			"Mu",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/crc32.c",
+			"Mu",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/deflate.c",
+			"Mu",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/gzclose.c",
+			"Mu",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/gzlib.c",
+			"Mu",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/gzread.c",
+			"Mu",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/gzwrite.c",
+			"Mu",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/infback.c",
+			"Mu",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/inffast.c",
+			"Mu",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/inflate.c",
+			"Mu",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/inftrees.c",
+			"Mu",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/trees.c",
+			"Mu",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/uncompr.c",
+			"Mu",
+			null
+		],
+		[
+			"F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/zutil.c",
+			"Mu",
+			null
+		]
+	],
+	"VERBOSITY" : 0
+}

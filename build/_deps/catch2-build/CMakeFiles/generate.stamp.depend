@@ -1,0 +1,7 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-3.28/Modules/CMakeDependentOption.cmake
+C:/Program Files/CMake/share/cmake-3.28/Modules/CMakePackageConfigHelpers.cmake
+C:/Program Files/CMake/share/cmake-3.28/Modules/GNUInstallDirs.cmake
+C:/Program Files/CMake/share/cmake-3.28/Modules/WriteBasicConfigVersionFile.cmake
+F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/_deps/catch2-src/CMake/CatchConfigOptions.cmake
+F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/_deps/catch2-src/CMakeLists.txt

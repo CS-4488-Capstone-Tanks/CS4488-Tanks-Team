@@ -1,0 +1,9 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-3.28/Modules/CheckCSourceCompiles.cmake
+C:/Program Files/CMake/share/cmake-3.28/Modules/CheckFunctionExists.cmake
+C:/Program Files/CMake/share/cmake-3.28/Modules/CheckIncludeFile.cmake
+C:/Program Files/CMake/share/cmake-3.28/Modules/CheckIncludeFileCXX.cmake
+C:/Program Files/CMake/share/cmake-3.28/Modules/CheckTypeSize.cmake
+F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/CMakeLists.txt
+F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/zconf.h.cmakein
+F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/external/assimp/contrib/zlib/zlib.pc.cmakein
