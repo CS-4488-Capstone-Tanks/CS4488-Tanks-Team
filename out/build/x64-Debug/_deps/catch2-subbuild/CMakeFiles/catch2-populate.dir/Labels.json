@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/out/build/x64-Debug/_deps/catch2-subbuild/CMakeFiles/catch2-populate"
+		},
+		{
+			"file" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/out/build/x64-Debug/_deps/catch2-subbuild/CMakeFiles/catch2-populate.rule"
+		},
+		{
+			"file" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/out/build/x64-Debug/_deps/catch2-subbuild/CMakeFiles/catch2-populate-complete.rule"
+		},
+		{
+			"file" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/out/build/x64-Debug/_deps/catch2-subbuild/catch2-populate-prefix/src/catch2-populate-stamp/catch2-populate-build.rule"
+		},
+		{
+			"file" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/out/build/x64-Debug/_deps/catch2-subbuild/catch2-populate-prefix/src/catch2-populate-stamp/catch2-populate-configure.rule"
+		},
+		{
+			"file" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/out/build/x64-Debug/_deps/catch2-subbuild/catch2-populate-prefix/src/catch2-populate-stamp/catch2-populate-download.rule"
+		},
+		{
+			"file" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/out/build/x64-Debug/_deps/catch2-subbuild/catch2-populate-prefix/src/catch2-populate-stamp/catch2-populate-install.rule"
+		},
+		{
+			"file" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/out/build/x64-Debug/_deps/catch2-subbuild/catch2-populate-prefix/src/catch2-populate-stamp/catch2-populate-mkdir.rule"
+		},
+		{
+			"file" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/out/build/x64-Debug/_deps/catch2-subbuild/catch2-populate-prefix/src/catch2-populate-stamp/catch2-populate-patch.rule"
+		},
+		{
+			"file" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/out/build/x64-Debug/_deps/catch2-subbuild/catch2-populate-prefix/src/catch2-populate-stamp/catch2-populate-test.rule"
+		},
+		{
+			"file" : "F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/out/build/x64-Debug/_deps/catch2-subbuild/catch2-populate-prefix/src/catch2-populate-stamp/catch2-populate-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"catch2-populate"
+		],
+		"name" : "catch2-populate"
+	}
+}

@@ -1,3 +1,0 @@
-F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/_deps/catch2-subbuild/CMakeFiles/catch2-populate.dir
-F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/_deps/catch2-subbuild/CMakeFiles/ALL_BUILD.dir
-F:/GitHub/CS3321-high-rollers/CS4488-Tanks-Team/build/_deps/catch2-subbuild/CMakeFiles/ZERO_CHECK.dir
