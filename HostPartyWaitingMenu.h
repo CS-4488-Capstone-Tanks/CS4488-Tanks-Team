@@ -1,8 +1,0 @@
-#ifndef HOSTPARTYWAITINGMENU_H
-#define HOSTPARTYWAITINGMENU_H
-
-class HostPartyWaitingMenu{
-
-};
-
-#endif // HOSTPARTYWAITINGMENU_H

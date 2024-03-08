@@ -61,14 +61,16 @@ file(GLOB TANK_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 add_executable(tanks ${TANK_SOURCE_FILES}
     Renderer.h
     Scene.h
-    MultiplayerMenu.h
+
     MenuManager.h
-    MainMenu.h
-    InGameMenu.h
-    HostPartyWaitingMenu.h
+
+
+
     GameWindow.h
-    menuabstr.h menuabstr.cpp
-    joinipmenu.h joinipmenu.cpp)
+    mainmenu.h mainmenu.cpp mainmenu.ui
+
+
+)
 
 # Declare the system libraries we need to link with
 target_link_libraries(tanks PRIVATE ${QT_LIBRARIES} glm::glm assimp)
