@@ -9,8 +9,7 @@
 
 #include <QWidget>
 #include <QObject>
-#include "MainMenu.h"
-
+#include "mainmenu.h"
 class MenuManager : QObject{
 #define MAIN_MENU_KEY 0
 #define INGAME_MENU_KEY 2
@@ -33,11 +32,6 @@ class MenuManager : QObject{
     ///
     MenuManager(){
         Main_Menu = MainMenu();
-        In_Game_Menu = InGameMenu();
-        Options_Menu = OptionsMenu();
-        Multiplayer_Menu = MultiplayerMenu();
-        Host_Menu = HostPartyWaitingMenu();
-        Join_IP_Menu = JoinIPMenu();
     }
 
     /// LS S24
