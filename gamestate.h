@@ -17,7 +17,7 @@ public:
 
     /**
      * Given a the name of a .json state file, this method will load the state.
-        Note that the state file must be located in the "/assets/levels/"
+        Note that the state file must be located in the "assets/levels/"
         directory. Do not include ".json" in the filename.
      * @param filename
      */

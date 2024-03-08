@@ -10,10 +10,27 @@ class Scene : public QObject
     Q_OBJECT
 
 public:
+    /**
+     * @brief Construct a new Scene object
+     * 
+     * @param float deltaTime
+     * @param char stateFilename[]
+     * @param QObject* parent = nullptr
+    */
     explicit Scene(float deltaTime, char stateFilename[], QObject *parent = nullptr);
-    void load();
+
+    /**
+     * @brief Start the scene
+    */
     void start();
+
     // void keyPress();
+
+    /**
+     * @brief Pause or resume the scene
+     * 
+     * @param bool isPaused
+    */
     void setPaused(bool isPaused);
 private:
     // NetworkManager networkManager
@@ -23,6 +40,10 @@ private:
 
 signals:
 public slots:
+
+    /**
+     * @brief Update the scene
+    */
     void update();
 };
 

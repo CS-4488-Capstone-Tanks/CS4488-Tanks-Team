@@ -1,6 +1,6 @@
 #include "gamestate.h"
 #include "jsonhelpers.h"
-#include <QDir>
+// #include <QDir>
 
 const char LEVELS_PATH[] = "assets/levels/";
 
@@ -32,10 +32,15 @@ void GameState::updateState(float deltaTime)
 
 void GameState::loadState(char filename[])
 {
-    QString filepath = /*QDir::currentPath() +*/ LEVELS_PATH + QString::fromStdString(filename) + ".json"; //Not correct
+    QString filepath = /*QDir::currentPath() +*/ LEVELS_PATH + QString::fromStdString(filename) + ".json";
     QFile stateFile(filepath);
+
+    // We'll only need one file check or the other
+    if (!std::filesystem::exists(filepath.toStdString()))
+        throw "read error: couldn't find specified path \"" + filepath.toStdString() + "\"";
     if (!stateFile.open(QFile::ReadOnly | QFile::Text))
-        throw "read error::" + stateFile.errorString().toStdString();;
+        throw "read error: " + stateFile.errorString().toStdString();
+
     QByteArray stateData = stateFile.readAll();
     QJsonDocument saveDoc(QJsonDocument::fromJson(stateData));
     QJsonObject jsonObj = saveDoc.object();
@@ -87,7 +92,7 @@ void GameState::addObject(GameObject *const obj)
 
 void GameState::removeObject(uint32_t entityID)
 {
-
+    // TODO
 }
 
 

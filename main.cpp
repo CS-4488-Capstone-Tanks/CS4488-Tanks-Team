@@ -7,9 +7,12 @@ int main(int argc, char** argv) {
     QLabel label("Hello world");
     label.resize(200, 50);
     label.show();
+
+    // example
     Scene scene(60.0f/1000, "test_game_state");
-    // Scene scene(60.0f/1000);
     scene.start();
-    scene.update();
+    scene.update(); //This will a slot called by signals
+    // example
+
     return app.exec();
 }
