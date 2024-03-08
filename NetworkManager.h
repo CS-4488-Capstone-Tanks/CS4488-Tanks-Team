@@ -1,5 +1,7 @@
 //
 // Created by Parker on 2/23/2024.
+// I don't have much experience in networking, so I just tried to set this up as best as I could figure out based on
+// some resources online. I figure we'll tweak this later once the main game is working
 //
 
 #ifndef TANKS_NETWORKMANAGER_H

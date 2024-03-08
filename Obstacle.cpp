@@ -4,26 +4,26 @@
 
 #include "Obstacle.h"
 
-//Constructor initializing the obstacle and its collider with the given parameters
+//Constructor initializing the obstacle with its position and collider
 Obstacle::Obstacle(QObject *parent, uint32_t entityID, const glm::vec3& position, float colliderRadius)
-        : gameobject(parent), collider(CircleCollider(position, colliderRadius)) {
+        : GameObject(parent), collider(position, colliderRadius) {
     this->entityID = entityID;
     this->position = position;
-    //I'm assuming that the obstacles don't move, so its speed is zero
-    this->speed = 0.0f;
+    //Set the game object's type to Obstacle
+    this->type = GameObjectType::Obstacle;
 }
 
-//Function for initializing the obstacle
+
 void Obstacle::doStart() {
-
+    //Method for initializing obstacle specific properties
 }
 
-//Function for updates if necessary
 void Obstacle::doUpdate(float deltaTime) {
-
+    //Method for obstacle update logic. Not sure if necessary unless they can move, or are destructible
 }
 
-//Returns the collider associated with the obstacle
+
+//Retrieves the collider used for collision detection
 CircleCollider Obstacle::getCollider() const {
     return collider;
 }
