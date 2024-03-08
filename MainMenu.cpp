@@ -5,3 +5,12 @@
 *		- Includes Start Game, Multiplayer Option, Options Menu (Likely nonfunctional), Quit Game (Close Window)
 *		- Will also include a title, menu screen/image, and possibly music.
 */
+
+#include <QWidget>
+
+class MainMenu : QWidget {
+public:
+    MainMenu(){
+
+    }
+};
