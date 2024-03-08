@@ -21,7 +21,7 @@ public:
         directory. Do not include ".json" in the filename.
      * @param filename
      */
-    void loadState(QString filename);
+    void loadState(char filename[]);
     void addObject(GameObject *const obj);
 
 

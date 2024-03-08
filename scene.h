@@ -10,7 +10,8 @@ class Scene : public QObject
     Q_OBJECT
 
 public:
-    explicit Scene(float deltaTime, QObject *parent = nullptr);
+    explicit Scene(float deltaTime, char stateFilename[], QObject *parent = nullptr);
+    void load();
     void start();
     // void keyPress();
     void setPaused(bool isPaused);
