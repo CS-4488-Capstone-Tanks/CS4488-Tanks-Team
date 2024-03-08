@@ -6,7 +6,10 @@
 *		- GameWindow can keep a reference to an active instance of MenuManager to display menus
 *		- Also allows communication from menus to GameWindow
 */
-#include "MenuManager.h"
+
+#include <QWidget>
+#include <QObject>
+#include "MainMenu.h"
 
 class MenuManager : QObject{
 #define MAIN_MENU_KEY 0
@@ -29,8 +32,14 @@ class MenuManager : QObject{
     /// \brief MenuManager: Constructor
     ///
     MenuManager(){
-        QW_Vec = {};
+        Main_Menu = MainMenu();
+        In_Game_Menu = InGameMenu();
+        Options_Menu = OptionsMenu();
+        Multiplayer_Menu = MultiplayerMenu();
+        Host_Menu = HostPartyWaitingMenu();
+        Join_IP_Menu = JoinIPMenu();
     }
+
     /// LS S24
     /// \brief send_signal: Send out a signal (generally to GameWindow)
     ///

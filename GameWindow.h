@@ -1,11 +1,9 @@
-#if 0
 #ifndef GAMEWINDOW_H
 #define GAMEWINDOW_H
 
 #include "Renderer.h"
 #include "qwindow.h"
 #include "MenuManager.h"
-
 
 class GameWindow : public QWindow
 {
@@ -24,7 +22,7 @@ protected:
     QWindow win;
 
 private:
-    // MenuManager::MenuManager menuman; // Doesn't work yet, will figure out soon
+    MenuManager menuman;
     Renderer renderer;
     std::unordered_map<int, QWidget*> widget_cache;
     int active_key;
@@ -144,4 +142,3 @@ public:
 };
 
 #endif // GAMEWINDOW_H
-#endif

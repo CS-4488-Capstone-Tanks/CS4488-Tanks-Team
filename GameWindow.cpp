@@ -1,5 +1,10 @@
-#if 0
-#include "GameWindow.h"
+#include <QApplication>
+#include <QObject>
+#include <QLabel>
+#include <QWindow>
+#include <QWidget>
+#include "Renderer.h"
+#include "MenuManager.h"
 
 /* Luna Steed S24
 **** TODO:
@@ -218,4 +223,3 @@ public:
          */
     }
 };
-#endif
