@@ -6,9 +6,7 @@
 *		- GameWindow can keep a reference to an active instance of MenuManager to display menus
 *		- Also allows communication from menus to GameWindow
 */
-
-#include <QWidget>
-#include <QObject>
+#include "MenuManager.h"
 
 class MenuManager : QObject{
 #define MAIN_MENU_KEY 0
