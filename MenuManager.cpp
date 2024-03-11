@@ -9,7 +9,7 @@
 
 #include <QWidget>
 #include <QObject>
-#include "mainmenu.h"
+
 class MenuManager : QObject{
 #define MAIN_MENU_KEY 0
 #define INGAME_MENU_KEY 2
