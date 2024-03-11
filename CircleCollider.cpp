@@ -3,6 +3,7 @@
 //
 
 #include "CircleCollider.h"
+#include <stdexcept>
 
 //for distance2 function
 #include <glm/gtx/norm.hpp>
