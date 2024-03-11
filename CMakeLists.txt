@@ -67,7 +67,6 @@ add_executable(tanks ${TANK_SOURCE_FILES}
 
 
     GameWindow.h
-    mainmenu.h mainmenu.cpp mainmenu.ui
 
 
 )

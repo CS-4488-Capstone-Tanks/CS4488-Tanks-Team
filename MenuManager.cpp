@@ -9,7 +9,7 @@
 
 #include <QWidget>
 #include <QObject>
-#include "mainmenu.h"
+
 class MenuManager : QObject{
 #define MAIN_MENU_KEY 0
 #define INGAME_MENU_KEY 2
@@ -32,7 +32,6 @@ class MenuManager : QObject{
     ///
     MenuManager(){
         QW_Vec = {};
-        Main_Menu = MainMenu();
     }
     /// LS S24
     /// \brief send_signal: Send out a signal (generally to GameWindow)
