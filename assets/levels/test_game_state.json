@@ -1,0 +1,25 @@
+{
+    "playerTank": {
+        "position": [0, 0, 0],
+        "direction": [0, 0, 0]
+    },
+    "enemyTank": {
+        "type": "scrub",
+        "position": [0, 0, 50],
+        "direction": [0, 0, -1]
+    },
+    "obstacles": [
+        {
+            "type": "Rock",
+            "position": [0, 0, 0],
+            "direction": [0, 0, 0],
+            "scale": [1, 1, 1]
+        },
+        {
+            "type": "House",
+            "position": [0, 0, 0],
+            "direction": [0, 0, 0],
+            "scale": [5, 5, 5]
+        }
+    ]
+}
