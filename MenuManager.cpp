@@ -31,9 +31,9 @@ class MenuManager : QObject{
     /// \brief MenuManager: Constructor
     ///
     MenuManager(){
+        QW_Vec = {};
         Main_Menu = MainMenu();
     }
-
     /// LS S24
     /// \brief send_signal: Send out a signal (generally to GameWindow)
     ///

@@ -1,14 +1,9 @@
 #include "mainmenu.h"
-#include <QWidget>
 
-MainMenu::MainMenu(QWidget *parent)
-    : QWidget(parent)
-    , ui(new Ui::MainMenu)
-{
-    ui->setupUi(this);
+namespace Ui {
+MainMenu::MainMenu(QWidget* parent) : QWidget(parent) {} // call the parent constructor
+MainMenu::~MainMenu() = default;
+MainMenu::setupUI(QWidget* widget) {
+    // Code go here
 }
-
-MainMenu::~MainMenu(){
-    delete ui;
 }
-
