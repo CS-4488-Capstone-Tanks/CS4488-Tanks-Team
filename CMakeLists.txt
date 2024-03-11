@@ -67,6 +67,7 @@ add_executable(tanks ${TANK_SOURCE_FILES}
 
 
     GameWindow.h
+        Game.h
 
 
 )

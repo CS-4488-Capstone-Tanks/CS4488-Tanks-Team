@@ -5,6 +5,7 @@
 #include "qwindow.h"
 #include "MenuManager.h"
 
+
 class GameWindow : public QWindow
 {
 // Default key values for mapping to QWidget Pointers
@@ -22,7 +23,7 @@ protected:
     QWindow win;
 
 private:
-    MenuManager menuman;
+    // MenuManager::MenuManager menuman; // Doesn't work yet, will figure out soon
     Renderer renderer;
     std::unordered_map<int, QWidget*> widget_cache;
     int active_key;

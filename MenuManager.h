@@ -6,10 +6,6 @@
 #include <QLabel>
 #include <QWindow>
 #include <QWidget>
-#include "Renderer.h"
 
-class MenuManager{
-
-};
 
 #endif // MENUMANAGER_H
