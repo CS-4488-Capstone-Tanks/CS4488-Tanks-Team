@@ -17,18 +17,19 @@ FetchContent_MakeAvailable(Catch2)
 
 # Try to find Qt6 if available, otherwise find Qt5
 # Set some variables so the later linking/including commands can use the found info
-find_package(Qt6 COMPONENTS Core Gui Widgets OpenGLWidgets QUIET)
+
+find_package(Qt6 COMPONENTS Core Gui Widgets OpenGLWidgets Network QUIET)
 if(Qt6_FOUND)
     message(STATUS "Using Qt6")
     set(QT_VERSION_MAJOR 6)
-    set(QT_LIBRARIES Qt6::Core Qt6::Gui Qt6::Widgets Qt6::OpenGLWidgets)
+    set(QT_LIBRARIES Qt6::Core Qt6::Gui Qt6::Widgets Qt6::OpenGLWidgets Qt6::Network)
     set(QT_INCLUDES ${Qt6_INCLUDE_DIRS})
 else()
     # If Qt6 is not found, try to find Qt5
-    find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
+    find_package(Qt5 COMPONENTS Core Gui Widgets Network REQUIRED)
     message(STATUS "Using Qt5")
     set(QT_VERSION_MAJOR 5)
-    set(QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets)
+    set(QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Network)
     set(QT_INCLUDES ${Qt5_INCLUDE_DIRS})
 endif()
 
