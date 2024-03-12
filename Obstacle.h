@@ -5,7 +5,7 @@
 #ifndef TANKS_OBSTACLE_H
 #define TANKS_OBSTACLE_H
 
-#include "GameObject.h"
+#include "gameobject.h"
 #include "CircleCollider.h"
 #include <QObject>
 

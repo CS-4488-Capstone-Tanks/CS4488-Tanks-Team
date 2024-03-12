@@ -5,6 +5,10 @@
 #include "CircleCollider.h"
 #include <stdexcept>
 
+// Note! This file uses experimental features of GLM, so you either have to not update
+// GLM, or if you do and it breaks the distance2 function, you'll have to change the code to make it work
+#define GLM_ENABLE_EXPERIMENTAL
+
 //for distance2 function
 #include <glm/gtx/norm.hpp>
 

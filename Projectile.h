@@ -5,7 +5,7 @@
 #ifndef TANKS_PROJECTILE_H
 #define TANKS_PROJECTILE_H
 
-#include "GameObject.h"
+#include "gameobject.h"
 #include "CircleCollider.h"
 #include <cstdint>
 #include <QObject>
