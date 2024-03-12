@@ -1,3 +1,4 @@
+#if 0
 #ifndef GAMEWINDOW_H
 #define GAMEWINDOW_H
 
@@ -143,3 +144,4 @@ public:
 };
 
 #endif // GAMEWINDOW_H
+#endif
