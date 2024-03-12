@@ -46,11 +46,11 @@ Renderer::Mesh Renderer::meshFromFile(const std::filesystem::path& path) {
     Mesh m{};
 
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate);
+    const aiScene* scene = importer.ReadFile(path.string(), aiProcess_Triangulate);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         std::string msg = "Failed to load mesh: ";
-        msg += path;
+        msg += path.string();
         throw std::runtime_error(msg);
     }
 
@@ -368,7 +368,7 @@ void Renderer::initializeGL() {
                     const auto& path = entry.path();
                     Mesh loaded = meshFromFile(path);
 
-                    meshes[path.stem()] = loaded;
+                    meshes[path.stem().string()] = loaded;
                 }
             }
         }
