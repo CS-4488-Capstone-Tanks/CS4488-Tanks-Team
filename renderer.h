@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 
 #include <vector>
+#include <filesystem>
 
 // Forward declared so that this header doesn't need to include the game object header
 class GameObject;
@@ -56,7 +57,7 @@ class Renderer : public QOpenGLWidget, public QOpenGLExtraFunctions {
     glm::mat4 view;
     glm::mat4 projection;
 
-    Mesh meshFromFile(const char* path);
+    Mesh meshFromFile(const std::filesystem::path& path);
     void meshDestroy(Mesh& mesh);
     unsigned int shaderFromSource(const char* vertex, const char* fragment);
 

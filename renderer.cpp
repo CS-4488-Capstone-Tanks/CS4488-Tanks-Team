@@ -42,7 +42,7 @@ void main() {
 
 
 
-Renderer::Mesh Renderer::meshFromFile(const char* path) {
+Renderer::Mesh Renderer::meshFromFile(const std::filesystem::path& path) {
     Mesh m{};
 
     Assimp::Importer importer;
@@ -366,8 +366,7 @@ void Renderer::initializeGL() {
             for(const auto& entry : std::filesystem::directory_iterator("assets/models")) {
                 if (entry.is_regular_file()) {
                     const auto& path = entry.path();
-
-                    Mesh loaded = meshFromFile(path.c_str());
+                    Mesh loaded = meshFromFile(path);
 
                     meshes[path.stem()] = loaded;
                 }
