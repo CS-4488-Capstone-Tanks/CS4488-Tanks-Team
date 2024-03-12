@@ -1,3 +1,4 @@
+#if 0
 #include "GameWindow.h"
 
 /* Luna Steed S24
@@ -217,3 +218,4 @@ public:
          */
     }
 };
+#endif
