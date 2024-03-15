@@ -8,7 +8,6 @@
 */
 #include "MenuManager.h"
 
-class MenuManager : QObject{
 #define MAIN_MENU_KEY 0
 #define INGAME_MENU_KEY 2
 #define OPTIONS_MENU_KEY 3
@@ -16,40 +15,45 @@ class MenuManager : QObject{
 #define HOST_MENU_KEY 5
 #define JOINIP_MENU_KEY 6
 
-    std::vector<QWidget*> QW_Vec;
+QWidget Main_Menu;
+QWidget In_Game_Menu;
+QWidget Options_Menu;
+QWidget Multiplayer_Menu;
+QWidget Host_Menu;
+QWidget Join_IP_Menu;
 
-    QWidget Main_Menu;
-    QWidget In_Game_Menu;
-    QWidget Options_Menu;
-    QWidget Multiplayer_Menu;
-    QWidget Host_Menu;
-    QWidget Join_IP_Menu;
+///
+/// \brief MenuManager: Constructor
+///
+MenuManager::MenuManager(){
+    QW_Vec = {
+                &Main_Menu,
+                &In_Game_Menu,
+                &Options_Menu,
+                &Multiplayer_Menu,
+                &Host_Menu,
+                &Join_IP_Menu
+             };
+    active_menu = &Main_Menu;
+}
+/// LS S24
+/// \brief send_signal: Send out a signal (generally to GameWindow)
+///
+void MenuManager::send_signal(){
 
-    ///
-    /// \brief MenuManager: Constructor
-    ///
-    MenuManager(){
-        QW_Vec = {};
-    }
-    /// LS S24
-    /// \brief send_signal: Send out a signal (generally to GameWindow)
-    ///
-    void send_signal(){
+}
 
-    }
+/// LS S24
+/// \brief receive_signal: Receive a signal (generally from GameWindow)
+///
+void MenuManager::receive_signal(){
 
-    /// LS S24
-    /// \brief receive_signal: Receive a signal (generally from GameWindow)
-    ///
-    void receive_signal(){
+}
 
-    }
+/// LS S24
+/// \brief fetch_menu: Fetches a QWidget menu.
+/// \return Q Widget Pointer
+///
+QWidget* MenuManager::fetch_menu(){
 
-    /// LS S24
-    /// \brief fetch_menu: Fetches a QWidget menu.
-    /// \return Q Widget Pointer
-    ///
-    QWidget* fetch_menu(){
-
-    }
-};
+}
