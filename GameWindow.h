@@ -1,7 +1,3 @@
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 #ifndef GAMEWINDOW_H
 #define GAMEWINDOW_H
 
@@ -104,8 +100,4 @@ public:
     void create_renderer();
 };
 
-<<<<<<< Updated upstream
 #endif // GAMEWINDOW_H
-=======
-#endif // GAMEWINDOW_H
->>>>>>> Stashed changes
