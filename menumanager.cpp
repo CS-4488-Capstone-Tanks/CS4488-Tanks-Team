@@ -6,7 +6,7 @@
 *		- GameWindow can keep a reference to an active instance of MenuManager to display menus
 *		- Also allows communication from menus to GameWindow
 */
-#include "MenuManager.h"
+#include "menumanager.h"
 
 #define MAIN_MENU_KEY 0
 #define INGAME_MENU_KEY 2
@@ -37,14 +37,14 @@ MenuManager::MenuManager(){
     active_menu = &Main_Menu;
 }
 /// LS S24
-/// \brief send_signal: Send out a signal (generally to GameWindow)
+/// \brief sendSignal: Send out a signal (generally to GameWindow)
 ///
 void MenuManager::send_signal(){
 
 }
 
 /// LS S24
-/// \brief receive_signal: Receive a signal (generally from GameWindow)
+/// \brief receiveSignal: Receive a signal (generally from GameWindow)
 ///
 void MenuManager::receive_signal(){
 
@@ -54,6 +54,6 @@ void MenuManager::receive_signal(){
 /// \brief fetch_menu: Fetches a QWidget menu.
 /// \return Q Widget Pointer
 ///
-QWidget* MenuManager::fetch_menu(){
-
+QWidget* MenuManager::fetch_menu(int key){
+    return QW_Vec[key];
 }

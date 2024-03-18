@@ -6,6 +6,6 @@
 #define TANKS_GAME_H
 
 #include "Scene.h"
-#include "GameWindow.h"
+#include "gamewindow.h"
 
 #endif //TANKS_GAME_H

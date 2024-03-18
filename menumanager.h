@@ -24,9 +24,7 @@ protected:
     QWidget Host_Menu;
     QWidget Join_IP_Menu;
 
-
-    void send_signal();
-    QWidget* fetch_menu();
+    Q_SLOT QWidget* fetch_menu(int key);
 
     friend class GameWindow;
 };
