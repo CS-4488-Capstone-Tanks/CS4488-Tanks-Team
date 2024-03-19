@@ -2,7 +2,7 @@
 #include <QMessageBox>
 #include <iostream>
 
-Scene::Scene(float dT, char stateFilename[], QObject *parent)
+Scene::Scene(float dT, std::string stateFilename, QObject *parent)
     : QObject{parent}
 {
     deltaTime = dT;

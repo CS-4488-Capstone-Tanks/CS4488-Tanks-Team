@@ -1,6 +1,5 @@
 #include "gamestate.h"
 #include "jsonhelpers.h"
-// #include <QDir>
 
 const char LEVELS_PATH[] = "assets/levels/";
 
@@ -11,10 +10,7 @@ const char OBSTACLES_KEY[] = "obstacles";
 const char POS_KEY[] = "position";
 const char DIR_KEY[] = "direction";
 
-GameState::GameState()
-{
-
-}
+GameState::GameState() {}
 
 void GameState::startState()
 {
@@ -30,16 +26,13 @@ void GameState::updateState(float deltaTime)
     }
 }
 
-void GameState::loadState(char filename[])
+void GameState::loadState(std::string filename)
 {
-    QString filepath = /*QDir::currentPath() +*/ LEVELS_PATH + QString::fromStdString(filename) + ".json";
+    QString filepath = LEVELS_PATH + QString::fromStdString(filename) + ".json";
     QFile stateFile(filepath);
 
-    // We'll only need one file check or the other
-    if (!std::filesystem::exists(filepath.toStdString()))
-        throw "read error: couldn't find specified path \"" + filepath.toStdString() + "\"";
-    if (!stateFile.open(QFile::ReadOnly | QFile::Text))
-        throw "read error: " + stateFile.errorString().toStdString();
+    if (!stateFile.open(QIODevice::ReadOnly | QIODevice::Text))
+        throw "read error: couldn't open file \"" + filepath.toStdString() + "\"";
 
     QByteArray stateData = stateFile.readAll();
     QJsonDocument saveDoc(QJsonDocument::fromJson(stateData));

@@ -1,6 +1,6 @@
 {
     "playerTank": {
-        "position": [0, 0, 0],
+        "position": [1, 2, 3],
         "direction": [0, 0, 0]
     },
     "enemyTank": {

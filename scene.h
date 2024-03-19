@@ -17,7 +17,7 @@ public:
      * @param char stateFilename[]
      * @param QObject* parent = nullptr
     */
-    explicit Scene(float deltaTime, char stateFilename[], QObject *parent = nullptr);
+    explicit Scene(float deltaTime, std::string stateFilename, QObject *parent = nullptr);
 
     /**
      * @brief Start the scene
