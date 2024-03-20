@@ -77,4 +77,4 @@ add_custom_target(copy_assets ALL
     "${CMAKE_CURRENT_SOURCE_DIR}/assets"
     "$<TARGET_FILE_DIR:tanks>/assets"
 )
-add_dependencies(copy_assets tanks)U
+add_dependencies(copy_assets tanks)
