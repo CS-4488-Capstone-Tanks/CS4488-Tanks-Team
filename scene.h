@@ -45,6 +45,8 @@ public slots:
      * @brief Update the scene
     */
     void update();
+
+    friend class Game;
 };
 
 #endif // SCENE_H

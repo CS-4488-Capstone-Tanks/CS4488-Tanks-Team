@@ -11,102 +11,52 @@
 
 
 class GameWindow : public QWindow {
+    Q_OBJECT
 // Default key values for mapping to QWidget Pointers
 #define MAIN_MENU_KEY 0
 #define RENDERER_KEY 1
 #define INGAME_MENU_KEY 2
 #define OPTIONS_MENU_KEY 3
 #define MULTIPLAYER_MENU_KEY 4
-#define HOST_MENU_KEY 5
-#define JOINIP_MENU_KEY 6
+#define HOST_MENU_KEY 5 // Unimplemented
+#define JOINIP_MENU_KEY 6 // Unimplemented
 
 
 protected:
-    QWindow win;
+    // Protected Variables
+    QWindow win; // win is protected so that any child classes can access it, if need be.
 
 private:
+    // Private Variables
     MenuManager menuMan;
     Renderer renderer;
     std::unordered_map<int, QWidget *> widgetCache;
     int activeKey;
 
-    /**
-     * @author Luna Steed
-     * @time Spring 2024
-     * @brief fetchAdjacent: Call Menu Manager to return list of pointers to accessible Qwidgets, which are added to the cache
-     * @param wpointer
-     *
-     * NOTE: fetchAdjacent does not return anything, it only adds widgets to the cache. MenuManager is returning to this method.
-     */
+    // Private Functions
     void fetchAdjacent(QWidget *wpointer);
-
-    /**
-     * @author Luna Steed
-     * @time Spring 2024
-     * @brief fetchByKey: Call Menu Manager to add both desired menu and other accessible widgets
-     * @param key: Key to send to the Menu Manager
-     */
     void fetchByKey(int key);
-
-    /**
-     * @author Luna Steed
-     * @time Spring 2024
-     * @brief cacheCheck: Checks the cache for a key. If present, returns the Qwidget pointer. If not, fetches widget.
-     * @param key: Assigned key for the cache map
-     * @return wpoint: Pointer to desired Qwidget
-     */
     QWidget *cacheCheck(int key);
-
-    /**
-     * @author Luna Steed
-     * @time Spring 2024
-     * @brief cacheMiss: Fetches a widget from the Menu Manager
-     * @param key key for the widget
-     * @return pointer to the widget
-     */
     QWidget *cacheMiss(int key);
 
 public:
-
-    /**
-     * @author Luna Steed
-     * @time Spring 2024
-     * @brief GameWindow: Constructor
-     */
+    // Public Functions
     GameWindow();
-
-    /**
-     * @a+uthor Luna Steed
-     * @time Spring 2024
-     * @brief changeWidget: Changes the active QWidget
-     * @param key
-     */
     void changeWidget(int key);
-
-    /**
-     * @author Luna Steed
-     * @time Spring 2024
-     * @brief displayWidget: Displays the active QWidget
-     */
     void displayWidget();
-
-    /**
-     * @author Luna Steed
-     * @time Spring 2024
-     * @brief hideWidget: Hide the active widget
-     */
     void hideWidget();
 
-    /**
-     * @author Luna Steed
-     * @time Spring 2024
-     * @brief connect: Send Qsignal to MenuManager
-     */
+
+
+signals:
     Q_SIGNAL void callMenuMan(int key);
+
+public slots:
     Q_SLOT void receiveMenu();
 
-    friend class MenuManager;
-    friend class Game;
+// Friends
+friend class MenuManager;
+friend class Game;
 };
 
 

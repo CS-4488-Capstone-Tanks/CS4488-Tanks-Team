@@ -50,19 +50,15 @@
  */
 
 
-    /**
-     * @author Luna Steed
-     * @time Spring 2024
-     * @brief fetchAdjacent: Call Menu Manager to return list of pointers to accessible Qwidgets, which are added to the cache
-     * @param wpointer
-     *
-     * NOTE: fetchAdjacent does not return anything, it only adds widgets to the cache. MenuManager is returning to this method.
-     */
+/**
+ * @author Luna Steed
+ * @time Spring 2024
+ * @brief fetchAdjacent: Call Menu Manager to return list of pointers to accessible Qwidgets, which are added to the cache
+ * @details This method calls the Menu Manager to fetch a list of pointers to accessible Qwidgets. It then adds the widgets to the cache. It does not return anything.
+ * @param wpointer Pointer to the current widget
+ */
 void GameWindow::fetchAdjacent(QWidget* wpointer)
 {
-    /* TO DO:
-     * Create menu manager, basic menus, and add methods to fetch accessible menus by a given menu.
-     */
     std::vector <QWidget*> adjacent = {};
     if (wpointer == &renderer) {
         adjacent.push_back(menuMan.fetch_menu(INGAME_MENU_KEY));
@@ -83,6 +79,7 @@ void GameWindow::fetchAdjacent(QWidget* wpointer)
  * @author Luna Steed
  * @time Spring 2024
  * @brief fetchByKey: Call Menu Manager to add both desired menu and other accessible widgets
+ * @details This method calls the Menu Manager to fetch a menu by a given key. It then calls fetchAdjacent to fetch adjacent widgets.
  * @param key: Key to send to the Menu Manager
  */
 void GameWindow::fetchByKey(int key)
@@ -97,7 +94,14 @@ void GameWindow::fetchByKey(int key)
     fetchAdjacent(widgetCache[key]); // Fetch adjacent widgets
 }
 
-
+/**
+ * @author Luna Steed
+ * @time Spring 2024
+ * @brief cacheCheck: Checks the cache for a key. If present, returns the Qwidget pointer. If not, fetches widget.
+ * @details This method checks the cache for a widget. If the widget is present, it returns the pointer. If the widget is not present, it calls cacheMiss to fetch the widget.
+ * @param key: Assigned key for the cache map
+ * @return wpoint: Pointer to desired Qwidget
+ */
 QWidget* GameWindow::cacheCheck(int key)
 {   QWidget* wpoint;
     try {
@@ -110,7 +114,14 @@ QWidget* GameWindow::cacheCheck(int key)
     return wpoint;
 }
 
-
+/**
+ * @author Luna Steed
+ * @time Spring 2024
+ * @brief cacheMiss: Fetches a widget from the Menu Manager
+ * @details If the widget is not found in the cache, this method will fetch the widget from the Menu Manager.
+ * @param key key for the widget
+ * @return pointer to the widget
+ */
 QWidget* GameWindow::cacheMiss(int key)
 {
     QWidget* wpoint;
@@ -119,7 +130,12 @@ QWidget* GameWindow::cacheMiss(int key)
     return wpoint;
 }
 
-
+/**
+ * @author Luna Steed
+ * @time Spring 2024
+ * @brief GameWindow: Constructor
+ * @details Constructor for the GameWindow class. Initializes the MenuManager, QWindow, Renderer, and widgetCache.
+ */
 GameWindow::GameWindow(): menuMan(MenuManager()), win(QWindow()), renderer(Renderer()), widgetCache({})
 {
     activeKey = MAIN_MENU_KEY; // Start at main menu
@@ -131,12 +147,15 @@ GameWindow::GameWindow(): menuMan(MenuManager()), win(QWindow()), renderer(Rende
     win.showNormal();
 }
 
+/**
+ * @author Luna Steed
+ * @time Spring 2024
+ * @brief changeWidget: Changes the active QWidget
+ * @details This method changes the active QWidget. It hides the current widget and displays the new widget.
+ * @param key
+ */
 void GameWindow::changeWidget(int key)
 {
-    /* TO DO:
-     * Use Cache Check to get a pointer to the desired widget
-     * Set active display to QWidget
-     */
     if (key == activeKey) {
         return;
     }
@@ -146,7 +165,11 @@ void GameWindow::changeWidget(int key)
     fetchByKey(key); // Reset cache and fetch adjacent widgets
 }
 
-
+/**
+ * @author Luna Steed
+ * @time Spring 2024
+ * @brief displayWidget: Displays the active QWidget
+ */
 void GameWindow::displayWidget()
 {
     try {
@@ -159,7 +182,11 @@ void GameWindow::displayWidget()
     }
 }
 
-
+/**
+ * @author Luna Steed
+ * @time Spring 2024
+ * @brief hideWidget: Hide the active widget
+ */
 void GameWindow::hideWidget()
 {
     try {
@@ -172,11 +199,12 @@ void GameWindow::hideWidget()
     }
 }
 
-
+/**
+ * @author Luna Steed
+ * @time Spring 2024
+ * @brief callMenuMan: Send Qsignal to MenuManager
+ */
 void GameWindow::callMenuMan(int key) {
-    /* TO DO:
-     * Set up QSlots/QSignals between Game and QWindow's interacting classes
-     */
     const QObject * sender = this;
     const char * signal = "callMenuMan()";
     const QObject * receiver = &menuMan;
@@ -184,6 +212,11 @@ void GameWindow::callMenuMan(int key) {
     QObject::connect(sender, signal, receiver, method);
 }
 
+/**
+ * @author Luna Steed
+ * @time Spring 2024
+ * @brief receiveMenu: Receive Qsignal from MenuManager.
+ */
 void GameWindow::receiveMenu() {
     /* TO DO:
      * Set up QSlots/QSignals between Game and QWindow's interacting classes
