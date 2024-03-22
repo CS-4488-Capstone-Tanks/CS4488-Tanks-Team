@@ -32,6 +32,10 @@ public:
      * @param bool isPaused
     */
     void setPaused(bool isPaused);
+
+    std::vector<GameObject*>::const_iterator begin() const;
+    std::vector<GameObject*>::const_iterator end() const;
+
 private:
     // NetworkManager networkManager
     GameState gameState;

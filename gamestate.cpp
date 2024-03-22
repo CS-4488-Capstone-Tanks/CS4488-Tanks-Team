@@ -1,6 +1,7 @@
 #include "gamestate.h"
 #include "jsonhelpers.h"
-// #include <QDir>
+#include "tank.h"
+
 
 const char LEVELS_PATH[] = "assets/levels/";
 
@@ -13,7 +14,8 @@ const char DIR_KEY[] = "direction";
 
 GameState::GameState()
 {
-
+    auto test = new PlayerTank();
+    addObject(test);
 }
 
 void GameState::startState()
@@ -93,6 +95,14 @@ void GameState::addObject(GameObject *const obj)
 void GameState::removeObject(uint32_t entityID)
 {
     // TODO
+}
+
+std::vector<GameObject*>::const_iterator GameState::begin() const {
+    return objs.begin();
+}
+
+std::vector<GameObject*>::const_iterator GameState::end() const {
+    return objs.end();
 }
 
 

@@ -2,12 +2,12 @@
 // Created by Parker on 2/23/2024.
 //
 
-#include "Projectile.h"
+#include "projectile.h"
 #include <stdexcept>
 
 //Constructor for the Projectile class
-Projectile::Projectile(QObject *parent, uint32_t entityID)
-        : GameObject(parent), velocity(glm::vec3(0.0f)), lifetime(10.0f), collider(glm::vec3(0.0f), 1.0f) {
+Projectile::Projectile(uint32_t entityID)
+        : GameObject(GameObjectType::Projectile), velocity(glm::vec3(0.0f)), lifetime(10.0f), collider(glm::vec3(0.0f), 1.0f) {
     this->entityID = entityID;
     //Set the game object's type to Projectile
     this->type = GameObjectType::Projectile;

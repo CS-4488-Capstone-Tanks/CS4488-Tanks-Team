@@ -36,7 +36,9 @@ class Renderer : public QOpenGLWidget, public QOpenGLExtraFunctions {
     struct Mesh {
         unsigned int vao;
         unsigned int vbo;
+        unsigned int ebo;
         int vertexCount;
+        int indexCount;
     };
 
     std::unordered_map<std::string, Mesh> meshes;
@@ -76,7 +78,7 @@ public:
      * Draw an object to the screen
      * @param object the object to draw
      */
-    void drawObject(GameObject* object);
+    void drawObject(const GameObject* object);
 
     /** Called when all objects for the frame have been drawn */
     void doneWithFrame();

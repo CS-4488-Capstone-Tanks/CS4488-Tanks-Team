@@ -2,7 +2,7 @@
 // Created by Parker on 2/23/2024.
 //
 
-#include "CircleCollider.h"
+#include "circlecollider.h"
 #include <stdexcept>
 
 // Note! This file uses experimental features of GLM, so you either have to not update

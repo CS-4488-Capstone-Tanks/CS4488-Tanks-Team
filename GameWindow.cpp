@@ -1,3 +1,42 @@
+#include "GameWindow.h"
+#include "renderer.h"
+
+GameWindow::GameWindow() {
+    widgets[GAME_KEY] = new Renderer();
+
+    // If we have a main menu, load that. Otherwise, just load the first widget
+    if (widgets.find(MAINMENU_KEY) != widgets.end()) {
+        displayMenu(MAINMENU_KEY);
+    }
+    else {
+        for(const auto& pair : widgets) {
+            displayMenu(pair.first);
+            break;
+        }
+    }
+}
+
+GameWindow::~GameWindow() {
+    for(auto& pair : widgets) {
+        delete pair.second;
+    }
+}
+
+void GameWindow::displayMenu(int id) {
+    if (widgets.find(id) != widgets.end()) { // check to make sure the menu exists
+        setCentralWidget(widgets.at(id));
+    }
+}
+
+QWidget* GameWindow::retrieveMenu(int id) {
+    if (widgets.find(id) != widgets.end()) {
+        return widgets[id];
+    }
+    else {
+        throw std::runtime_error("No widget with that id");
+    }
+}
+
 #if 0
 #include "GameWindow.h"
 

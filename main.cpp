@@ -1,18 +1,29 @@
-#include <QApplication>
-#include <QLabel>
-#include "scene.h"
+#include "game.h"
+
+#include "renderer.h"
+#include "tank.h"
 
 int main(int argc, char** argv) {
-    QApplication app(argc, argv);
-    QLabel label("Hello world");
-    label.resize(200, 50);
-    label.show();
+#if 1
+    Game game(argc, argv);
+    return game.start();
+#else
 
-    // example
-    Scene scene(60.0f/1000, "test_game_state");
-    scene.start();
-    scene.update(); //This will a slot called by signals
-    // example
+    QApplication app(argc, argv);
+
+    Renderer renderer;
+    renderer.show();
+
+    PlayerTank tank;
+
+    QTimer timer;
+    QObject::connect(&timer, &QTimer::timeout, [&renderer, &tank]() {
+        renderer.drawObject(&tank);
+        renderer.doneWithFrame();
+    });
+
+    timer.start(16);
 
     return app.exec();
+#endif
 }

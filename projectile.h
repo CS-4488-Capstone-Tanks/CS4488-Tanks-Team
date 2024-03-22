@@ -6,18 +6,16 @@
 #define TANKS_PROJECTILE_H
 
 #include "gameobject.h"
-#include "CircleCollider.h"
+#include "circlecollider.h"
 #include <cstdint>
 #include <QObject>
 
 //The Projectile class represents a moving game entity that can interact with other game entities
 //It inherits from GameObject, and it has a lifespan, velocity, and collider for collision detection
 class Projectile : public GameObject {
-Q_OBJECT
-
 public:
     //Constructor sets up the projectile with a parent, entity ID, default velocity, and collider
-    explicit Projectile(QObject *parent = nullptr, uint32_t entityID = 0);
+    explicit Projectile(uint32_t entityID = 0);
 
     //doStart is called before the game starts, so it can be used for initialization
     void doStart() override;

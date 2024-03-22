@@ -10,7 +10,7 @@
 #include <filesystem>
 
 
-//#include "gameobject.h"
+#include "gameobject.h"
 
 static const char* texturedVertexSource = R"(
 #version 450
@@ -37,7 +37,21 @@ out vec4 fragColor;
 uniform sampler2D imageTexture;
 
 void main() {
-    fragColor = texture(imageTexture, texCoord);
+    //fragColor = texture(imageTexture, texCoord);
+    fragColor = vec4(1.0f);
+})";
+
+static const char* coloredFragmentSource = R"(
+#version 450
+
+in vec2 texCoord;
+
+out vec4 fragColor;
+
+uniform vec3 color;
+
+void main() {
+    fragColor = vec4(color, 1.0f);
 })";
 
 
@@ -58,26 +72,27 @@ Renderer::Mesh Renderer::meshFromFile(const std::filesystem::path& path) {
         std::cout << "WARN: Model file " << path << " has more than 1 mesh, only the first will be used\n";
     }
 
-    // Create the vertex array and buffer
+    // Create the vertex array and buffer, as well as the element buffer
     glGenVertexArrays(1, &m.vao);
     glGenBuffers(1, &m.vbo);
+    glGenBuffers(1, &m.ebo);
 
     // Bind them, and upload the data to the GPU buffer
     glBindVertexArray(m.vao);
     glBindBuffer(GL_ARRAY_BUFFER, m.vbo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m.ebo);
 
     const aiMesh* mesh = scene->mMeshes[0];
 
     // OpenGL now needs all that data in one big buffer. Easier to interleave it now,
-    // then deal with the math of storing them separately
+    // than deal with the math of storing them separately
 
     std::vector<float> interleavedBuffer;
     for(size_t i = 0; i < mesh->mNumVertices; i++) {
-        if (mesh->HasPositions()) {
-            interleavedBuffer.push_back(mesh->mVertices[i].x);
-            interleavedBuffer.push_back(mesh->mVertices[i].y);
-            interleavedBuffer.push_back(mesh->mVertices[i].z);
-        }
+        interleavedBuffer.push_back(mesh->mVertices[i].x);
+        interleavedBuffer.push_back(mesh->mVertices[i].y);
+        interleavedBuffer.push_back(mesh->mVertices[i].z);
+
         if (mesh->HasTextureCoords(0)) { // Assuming the first set of texture coordinates
             interleavedBuffer.push_back(mesh->mTextureCoords[0][i].x);
             interleavedBuffer.push_back(mesh->mTextureCoords[0][i].y);
@@ -89,35 +104,55 @@ Renderer::Mesh Renderer::meshFromFile(const std::filesystem::path& path) {
         }
     }
 
+    std::vector<unsigned int> indices;
+    for(size_t i = 0; i < mesh->mNumFaces; i++) {
+        const auto& face = mesh->mFaces[i];
+
+        for(size_t j = 0; j < face.mNumIndices; j++) {
+            indices.push_back(face.mIndices[j]);
+        }
+    }
+
     // Upload our data to the GPU
     // Store it in the array buffer
     // Pass how big our data is, and the pointer to it
     // Lastly, it won't change often, so we use static draw
     glBufferData(GL_ARRAY_BUFFER, interleavedBuffer.size() * sizeof(float), interleavedBuffer.data(), GL_STATIC_DRAW);
 
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+
+    // The stride is the total size - in bytes - of each vertex. So for example, if your
+    // vertex is [vec3][vec2], it should be 5 * sizeof(float)
+    GLsizei stride = 3 * sizeof(float);
+
+    if (mesh->HasTextureCoords(0)) { stride += 2 * sizeof(float); }
+    if (mesh->HasNormals()) { stride += 3 * sizeof(float); }
+
+    // The buffer offset is where each attribute starts in the buffer. So
+    // for example, if your vertex is [vec3][vec2], the vec3's offset is 0,
+    // and the vec2's offset is 3 * sizeof(float)
     size_t bufferOffset = 0;
 
-    if (mesh->HasPositions()) {
-        // Tell the vertex array that we want to:
-        // Enable attribute 0
-        // Which has three components (a vec3)
-        // of type float
-        // that is not normalized
-        // has total data size per element of 3 * sizeof(float)
-        // and starts at a certain offset in the buffer
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)bufferOffset);
-        glEnableVertexAttribArray(0);
-        bufferOffset += 3 * sizeof(float);
-    }
+    // Tell the vertex array that we want to:
+    // Enable attribute 0
+    // Which has three components (a vec3)
+    // of type float
+    // that is not normalized
+    // has total data size per-vertex equal to the stride
+    // and starts at a certain offset in the buffer
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
+    glEnableVertexAttribArray(0);
 
     if (mesh->HasTextureCoords(0)) {
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)bufferOffset);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
         glEnableVertexAttribArray(1);
         bufferOffset += 2 * sizeof(float);
     }
 
     if (mesh->HasNormals()) {
-        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)bufferOffset);
+        GLsizei offset = mesh->HasTextureCoords(0) ? 5 * sizeof(float) : 3 * sizeof(float);
+
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, (void*)offset);
         glEnableVertexAttribArray(2);
     }
 
@@ -125,6 +160,7 @@ Renderer::Mesh Renderer::meshFromFile(const std::filesystem::path& path) {
     glBindVertexArray(0);
 
     m.vertexCount = mesh->mNumVertices;
+    m.indexCount = indices.size();
 
     return m;
 }
@@ -213,6 +249,7 @@ unsigned int Renderer::shaderFromSource(const char* vertex, const char* fragment
 void Renderer::doneWithFrame() {
     lastFrame = curFrame;
     curFrame.clear();
+    update();
 }
 
 void Renderer::togglePeriscope() {
@@ -224,10 +261,9 @@ void Renderer::togglePeriscope() {
 }
 
 
-void Renderer::drawObject(GameObject* object) {
+void Renderer::drawObject(const GameObject* object) {
     DrawCommand cmd{};
 
-    /* TODO: uncomment this once objects are implemented
     switch(object->getType()) {
         case GameObjectType::PlayerTank:
             cmd.type = DrawCommandType::Player;
@@ -247,16 +283,21 @@ void Renderer::drawObject(GameObject* object) {
     // of its forward direction, and the world's up vector
     glm::vec3 pos = object->getPosition();
     glm::vec3 objectForward = object->getDirection();
+
+    if (objectForward == glm::vec3(0, 0, 0)) {
+        objectForward = glm::vec3(0, 0, -1);
+    }
+
     glm::vec3 worldUp = glm::vec3(0, 1, 0);
-    glm::vec3 objectRight = glm::normalize(glm::cross(worldUp, objectForward));
+    glm::vec3 objectRight = glm::normalize(glm::cross(objectForward, worldUp));
+    glm::vec3 correctedUp = glm::normalize(glm::cross(objectRight, objectForward));
 
     cmd.transform[0] = glm::vec4(objectRight, 0.0f);
-    cmd.transform[1] = glm::vec4(worldUp, 0.0f);
-    cmd.transform[2] = glm::vec4(objectForward, 0.0f);
+    cmd.transform[1] = glm::vec4(correctedUp, 0.0f);
+    cmd.transform[2] = glm::vec4(-objectForward, 0.0f);
     cmd.transform[3] = glm::vec4(pos, 1.0f);
 
     cmd.forwardPoint = pos + glm::normalize(objectForward);
-    */
 
     curFrame.emplace_back(cmd);
 }
@@ -266,6 +307,7 @@ void Renderer::paintGL() {
 
     // Clear both the color buffer and depth buffer, preparing to draw an entirely fresh frame
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
     // If the periscope is enabled, make a pass through the draw commands to ensure
     // we find where the player is and set the camera to be there for first person view
@@ -286,11 +328,20 @@ void Renderer::paintGL() {
     glm::mat4 vp = projection * view;
     glm::mat4 mvp;
 
-    // Use the appropriate shader for drawing
-    glUseProgram(texturedShader);
 
-    // Get the numeric identifier of our uniform, for uploading data to
-    int mvpLocation = glGetUniformLocation(texturedShader, "mvp");
+    // Choose the shader to use for drawing
+    unsigned int shader = texturedShader;
+
+    // Ensure it is active
+    glUseProgram(shader);
+
+    // Get the numeric identifier of our uniforms, for uploading data to
+    int mvpLocation = glGetUniformLocation(shader, "mvp");
+    int texLoc = glGetUniformLocation(shader, "texture");
+    int colLoc = glGetUniformLocation(shader, "color");
+
+    const float red[] = { 1.0f, 0.0f, 0.0f };
+    const float green[] = { 0.0f, 1.0f, 0.0f };
 
     for(auto& cmd : lastFrame) {
         mvp = vp * cmd.transform;
@@ -300,9 +351,13 @@ void Renderer::paintGL() {
         switch(cmd.type) {
             case DrawCommandType::Player:
                 m = meshes["tank"];            // find the mesh we care about
+
+                if (colLoc != -1) { glUniform3fv(colLoc, 1, green); }
                 break;
             case DrawCommandType::Enemy:
                 m = meshes["tank"];
+
+                if (colLoc != -1) { glUniform3fv(colLoc, 1, red); }
                 break;
             case DrawCommandType::Obstacle:
                 m = meshes["obstacle"];
@@ -312,8 +367,11 @@ void Renderer::paintGL() {
                 break;
         }
 
+        glBindVertexArray(m.vao);
+
         glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));  // set our mvp matrix for this draw
-        glDrawArrays(GL_TRIANGLES, 0, m.vertexCount);                       // execute a draw call
+        //glDrawArrays(GL_TRIANGLES, 0, m.vertexCount);                       // execute a draw call
+        glDrawElements(GL_TRIANGLES, m.indexCount, GL_UNSIGNED_INT, 0);
     }
 }
 
@@ -354,7 +412,7 @@ void Renderer::initializeGL() {
     usingPeriscope = false;
 
     try {
-        texturedShader = shaderFromSource(texturedVertexSource, texturedFragmentSource);
+        texturedShader = shaderFromSource(texturedVertexSource, coloredFragmentSource);
 
         // Ensure the data exists as an empty mesh, so at worst, if the meshes aren't on disk, we just
         // don't draw them instead of crashing or something

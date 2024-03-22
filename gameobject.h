@@ -7,11 +7,10 @@
 
 using namespace glm;
 
-class GameObject : public QObject
+class GameObject
 {
-    Q_OBJECT
 public:
-    explicit GameObject(QObject *parent = nullptr);
+    explicit GameObject(GameObjectType type);
 
 
     /**
@@ -33,10 +32,10 @@ public:
      */
     virtual void doUpdate(float deltaTime);
 
-    vec3 getPosition();
-    vec3 getDirection();
-    GameObjectType getType();
-    uint32_t getEntityID();
+    vec3 getPosition() const;
+    vec3 getDirection() const;
+    GameObjectType getType() const;
+    uint32_t getEntityID() const;
     void setEntityID(int id);
 
 
@@ -46,8 +45,6 @@ protected:
     float speed = 0.0f;
     uint32_t entityID;
     GameObjectType type;
-
-signals:
 };
 
 #endif // GAMEOBJECT_H

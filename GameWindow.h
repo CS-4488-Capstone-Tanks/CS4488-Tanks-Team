@@ -1,3 +1,29 @@
+#ifndef GAMEWINDOW_H
+#define GAMEWINDDOW_H
+
+#include <QMainWindow>
+#include <unordered_map>
+
+#define MAINMENU_KEY 0
+#define GAME_KEY 1
+
+class GameWindow : public QMainWindow {
+    std::unordered_map<int, QWidget*> widgets;
+    uint64_t activeWidget;
+public:
+    GameWindow();
+    ~GameWindow();
+
+    void displayMenu(int id);
+    QWidget* retrieveMenu(int id);
+};
+
+#endif
+
+
+
+
+
 #if 0
 #ifndef GAMEWINDOW_H
 #define GAMEWINDOW_H

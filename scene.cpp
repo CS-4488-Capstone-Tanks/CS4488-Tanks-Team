@@ -29,3 +29,11 @@ void Scene::update()
     if (!isPaused)
         gameState.updateState(deltaTime);
 }
+
+std::vector<GameObject*>::const_iterator Scene::begin() const {
+    return gameState.begin();
+}
+
+std::vector<GameObject*>::const_iterator Scene::end() const {
+    return gameState.end();
+}

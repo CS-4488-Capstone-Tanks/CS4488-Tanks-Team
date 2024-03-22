@@ -6,17 +6,16 @@
 #define TANKS_OBSTACLE_H
 
 #include "gameobject.h"
-#include "CircleCollider.h"
+#include "circlecollider.h"
 #include <QObject>
 
 //The Obstacle class is a static game entity that can't move but can be collided with
 //It inherits from GameObject and has a collider to handle collisions
 class Obstacle : public GameObject {
-Q_OBJECT
 
 public:
     //Constructor sets up the obstacle with a parent, entity ID, position, and collider radius
-    explicit Obstacle(QObject *parent = nullptr, uint32_t entityID = 0, const glm::vec3& position = glm::vec3(0.0f), float colliderRadius = 1.0f);
+    explicit Obstacle(uint32_t entityID = 0, const glm::vec3& position = glm::vec3(0.0f), float colliderRadius = 1.0f);
 
     //doStart is called before the game starts, so it can be used for initialization
     void doStart() override;

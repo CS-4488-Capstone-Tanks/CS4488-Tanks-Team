@@ -2,11 +2,11 @@
 // Created by Parker on 2/23/2024.
 //
 
-#include "Obstacle.h"
+#include "obstacle.h"
 
 //Constructor initializing the obstacle with its position and collider
-Obstacle::Obstacle(QObject *parent, uint32_t entityID, const glm::vec3& position, float colliderRadius)
-        : GameObject(parent), collider(position, colliderRadius) {
+Obstacle::Obstacle(uint32_t entityID, const glm::vec3& position, float colliderRadius)
+        : GameObject(GameObjectType::Obstacle), collider(position, colliderRadius) {
     this->entityID = entityID;
     this->position = position;
     //Set the game object's type to Obstacle

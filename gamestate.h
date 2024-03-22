@@ -24,6 +24,8 @@ public:
     void loadState(char filename[]);
     void addObject(GameObject *const obj);
 
+    std::vector<GameObject*>::const_iterator begin() const;
+    std::vector<GameObject*>::const_iterator end() const;
 
 private:
     std::vector<GameObject*> objs;

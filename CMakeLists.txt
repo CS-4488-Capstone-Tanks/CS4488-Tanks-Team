@@ -51,9 +51,41 @@ set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "Assimp build tests" FORCE)
 set(ASSIMP_INSTALL OFF CACHE BOOL "Assimp install" FORCE)
 set(ASSIMP_INSTALL_PDB OFF CACHE BOOL "Assimp install PDB" FORCE)
 
+function(find_or_build_assimp)
+    set(ASSIMP_LIB_PATH "${CMAKE_CURRENT_SOURCE_DIR}/external/assimp/build/bin/libassimp.so")
+
+    if(EXISTS "${ASSIMP_LIB_PATH}")
+        message(STATUS "Using cached Assimp")
+    else()
+        set(ASSIMP_BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/assimp/build")
+
+        file(MAKE_DIRECTORY "${ASSIMP_BUILD_DIR}")
+
+        execute_process(COMMAND
+            cmake "${CMAKE_CURRENT_SOURCE_DIR}/external/assimp" -DBUILD_SHARED_LIBS=ON -DASSIMP_BUILD_TESTS=OFF -DASSIMP_INSTALL=OFF
+            WORKING_DIRECTORY "${ASSIMP_BUILD_DIR}"
+        )
+
+        execute_process(COMMAND
+            cmake --build . --config Release
+            WORKING_DIRECTORY "${ASSIMP_BUILD_DIR}"
+        )
+
+        if(NOT EXISTS "${ASSIMP_LIB_PATH}")
+            message(FATAL_ERROR "Failed to build Assimp")
+        endif()
+    endif()
+
+    add_library(assimp STATIC IMPORTED GLOBAL)
+    set_target_properties(assimp PROPERTIES IMPORTED_LOCATION ${ASSIMP_LIB_PATH})
+    target_include_directories(assimp INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/external/assimp/include")
+endfunction()
+
 
 # Now import assimp
 add_subdirectory(external/assimp)
+
+#find_or_build_assimp()
 
 # Glob any .cpp files in the current directory, storing them as a list in TANK_SOURCE_FILES
 file(GLOB TANK_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
@@ -69,6 +101,7 @@ target_include_directories(tanks PRIVATE
     ${QT_INCLUDES}
     ${CMAKE_CURRENT_SOURCE_DIR}/external/glm
     ${CMAKE_CURRENT_SOURCE_DIR}/external/assimp/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/assimp/build/include
 )
 
 # Add a post-build step to copy over the assets folder
