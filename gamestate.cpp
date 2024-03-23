@@ -15,7 +15,12 @@ const char DIR_KEY[] = "direction";
 GameState::GameState()
 {
     auto test = new PlayerTank();
+    test->setPosition(glm::vec3(2, 0, 0));
     addObject(test);
+
+    auto test2 = new EnemyTank();
+    test2->setPosition(glm::vec3(-2, 0, 0));
+    addObject(test2);
 }
 
 void GameState::startState()

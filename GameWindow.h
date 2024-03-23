@@ -1,5 +1,5 @@
 #ifndef GAMEWINDOW_H
-#define GAMEWINDDOW_H
+#define GAMEWINDOW_H
 
 #include <QMainWindow>
 #include <unordered_map>

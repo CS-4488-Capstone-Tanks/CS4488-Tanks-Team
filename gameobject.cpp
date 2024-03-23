@@ -9,3 +9,7 @@ uint32_t GameObject::getEntityID() const { return entityID; }
 void GameObject::setEntityID(int id) {entityID = id; }
 void GameObject::doStart(){}
 void GameObject::doUpdate(float deltaTime){}
+
+void GameObject::setPosition(glm::vec3 position) {
+    this->position = position;
+}

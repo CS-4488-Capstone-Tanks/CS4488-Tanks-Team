@@ -36,8 +36,9 @@ public:
     vec3 getDirection() const;
     GameObjectType getType() const;
     uint32_t getEntityID() const;
-    void setEntityID(int id);
 
+    void setEntityID(int id);
+    void setPosition(glm::vec3 position);
 
 protected:
     vec3 position = vec3(0,0,0);
