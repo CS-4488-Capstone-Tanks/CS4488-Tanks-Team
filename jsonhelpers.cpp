@@ -2,6 +2,8 @@
 
 vec3 JsonHelpers::getVec3FromJson(QJsonArray vArray)
 {
+    if (vArray.size() != 3)
+        throw std::invalid_argument("Expected an array of size 3");
     return vec3(
         vArray[0].toDouble(),
         vArray[1].toDouble(),
