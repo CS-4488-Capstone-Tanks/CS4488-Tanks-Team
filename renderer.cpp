@@ -6,11 +6,27 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include <QImage>
+
 #include <iostream>
 #include <filesystem>
 
 
-//#include "gameobject.h"
+
+// The renderer uses a few magic file names. Here's where they're set.
+// It doesn't care what the extension is, so tank.obj is equivalent to tank.fbx for example
+
+static const std::string TANK_MESH_FILE = "tank";
+static const std::string OBSTACLE_MESH_FILE = "obstacle";
+static const std::string BULLET_MESH_FILE = "bullet";
+static const std::string PLAYER_TEXTURE_FILE = "player";
+static const std::string ENEMY_TEXTURE_FILE = "enemy";
+static const std::string OBSTACLE_TEXTURE_FILE = "obstacle";
+static const std::string BULLET_TEXTURE_FILE = "bullet";
+
+
+
+#include "gameobject.h"
 
 static const char* texturedVertexSource = R"(
 #version 450
@@ -40,7 +56,35 @@ void main() {
     fragColor = texture(imageTexture, texCoord);
 })";
 
+static const char* coloredFragmentSource = R"(
+#version 450
 
+in vec2 texCoord;
+
+out vec4 fragColor;
+
+uniform vec3 color;
+
+void main() {
+    fragColor = vec4(color, 1.0f);
+})";
+
+
+bool Renderer::Shader::hasUniform(const char* name) {
+    return uniforms.find(name) != uniforms.end();
+}
+
+bool Renderer::Shader::hasUniform(const std::string& name) {
+    return uniforms.find(name) != uniforms.end();
+}
+
+bool Renderer::textureExists(const char* name) {
+    return textures.find(name) != textures.end();
+}
+
+bool Renderer::textureExists(const std::string& name) {
+    return textures.find(name) != textures.end();
+}
 
 Renderer::Mesh Renderer::meshFromFile(const std::filesystem::path& path) {
     Mesh m{};
@@ -61,10 +105,12 @@ Renderer::Mesh Renderer::meshFromFile(const std::filesystem::path& path) {
     // Create the vertex array and buffer
     glGenVertexArrays(1, &m.vao);
     glGenBuffers(1, &m.vbo);
+    glGenBuffers(1, &m.ebo);
 
     // Bind them, and upload the data to the GPU buffer
     glBindVertexArray(m.vao);
     glBindBuffer(GL_ARRAY_BUFFER, m.vbo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m.ebo);
 
     const aiMesh* mesh = scene->mMeshes[0];
 
@@ -73,11 +119,10 @@ Renderer::Mesh Renderer::meshFromFile(const std::filesystem::path& path) {
 
     std::vector<float> interleavedBuffer;
     for(size_t i = 0; i < mesh->mNumVertices; i++) {
-        if (mesh->HasPositions()) {
-            interleavedBuffer.push_back(mesh->mVertices[i].x);
-            interleavedBuffer.push_back(mesh->mVertices[i].y);
-            interleavedBuffer.push_back(mesh->mVertices[i].z);
-        }
+        interleavedBuffer.push_back(mesh->mVertices[i].x);
+        interleavedBuffer.push_back(mesh->mVertices[i].y);
+        interleavedBuffer.push_back(mesh->mVertices[i].z);
+
         if (mesh->HasTextureCoords(0)) { // Assuming the first set of texture coordinates
             interleavedBuffer.push_back(mesh->mTextureCoords[0][i].x);
             interleavedBuffer.push_back(mesh->mTextureCoords[0][i].y);
@@ -89,26 +134,47 @@ Renderer::Mesh Renderer::meshFromFile(const std::filesystem::path& path) {
         }
     }
 
+    // The indices are a set of indexes into the vertex array, that the GPU will use to
+    // know what order to connect the vertices to create triangles
+    std::vector<unsigned int> indices;
+    for(size_t i = 0; i < mesh->mNumFaces; i++) {
+        const auto& face = mesh->mFaces[i];
+
+        for(size_t j = 0; j < face.mNumIndices; j++) {
+            indices.push_back(face.mIndices[j]);
+        }
+    }
+
     // Upload our data to the GPU
     // Store it in the array buffer
     // Pass how big our data is, and the pointer to it
     // Lastly, it won't change often, so we use static draw
     glBufferData(GL_ARRAY_BUFFER, interleavedBuffer.size() * sizeof(float), interleavedBuffer.data(), GL_STATIC_DRAW);
 
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+
+    // The stride is the total size - in bytes - of each vertex. So for example, if your
+    // vertex is [vec3][vec2], it should be 5 * sizeof(float)
+    GLsizei stride = 3 * sizeof(float);
+
+    if (mesh->HasTextureCoords(0)) { stride += 2 * sizeof(float); }
+    if (mesh->HasNormals()) { stride += 3 * sizeof(float); }
+
+    // The buffer offset is where each attribute starts in the buffer. So
+    // for example, if your vertex is [vec3][vec2], the vec3's offset is 0,
+    // and the vec2's offset is 3 * sizeof(float)
     size_t bufferOffset = 0;
 
-    if (mesh->HasPositions()) {
-        // Tell the vertex array that we want to:
-        // Enable attribute 0
-        // Which has three components (a vec3)
-        // of type float
-        // that is not normalized
-        // has total data size per element of 3 * sizeof(float)
-        // and starts at a certain offset in the buffer
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)bufferOffset);
-        glEnableVertexAttribArray(0);
-        bufferOffset += 3 * sizeof(float);
-    }
+    // Tell the vertex array that we want to:
+    // Enable attribute 0
+    // Which has three components (a vec3)
+    // of type float
+    // that is not normalized
+    // has total data size per element of 3 * sizeof(float)
+    // and starts at a certain offset in the buffer
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)bufferOffset);
+    glEnableVertexAttribArray(0);
+    bufferOffset += 3 * sizeof(float);
 
     if (mesh->HasTextureCoords(0)) {
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)bufferOffset);
@@ -125,6 +191,7 @@ Renderer::Mesh Renderer::meshFromFile(const std::filesystem::path& path) {
     glBindVertexArray(0);
 
     m.vertexCount = mesh->mNumVertices;
+    m.indexCount = indices.size();
 
     return m;
 }
@@ -132,11 +199,12 @@ Renderer::Mesh Renderer::meshFromFile(const std::filesystem::path& path) {
 void Renderer::meshDestroy(Renderer::Mesh& mesh) {
     glDeleteVertexArrays(1, &mesh.vao);
     glDeleteBuffers(1, &mesh.vbo);
+    glDeleteBuffers(1, &mesh.ebo);
 
     mesh = {};
 }
 
-unsigned int Renderer::shaderFromSource(const char* vertex, const char* fragment) {
+Renderer::Shader Renderer::shaderFromSource(const char* vertex, const char* fragment) {
     // Create the two shader modules
     unsigned int vshader = glCreateShader(GL_VERTEX_SHADER);
     unsigned int fshader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -207,7 +275,29 @@ unsigned int Renderer::shaderFromSource(const char* vertex, const char* fragment
     glDeleteShader(vshader);
     glDeleteShader(fshader);
 
-    return program;
+
+    Shader shader {
+        .program = program
+    };
+
+    // Read out all the uniforms (variables we can set on the shader)
+
+    GLint numUniforms = 0;
+    glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &numUniforms);
+
+    GLchar uniformName[256];
+    for(GLint i = 0; i < numUniforms; i++) {
+        GLsizei length;
+        GLint size;
+        GLenum type;
+
+        glGetActiveUniform(program, i, sizeof(uniformName), &length, & size, &type, uniformName);
+        GLint location = glGetUniformLocation(program, uniformName);
+
+        shader.uniforms[uniformName] = location;
+    }
+
+    return shader;
 }
 
 void Renderer::doneWithFrame() {
@@ -227,7 +317,6 @@ void Renderer::togglePeriscope() {
 void Renderer::drawObject(GameObject* object) {
     DrawCommand cmd{};
 
-    /* TODO: uncomment this once objects are implemented
     switch(object->getType()) {
         case GameObjectType::PlayerTank:
             cmd.type = DrawCommandType::Player;
@@ -246,17 +335,23 @@ void Renderer::drawObject(GameObject* object) {
     // Compute the basis vectors of the object's rotation using the cross product
     // of its forward direction, and the world's up vector
     glm::vec3 pos = object->getPosition();
-    glm::vec3 objectForward = object->getDirection();
+    glm::vec3 objectForward = glm::normalize(object->getDirection());
+
+    // Default to facing +Z, since a 0 forward dir breaks the math
+    if (objectForward == glm::vec3(0, 0, 0)) {
+        objectForward = glm::vec3(0, 0, -1);
+    }
+
     glm::vec3 worldUp = glm::vec3(0, 1, 0);
-    glm::vec3 objectRight = glm::normalize(glm::cross(worldUp, objectForward));
+    glm::vec3 objectRight = glm::normalize(glm::cross(objectForward, worldUp));
+    glm::vec3 correctedUp = glm::normalize(glm::cross(objectRight, objectForward));
 
     cmd.transform[0] = glm::vec4(objectRight, 0.0f);
-    cmd.transform[1] = glm::vec4(worldUp, 0.0f);
-    cmd.transform[2] = glm::vec4(objectForward, 0.0f);
+    cmd.transform[1] = glm::vec4(correctedUp, 0.0f);
+    cmd.transform[2] = glm::vec4(-objectForward, 0.0f);
     cmd.transform[3] = glm::vec4(pos, 1.0f);
 
-    cmd.forwardPoint = pos + glm::normalize(objectForward);
-    */
+    cmd.forwardPoint = pos + objectForward;
 
     curFrame.emplace_back(cmd);
 }
@@ -286,34 +381,102 @@ void Renderer::paintGL() {
     glm::mat4 vp = projection * view;
     glm::mat4 mvp;
 
-    // Use the appropriate shader for drawing
-    glUseProgram(texturedShader);
-
-    // Get the numeric identifier of our uniform, for uploading data to
-    int mvpLocation = glGetUniformLocation(texturedShader, "mvp");
 
     for(auto& cmd : lastFrame) {
         mvp = vp * cmd.transform;
 
+        Shader shader{};
+        unsigned int texture = 0;
+        float color[3] = {0.0f, 0.0f, 0.0f};
+
         Mesh m{};
 
+        // Figure out what we're drawing, and find the correct mesh/texture/color/shader
         switch(cmd.type) {
             case DrawCommandType::Player:
-                m = meshes["tank"];            // find the mesh we care about
+                m = meshes[TANK_MESH_FILE];
+
+                if (textureExists(PLAYER_TEXTURE_FILE)) {
+                    shader = shaders.find("texture")->second;
+                    texture = textures[PLAYER_TEXTURE_FILE];
+                }
+                else {
+                    shader = shaders.find("color")->second;
+                    color[1] = 1.0f; // green
+                }
+
                 break;
             case DrawCommandType::Enemy:
-                m = meshes["tank"];
+                m = meshes[TANK_MESH_FILE];
+
+                if (textureExists(ENEMY_TEXTURE_FILE)) {
+                    shader = shaders.find("texture")->second;
+                    texture = textures[ENEMY_TEXTURE_FILE];
+                }
+                else {
+                    shader = shaders.find("color")->second;
+                    color[0] = 1.0f; // red
+                }
+
                 break;
             case DrawCommandType::Obstacle:
-                m = meshes["obstacle"];
+                m = meshes[OBSTACLE_MESH_FILE];
+
+                if (textureExists(OBSTACLE_TEXTURE_FILE)) {
+                    shader = shaders.find("texture")->second;
+                    texture = textures[OBSTACLE_TEXTURE_FILE];
+                }
+                else {
+                    shader = shaders.find("color")->second;
+                    color[0] = 0.58f; // brown
+                    color[1] = 0.29f;
+                }
+
                 break;
             case DrawCommandType::Bullet:
-                m = meshes["bullet"];
+                m = meshes[BULLET_MESH_FILE];
+
+                if (textureExists(BULLET_TEXTURE_FILE)) {
+                    shader = shaders.find("texture")->second;
+                    texture = textures[OBSTACLE_TEXTURE_FILE];
+                }
+                else {
+                    shader = shaders.find("color")->second;
+                    color[0] = 1.0f; // yellow
+                    color[1] = 1.0f;
+                }
+
+                break;
+
+            default:
+                shader = shaders.find("color")->second;
+                color[0] = 1.0f;
+                color[1] = 1.0f;
+                color[2] = 1.0f;
                 break;
         }
 
-        glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));  // set our mvp matrix for this draw
-        glDrawArrays(GL_TRIANGLES, 0, m.vertexCount);                       // execute a draw call
+        glUseProgram(shader.program);
+
+        // Check and set our required uniforms
+        if (!shader.hasUniform("mvp")) {
+            std::cerr << "Shader has no mvp uniform, this is invalid\n";
+            continue;
+        }
+
+        // set our mvp matrix for this draw
+        glUniformMatrix4fv(shader.uniforms["mvp"], 1, GL_FALSE, glm::value_ptr(mvp));
+
+        if (shader.hasUniform("texture")) {
+            glBindTexture(GL_TEXTURE_2D, texture);
+        }
+
+        if (shader.hasUniform("color")) {
+            glUniform3fv(shader.uniforms["color"], 1, color);
+        }
+
+        // Execute a draw call
+        glDrawElements(GL_TRIANGLES, m.indexCount, GL_UNSIGNED_INT, 0);
     }
 }
 
@@ -354,13 +517,14 @@ void Renderer::initializeGL() {
     usingPeriscope = false;
 
     try {
-        texturedShader = shaderFromSource(texturedVertexSource, texturedFragmentSource);
+        shaders["texture"] = shaderFromSource(texturedVertexSource, texturedFragmentSource);
+        shaders["color"] = shaderFromSource(texturedVertexSource, coloredFragmentSource);
 
         // Ensure the data exists as an empty mesh, so at worst, if the meshes aren't on disk, we just
         // don't draw them instead of crashing or something
-        meshes["tank"] = {};
-        meshes["obstacle"] = {};
-        meshes["bullet"] = {};
+        meshes[TANK_MESH_FILE] = {};
+        meshes[OBSTACLE_MESH_FILE] = {};
+        meshes[BULLET_MESH_FILE] = {};
 
         if (std::filesystem::exists("assets/models")) {
             for(const auto& entry : std::filesystem::directory_iterator("assets/models")) {
@@ -374,6 +538,20 @@ void Renderer::initializeGL() {
         }
         else {
             throw std::runtime_error("No assets/models directory is available. Can't draw any 3D meshes");
+        }
+
+        if (std::filesystem::exists("assets/textures")) {
+            for(const auto& entry : std::filesystem::directory_iterator("assets/models")) {
+                if (entry.is_regular_file()) {
+                    const auto& path = entry.path();
+                    int loaded = textureFromFile(path);
+
+                    textures[path.stem().string()] = loaded;
+                }
+            }
+        }
+        else {
+            std::cout << "Renderer: no textures folder, skipping using textures\n";
         }
     }
     catch (std::exception& ex) {
@@ -391,4 +569,55 @@ Renderer::~Renderer() {
     }
 
     meshes.clear();
+
+    for(auto& kvpair : textures) {
+        textureDestroy(kvpair.second);
+    }
+
+    textures.clear();
+
+    for(auto& kvpair : shaders) {
+        shaderDestroy(kvpair.second);
+    }
+
+    shaders.clear();
 }
+
+unsigned int Renderer::textureFromFile(const std::filesystem::path& path) {
+    // Use QT to load the image
+    QImage image(path.c_str());
+    if (image.isNull()) {
+        std::cerr << "Failed to load image: " << path << "\n";
+        return 0;
+    }
+
+    // OpenGL requires specific data formatting
+    QImage glImage = image.mirrored().convertToFormat(QImage::Format_RGBA8888);
+
+    // Generate a texture
+    GLuint texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    // Set texture parameters, like how the texture should be resized and what to do if it doesn't quite fit right
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Upload the image data to the texture
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, glImage.width(), glImage.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, glImage.bits());
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    return texture;
+}
+
+void Renderer::textureDestroy(unsigned int tex) {
+    glDeleteTextures(1, &tex);
+}
+
+void Renderer::shaderDestroy(Renderer::Shader& shader) {
+    glDeleteShader(shader.program);
+    shader.uniforms.clear();
+}
+
