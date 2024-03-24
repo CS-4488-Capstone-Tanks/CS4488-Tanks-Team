@@ -337,7 +337,7 @@ void Renderer::drawObject(GameObject* object) {
     glm::vec3 pos = object->getPosition();
     glm::vec3 objectForward = glm::normalize(object->getDirection());
 
-    // Default to facing +Z, since a 0 forward dir breaks the math
+    // Default to facing -Z, since a 0 forward dir breaks the math
     if (objectForward == glm::vec3(0, 0, 0)) {
         objectForward = glm::vec3(0, 0, -1);
     }
