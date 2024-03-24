@@ -1,5 +1,4 @@
 /* Luna Steed S24
-**** TODO:
 *		Menu Manager
 *		- Keep menus ready when GameWindow calls to display a menu
 *       - Alleviates stress on GameWindow by abstracting menu handling
@@ -8,52 +7,67 @@
 */
 #include "menumanager.h"
 
-#define MAIN_MENU_KEY 0
-#define INGAME_MENU_KEY 2
-#define OPTIONS_MENU_KEY 3
-#define MULTIPLAYER_MENU_KEY 4
-#define HOST_MENU_KEY 5
-#define JOINIP_MENU_KEY 6
-
-QWidget Main_Menu;
-QWidget In_Game_Menu;
-QWidget Options_Menu;
-QWidget Multiplayer_Menu;
-QWidget Host_Menu;
-QWidget Join_IP_Menu;
-
-///
-/// \brief MenuManager: Constructor
-///
-MenuManager::MenuManager(){
+/**
+ * @author Luna Steed
+ * @time Spring 2024
+ * @brief MenuManager: Constructor
+ * @details Constructor for the MenuManager class
+ */
+MenuManager::MenuManager() : Main_Menu(), renderer(), In_Game_Menu(), Options_Menu(){
     QW_Vec = {
                 &Main_Menu,
+                &renderer,
                 &In_Game_Menu,
-                &Options_Menu,
-                &Multiplayer_Menu,
-                &Host_Menu,
-                &Join_IP_Menu
+                &Options_Menu //,
+                //&Multiplayer_Menu,
+                //&Host_Menu,
+                //&Join_IP_Menu
              };
-    active_menu = &Main_Menu;
-}
-/// LS S24
-/// \brief sendSignal: Send out a signal (generally to GameWindow)
-///
-void MenuManager::send_signal(){
-
+    active_widget = &Main_Menu;
 }
 
-/// LS S24
-/// \brief receiveSignal: Receive a signal (generally from GameWindow)
-///
-void MenuManager::receive_signal(){
-
+/**
+ * @author Luna Steed
+ * @time Spring 2024
+ * @brief MenuManager: Destructor
+ * @details Destructor for the MenuManager class. Deletes all menus/QWidgets.
+ */
+MenuManager::~MenuManager() {
+    delete active_widget; // Delete active menu
+    std::vector<QWidget*>().swap(QW_Vec); // Clear vector and free memory
 }
 
-/// LS S24
-/// \brief fetch_menu: Fetches a QWidget menu.
-/// \return Q Widget Pointer
-///
+/**
+ * @brief setActiveMenu: Set the active menu
+ * @details Sets the active menu to the given QWidget pointer.
+ * @param menu: QWidget pointer
+ */
+void MenuManager::setActiveMenu(QWidget* menu) {
+    active_widget = menu;
+}
+
+/**
+ * @author Luna Steed
+ * @time Spring 2024
+ * @brief checkActiveMenu: Check if the active menu is the given menu
+ * @details Checks if the active menu is the given QWidget pointer.
+ * @param menu: QWidget pointer
+ * @return bool: True if the active menu is the given menu, false otherwise
+ */
+bool MenuManager::checkActiveMenu(QWidget* menu) {
+    return active_widget == menu;
+}
+
+/**
+ * @author Luna Steed
+ * @time Spring 2024
+ * @brief fetch_menu: Fetches a QWidget menu.
+ * @return Q Widget Pointer
+ */
 QWidget* MenuManager::fetch_menu(int key){
-    return QW_Vec[key];
+    QWidget* menu = QW_Vec[key];
+    if (!checkActiveMenu(menu)) {
+        setActiveMenu(menu);
+    }
+    return active_widget;
 }

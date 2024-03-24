@@ -1,21 +1,14 @@
-#ifndef MAINMENU_H
-#define MAINMENU_H
+//
+// Created by lunah on 3/24/2024.
+//
 
-#include <QWidget>
+#ifndef TANKS_MAINMENU_H
+#define TANKS_MAINMENU_H
 
-namespace Ui {
-class MainMenu;
-}
 
-class MainMenu : public QWidget
-{
-    Q_OBJECT
+class mainmenu {
 
-public:
-    MainMenu(QWidget *parent = nullptr);
-    ~MainMenu();
-
-private:
-    Ui::MainMenu *ui;
 };
-#endif // MAINMENU_H
+
+
+#endif //TANKS_MAINMENU_H

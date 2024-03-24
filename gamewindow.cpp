@@ -45,7 +45,7 @@
  * The goal of this operating flow, where q_widgets gets added to and removed from, is to keep the game from
  * being resource intensive. Though our game is simple enough to where menus could simply be permanently
  * stored, we wanted to keep the option of scaling the game by adding more menus. This lets us simply
- * add more menus and change the signal/slot to accommodate without needing to hard-code q_widgets.
+ * add more menus to the menumanager and change the signal/slot to accommodate without needing to hard-code q_widgets.
  *
  */
 
@@ -67,7 +67,7 @@ void GameWindow::fetchAdjacent(QWidget* wpointer)
         adjacent.push_back(menuMan.fetch_menu(MAIN_MENU_KEY));
     }
     else if (wpointer == menuMan.fetch_menu(MAIN_MENU_KEY)){
-        adjacent.push_back(menuMan.fetch_menu(MULTIPLAYER_MENU_KEY));
+        // adjacent.push_back(menuMan.fetch_menu(MULTIPLAYER_MENU_KEY));      Unimplemented
         adjacent.push_back(menuMan.fetch_menu(OPTIONS_MENU_KEY));
     }
     for (auto widget : adjacent) {
@@ -78,17 +78,14 @@ void GameWindow::fetchAdjacent(QWidget* wpointer)
 /**
  * @author Luna Steed
  * @time Spring 2024
- * @brief fetchByKey: Call Menu Manager to add both desired menu and other accessible widgets
+ * @brief clearAndFetch: Call Menu Manager to add both desired menu and other accessible widgets
  * @details This method calls the Menu Manager to fetch a menu by a given key. It then calls fetchAdjacent to fetch adjacent widgets.
  * @param key: Key to send to the Menu Manager
  */
-void GameWindow::fetchByKey(int key)
+void GameWindow::clearAndFetch(int key)
 {
-    /* TO DO:
-     * Create menu manager, basic menus, and add methods to fetch a menu by a given key.
-     */
     widgetCache = {
-            {RENDERER_KEY, &renderer} // Keep renderer loaded at key 0, but remove other menus
+            {GAME_KEY, &renderer} // Keep renderer loaded at key 0, but remove other menus
     };
     widgetCache.insert({key, menuMan.fetch_menu(key)}); // Fetch desired widget
     fetchAdjacent(widgetCache[key]); // Fetch adjacent widgets
@@ -103,7 +100,8 @@ void GameWindow::fetchByKey(int key)
  * @return wpoint: Pointer to desired Qwidget
  */
 QWidget* GameWindow::cacheCheck(int key)
-{   QWidget* wpoint;
+{
+    QWidget* wpoint;
     try {
         wpoint = widgetCache.at(key);
     }
@@ -125,7 +123,7 @@ QWidget* GameWindow::cacheCheck(int key)
 QWidget* GameWindow::cacheMiss(int key)
 {
     QWidget* wpoint;
-    fetchByKey(key);
+    clearAndFetch(key);
     wpoint = widgetCache[key];
     return wpoint;
 }
@@ -144,7 +142,6 @@ GameWindow::GameWindow(): menuMan(MenuManager()), win(QWindow()), renderer(Rende
     win.create();
     QSize qsize = QSize(1200, 900);
     win.setBaseSize(qsize);
-    win.showNormal();
 }
 
 /**
@@ -156,13 +153,12 @@ GameWindow::GameWindow(): menuMan(MenuManager()), win(QWindow()), renderer(Rende
  */
 void GameWindow::changeWidget(int key)
 {
-    if (key == activeKey) {
+    if (key == activeKey) { // Don't change if already active
         return;
     }
     hideWidget(); // Hide current widget
     activeKey = key;
     displayWidget(); // Display new widget
-    fetchByKey(key); // Reset cache and fetch adjacent widgets
 }
 
 /**
@@ -197,33 +193,4 @@ void GameWindow::hideWidget()
         std::cerr << "Error encountered in GameWindow: " << e.what() << std::endl;
         throw e;
     }
-}
-
-/**
- * @author Luna Steed
- * @time Spring 2024
- * @brief callMenuMan: Send Qsignal to MenuManager
- */
-void GameWindow::callMenuMan(int key) {
-    const QObject * sender = this;
-    const char * signal = "callMenuMan()";
-    const QObject * receiver = &menuMan;
-    const char * method = "fetchMenu()";
-    QObject::connect(sender, signal, receiver, method);
-}
-
-/**
- * @author Luna Steed
- * @time Spring 2024
- * @brief receiveMenu: Receive Qsignal from MenuManager.
- */
-void GameWindow::receiveMenu() {
-    /* TO DO:
-     * Set up QSlots/QSignals between Game and QWindow's interacting classes
-     */
-    const QObject * sender = &menuMan;
-    const char * signal = "sendMenu()";
-    const QObject * receiver = this;
-    const char * method = "";
-    QObject::connect(sender, signal, receiver, method);
 }

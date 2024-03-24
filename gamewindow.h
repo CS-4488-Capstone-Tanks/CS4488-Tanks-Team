@@ -12,15 +12,6 @@
 
 class GameWindow : public QWindow {
     Q_OBJECT
-// Default key values for mapping to QWidget Pointers
-#define MAIN_MENU_KEY 0
-#define RENDERER_KEY 1
-#define INGAME_MENU_KEY 2
-#define OPTIONS_MENU_KEY 3
-#define MULTIPLAYER_MENU_KEY 4
-#define HOST_MENU_KEY 5 // Unimplemented
-#define JOINIP_MENU_KEY 6 // Unimplemented
-
 
 protected:
     // Protected Variables
@@ -35,8 +26,7 @@ private:
 
     // Private Functions
     void fetchAdjacent(QWidget *wpointer);
-    void fetchByKey(int key);
-    QWidget *cacheCheck(int key);
+    void clearAndFetch(int key);
     QWidget *cacheMiss(int key);
 
 public:
@@ -45,18 +35,7 @@ public:
     void changeWidget(int key);
     void displayWidget();
     void hideWidget();
-
-
-
-signals:
-    Q_SIGNAL void callMenuMan(int key);
-
-public slots:
-    Q_SLOT void receiveMenu();
-
-// Friends
-friend class MenuManager;
-friend class Game;
+    QWidget *cacheCheck(int key);
 };
 
 
