@@ -14,16 +14,3 @@ InGameMenu::InGameMenu(QWidget *parent) {
     layout->addWidget(mainMenuButton, 1, 0);
     layout->addWidget(exitButton, 2, 0);
 }
-
-/**
- * @author Luna Steed
- * @time 3/24/2024
- * @brief Destructor for the in-game menu
- */
-InGameMenu::~InGameMenu() {
-    delete resumeButton;
-    delete mainMenuButton;
-    delete exitButton;
-    delete layout;
-    delete this;
-}
