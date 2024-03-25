@@ -7,15 +7,15 @@
 
 #include <QtWidgets>
 
-class ingamemenu : public QWidget {
+class InGameMenu : public QWidget {
     QPushButton *resumeButton;
     QPushButton *mainMenuButton;
     QPushButton *exitButton;
     QGridLayout *layout;
 
 public:
-    explicit ingamemenu(QWidget *parent = nullptr);
-    ~ingamemenu() override;
+    explicit InGameMenu(QWidget *parent = nullptr);
+    ~InGameMenu() override;
 };
 
 

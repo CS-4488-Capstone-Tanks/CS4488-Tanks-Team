@@ -10,7 +10,7 @@
  * @brief Constructor for the options menu
  * @param parent The parent widget
  */
-optionsmenu::optionsmenu(QWidget *parent) {
+OptionsMenu::OptionsMenu(QWidget *parent) {
     // Create title
     menuTitle = new QLabel("Options", parent);
     menuTitle->setAlignment(Qt::AlignCenter);
@@ -47,7 +47,7 @@ optionsmenu::optionsmenu(QWidget *parent) {
  * @time 3/24/2024
  * @brief Destructor for the options menu
  */
-optionsmenu::~optionsmenu() {
+OptionsMenu::~OptionsMenu() {
     delete returnButton;
     delete menuTitle;
     delete volumeLabel;

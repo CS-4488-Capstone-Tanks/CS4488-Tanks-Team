@@ -8,7 +8,7 @@
 
 #include <QtWidgets>
 
-class optionsmenu : public QWidget {
+class OptionsMenu : public QWidget {
 public:
     // Buttons, sliders, selections, and labels
     QPushButton *returnButton;
@@ -27,8 +27,8 @@ public:
     QGridLayout *layout;
 
     // Constructor and destructor
-    explicit optionsmenu(QWidget *parent = nullptr);
-    ~optionsmenu() override;
+    explicit OptionsMenu(QWidget *parent = nullptr);
+    ~OptionsMenu() override;
 
 };
 

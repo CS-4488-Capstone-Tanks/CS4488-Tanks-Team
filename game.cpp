@@ -59,7 +59,7 @@ int Game::start() {
 void Game::tick() {
     sc->update();
 
-    QWidget* widg = gw->cacheCheck(GAME_KEY);
+    QWidget* widg = gw->changeWidget(GAME_KEY);
     auto* rend = dynamic_cast<Renderer*>(widg);
 
     for (const GameObject* obj : *sc){

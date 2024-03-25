@@ -4,7 +4,7 @@
 
 #include "ingamemenu.h"
 
-ingamemenu::ingamemenu(QWidget *parent) {
+InGameMenu::InGameMenu(QWidget *parent) {
     resumeButton = new QPushButton("Resume", parent);
     mainMenuButton = new QPushButton("Main Menu", parent);
     exitButton = new QPushButton("Exit", parent);
@@ -20,7 +20,7 @@ ingamemenu::ingamemenu(QWidget *parent) {
  * @time 3/24/2024
  * @brief Destructor for the in-game menu
  */
-ingamemenu::~ingamemenu() {
+InGameMenu::~InGameMenu() {
     delete resumeButton;
     delete mainMenuButton;
     delete exitButton;

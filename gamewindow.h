@@ -2,33 +2,40 @@
 #define GAMEWINDOW_H
 
 #include "renderer.h"
-#include "menumanager.h"
+#include "mainmenu.h"
+#include "ingamemenu.h"
+#include "optionsmenu.h"
+#include <QMainWindow>
 #include <unordered_map>
 #include <iostream>
 
+#define GAME_KEY 0
+#define MAIN_MENU_KEY 1
+#define INGAME_MENU_KEY 2
+#define OPTIONS_MENU_KEY 3
+#define MULTIPLAYER_MENU_KEY 4 // unimplemented
+#define HOST_MENU_KEY 5 // unimplemented
+#define JOINIP_MENU_KEY 6 // unimplemented
 
 class GameWindow : public QMainWindow {
     Q_OBJECT
 
 private:
     // Private Variables
-    MenuManager menuMan;
-    Renderer renderer;
-    std::unordered_map<int, QWidget *> widgetCache;
-    int activeKey;
+    Renderer *rend;
+    MainMenu *mainMenu;
+    InGameMenu *inGameMenu;
+    OptionsMenu *optionsMenu;
 
-    // Private Functions
-    void fetchAdjacent(QWidget *wpointer);
-    void clearAndFetch(int key);
-    QWidget *cacheMiss(int key);
+    std::unordered_map<int, QWidget *> widgets;
+    int activeKey;
 
 public:
     // Public Functions
     GameWindow();
-    void changeWidget(int key);
+    QWidget* changeWidget(int key);
     void displayWidget();
     void hideWidget();
-    QWidget *cacheCheck(int key);
 };
 
 

@@ -10,7 +10,7 @@
  * @brief Constructor for the main menu
  * @param parent The parent widget
  */
-mainmenu::mainmenu(QWidget *parent) : QWidget(parent) {
+MainMenu::MainMenu(QWidget *parent) : QWidget(parent) {
     // Create title
     title = new QLabel("Tanks", this);
     title->setAlignment(Qt::AlignCenter);
@@ -37,7 +37,7 @@ mainmenu::mainmenu(QWidget *parent) : QWidget(parent) {
  * @time 3/24/2024
  * @brief Destructor for the main menu
  */
-mainmenu::~mainmenu() {
+MainMenu::~MainMenu() {
     delete title;
     delete playButton;
     delete optionsButton;

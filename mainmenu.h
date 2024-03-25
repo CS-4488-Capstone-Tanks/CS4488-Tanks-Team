@@ -7,7 +7,7 @@
 
 #include <QtWidgets>
 
-class mainmenu : public QWidget {
+class MainMenu : public QWidget {
     Q_OBJECT
 
 public:
@@ -17,8 +17,8 @@ public:
     QPushButton *exitButton;
     QGridLayout *layout;
 
-    explicit mainmenu(QWidget *parent = nullptr);
-    ~mainmenu() override;
+    explicit MainMenu(QWidget *parent = nullptr);
+    ~MainMenu() override;
 };
 
 
