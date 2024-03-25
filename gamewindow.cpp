@@ -25,7 +25,7 @@ GameWindow::GameWindow()
             {OPTIONS_MENU_KEY, optionsMenu}
     };
 
-    activeKey = GAME_KEY;
+    activeKey = MAIN_MENU_KEY;
 
     changeWidget(activeKey);
 

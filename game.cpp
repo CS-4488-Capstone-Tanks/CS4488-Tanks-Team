@@ -2,6 +2,7 @@
 
 #include "game.h"
 
+
 /**
  * @author Tyson Cox, Luna Steed
  * @time Spring 2024
@@ -9,12 +10,14 @@
  * @details Constructor for the Game class. Initializes the GameWindow and Scene objects, and sets inGame to false.
  */
 Game::Game(int argc, char** argv) : QApplication(argc, argv), timer(new QTimer(this)) {
+    activeKey = MAIN_MENU_KEY;
     gw = new GameWindow();
     gw->show();
     const char stateFilename[] = "test_game_state";
     sc = new Scene(60.0f/1000, const_cast<char *>(stateFilename));
     inGame = false;
 }
+
 
 /**
  * @author Tyson Cox, Luna Steed
@@ -23,9 +26,14 @@ Game::Game(int argc, char** argv) : QApplication(argc, argv), timer(new QTimer(t
  * @details Destructor for the Game class. Deletes the GameWindow and Scene objects.
  */
 Game::~Game() {
+    delete &activeKey;
+    delete &inGame;
+    delete &timer;
     delete gw;
     delete sc;
+    delete this;
 }
+
 
 /**
  * @author Tyson Cox, Luna Steed
@@ -43,13 +51,61 @@ int Game::start() {
 
     inGame = true;
 
+    activeKey = GAME_KEY;
+    gw->changeWidget(activeKey);
     gw->show();
 
     return Game::exec();
 }
 
-// Q Slots: tick();
 
+/**
+ * @author Luna Steed
+ * @time Spring 2024
+ * @brief Game::pause: Pause the game
+ * @details Pause the game by stopping the timer and setting inGame to false.
+ */
+void Game::pause() {
+    timer.stop();
+    inGame = false;
+    activeKey = INGAME_MENU_KEY;
+    gw->changeWidget(activeKey);
+    sc->setPaused(true);
+}
+
+
+/**
+ * @author Luna Steed
+ * @time Spring 2024
+ * @brief Game::resume: Resume the game
+ * @details Resume the game by starting the timer and setting inGame to true.
+ */
+void Game::resume() {
+    timer.start();
+    inGame = true;
+    activeKey = GAME_KEY;
+    gw->changeWidget(activeKey);
+    sc->setPaused(false);
+}
+
+
+/**
+ * @author Luna Steed
+ * @time Spring 2024
+ * @brief Game::end: End the game
+ * @details End the game by stopping the timer, setting inGame to false, destroying and remaking the scene, and changing the active widget to the main menu.
+ */
+void Game::end() {
+    timer.stop();
+    inGame = false;
+    sc->~Scene();
+    sc = new Scene(60.0f / 1000, "test_game_state");
+    activeKey = MAIN_MENU_KEY;
+    gw->changeWidget(activeKey);
+}
+
+
+// PRIVATE Q Slots: tick();
 /**
  * @author Tyson Cox, Luna Steed
  * @time Spring 2024
@@ -69,26 +125,59 @@ void Game::tick() {
     rend->doneWithFrame();
 }
 
-/**
- * @author Luna Steed
- * @time Spring 2024
- * @brief Game::pause: Pause the game
- * @details Pause the game by stopping the timer and setting inGame to false.
- */
-void Game::pause() {
-    timer.stop();
-    inGame = false;
-    sc->setPaused(true);
-}
 
+// PUBLIC Q Slots: keyPressEvent(QKeyEvent *event), keyReleaseEvent(QKeyEvent *event)
 /**
  * @author Luna Steed
  * @time Spring 2024
- * @brief Game::resume: Resume the game
- * @details Resume the game by starting the timer and setting inGame to true.
+ * @brief Game::filterKeyEvent: Filter key events
+ * @details Filter key events with switch cases. Handle them in-house or pass them to the player tank object.
+ * @param event The key event to filter
  */
-void Game::resume() {
-    timer.start();
-    inGame = true;
-    sc->setPaused(false);
+void Game::filterKeyEvent(QKeyEvent *event) {
+    switch (event->key())
+    {
+        case Qt::Key_Escape: // ESC
+            if (inGame) { // in game
+                pause();
+                break;
+            }
+            else if (activeKey == INGAME_MENU_KEY) { // in in-game menu
+                resume();
+                break;
+            }
+            else if (activeKey == MAIN_MENU_KEY){ // main menu
+                this->~Game();
+                break;
+            }
+            else{ // anywhere else, return to main menu
+                activeKey = MAIN_MENU_KEY;
+                gw->changeWidget(activeKey);
+                break;
+            }
+        // Player controls
+        // WASD
+        case Qt::Key_W:
+        case Qt::Key_A:
+        case Qt::Key_S:
+        case Qt::Key_D:
+        // Arrow keys
+        case Qt::Key_Up:
+        case Qt::Key_Left:
+        case Qt::Key_Down:
+        case Qt::Key_Right:
+        // Firing
+        case Qt::Key_Space:
+        {
+            if (inGame) {
+                emit playerControlSignal();
+                break;
+            }
+            else { // Functionality should only be available in-game
+                break;
+            }
+        }
+    }
+
 }
+// PUBLIC Q Signal: playerControlSignal();
