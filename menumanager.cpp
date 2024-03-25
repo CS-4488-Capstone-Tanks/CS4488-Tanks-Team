@@ -13,17 +13,22 @@
  * @brief MenuManager: Constructor
  * @details Constructor for the MenuManager class
  */
-MenuManager::MenuManager() : Main_Menu(), renderer(), In_Game_Menu(), Options_Menu(){
+MenuManager::MenuManager(){
+    mainMenu = new mainmenu();
+    inGameMenu = new ingamemenu();
+    optionsMenu = new optionsmenu();
+    renderer = new Renderer();
+
     QW_Vec = {
-                &Main_Menu,
-                &renderer,
-                &In_Game_Menu,
-                &Options_Menu //,
-                //&Multiplayer_Menu,
-                //&Host_Menu,
-                //&Join_IP_Menu
+            mainMenu,
+            renderer,
+            inGameMenu,
+            optionsMenu //,
+            //multiplayerMenu,
+            //hostMenu,
+            //joinIPMenu
              };
-    active_widget = &Main_Menu;
+    active_widget = mainMenu;
 }
 
 /**

@@ -5,9 +5,20 @@
 #ifndef TANKS_MAINMENU_H
 #define TANKS_MAINMENU_H
 
+#include <QtWidgets>
 
-class mainmenu {
+class mainmenu : public QWidget {
+    Q_OBJECT
 
+public:
+    QLabel *title;
+    QPushButton *playButton;
+    QPushButton *optionsButton;
+    QPushButton *exitButton;
+    QGridLayout *layout;
+
+    explicit mainmenu(QWidget *parent = nullptr);
+    ~mainmenu() override;
 };
 
 

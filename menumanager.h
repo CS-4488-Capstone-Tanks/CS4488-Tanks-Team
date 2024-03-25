@@ -33,13 +33,13 @@ protected:
     // Protected variables
     QWidget* active_widget;
     std::vector<QWidget*> QW_Vec;
-    QWidget Main_Menu;
-    Renderer renderer;
-    QWidget In_Game_Menu;
-    QWidget Options_Menu;
-    // QWidget Multiplayer_Menu;  unimplemented
-    // QWidget Host_Menu;   unimplemented
-    // QWidget Join_IP_Menu;   unimplemented
+    mainmenu *mainMenu;
+    Renderer *renderer;
+    ingamemenu *inGameMenu;
+    optionsmenu *optionsMenu;
+    // QWidget multiplayerMenu;  unimplemented
+    // QWidget hostMenu;   unimplemented
+    // QWidget joinIPMenu;   unimplemented
 
     // Protected functions
     void setActiveMenu(QWidget* menu);

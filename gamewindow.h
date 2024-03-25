@@ -2,12 +2,8 @@
 #define GAMEWINDOW_H
 
 #include "Renderer.h"
-#include "qwindow.h"
 #include "menumanager.h"
-#include <QObject>
 #include <unordered_map>
-#include <QWidget>
-#include "game.h"
 
 
 class GameWindow : public QWindow {

@@ -11,12 +11,13 @@
 Game::Game(int argc, char** argv) : QApplication(argc, argv), timer(new QTimer(this)) {
     gw = new GameWindow();
     gw->show();
-    sc = new Scene(60.0f/1000, "test_game_state");
+    const char stateFilename[] = "test_game_state";
+    sc = new Scene(60.0f/1000, const_cast<char *>(stateFilename));
     inGame = false;
 }
 
 /**
- * @author Tyson Cox
+ * @author Tyson Cox, Luna Steed
  * @time Spring 2024
  * @brief Game::~Game destructor
  * @details Destructor for the Game class. Deletes the GameWindow and Scene objects.
@@ -27,7 +28,7 @@ Game::~Game() {
 }
 
 /**
- * @author Tyson Cox
+ * @author Tyson Cox, Luna Steed
  * @time Spring 2024
  * @brief Game::start: Start the game
  * @details Start the game when prompted by the signal. Changes the active widget to the renderer and sets inGame to true.
@@ -50,7 +51,7 @@ int Game::start() {
 // Q Slots: tick();
 
 /**
- * @author Tyson Cox
+ * @author Tyson Cox, Luna Steed
  * @time Spring 2024
  * @brief Game::tick: Update the game
  * @details Update the game by calling the Scene's update method.

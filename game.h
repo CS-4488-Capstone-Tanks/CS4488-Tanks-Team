@@ -28,8 +28,8 @@ public:
     Game(int argc, char** argv);
     ~Game() override;
 
-// Private Functions
-int start();
+    // Private Functions
+    int start();
 };
 
 #endif //TANKS_GAME_H
