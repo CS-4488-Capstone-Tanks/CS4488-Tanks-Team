@@ -1,10 +1,11 @@
-#include <iostream>
-#include "gamewindow.h"
+
 
 
 ///
 /// \brief LS S24 The GameWindow class governs the main window that displays the game and all menus.
 ///
+
+#include "gamewindow.h"
 
 /* LS 3/7/24
  * This file is a part of the Tanks Game GUI/display system. It is the main window that will display the game.

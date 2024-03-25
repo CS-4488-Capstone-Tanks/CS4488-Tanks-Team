@@ -1,9 +1,10 @@
 #ifndef GAMEWINDOW_H
 #define GAMEWINDOW_H
 
-#include "Renderer.h"
+#include "renderer.h"
 #include "menumanager.h"
 #include <unordered_map>
+#include <iostream>
 
 
 class GameWindow : public QWindow {

@@ -1,7 +1,5 @@
 #include "game.h"
 
-#include "renderer.h"
-
 int main(int argc, char** argv) {
 #if 1
         Game game(argc, argv);
