@@ -44,12 +44,27 @@ public:
     */
     void setPaused(bool isPaused);
 
+	/**
+	 * @return A constant iterator pointing to the beginning of the vector of GameObject pointers.
+     * @author Tyson Cox (implemented by Koda Koziol)
+     * @date SPRING 2024
+	 */
+    std::vector<GameObject*>::const_iterator begin() const;
+
+    /**
+     * @return A constant iterator pointing to the end of the vector of GameObject pointers.
+     * @author Tyson Cox (implemented by Koda Koziol)
+     * @date SPRING 2024
+     */
+    std::vector<GameObject*>::const_iterator end() const;
+
+
 
 private:
     // NetworkManager networkManager
     GameState gameState;
     float deltaTime; // This should probably be initialized in game.h, where the QTimer is
-    bool isPaused;
+    bool isPaused = false;
 
 signals:
 public slots:

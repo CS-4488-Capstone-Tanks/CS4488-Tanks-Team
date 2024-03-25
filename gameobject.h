@@ -18,15 +18,19 @@ using namespace glm;
 class GameObject : public QObject
 {
     Q_OBJECT
+	
 public:
 
     /**
      * @brief Constructor for the GameObject.
-     * @param parent: The parent of the GameObject. Default is nullptr.
+     * @param type: The GameObjectType of the GameObject. This is used so
+        the renderer can differentiate between different types of GameObjects.
+     * @param parent: The parent of the GameObject.
      * @author Koda Koziol
      * @date SPRING 2024
      */
-    explicit GameObject(QObject *parent = nullptr);
+    explicit GameObject(GameObjectType type, QObject *parent = nullptr);
+
 
     /**
      * @brief This method gets called once immediately before the very first
@@ -55,14 +59,14 @@ public:
      * @author Koda Koziol
      * @date SPRING 2024
      */
-    vec3 getPosition();
+    vec3 getPosition() const;
 
     /**
      * @return The direction the GameObject is facing in 3D space.
      * @author Koda Koziol
      * @date SPRING 2024
      */
-    vec3 getDirection();
+    vec3 getDirection() const;
 
     /**
      * @return The GameObjectType of the GameObject. This is used to
@@ -70,7 +74,7 @@ public:
      * @author Koda Koziol
      * @date SPRING 2024
     */
-    GameObjectType getType();
+    GameObjectType getType() const;
 
     /**
      * @return The Entity ID of the GameObject. This is a unique identifier
@@ -80,7 +84,7 @@ public:
      * @author Koda Koziol
      * @date SPRING 2024
     */
-    uint32_t getEntityID();
+    uint32_t getEntityID() const;
 
     /**
      * @brief Set the Entity ID of the GameObject. This should only be called by the GameState
@@ -101,7 +105,6 @@ protected:
     uint32_t entityID;
     GameObjectType type;
 
-signals:
 };
 
 #endif // GAMEOBJECT_H
