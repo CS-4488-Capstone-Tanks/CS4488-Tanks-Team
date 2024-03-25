@@ -7,7 +7,7 @@
 #include <iostream>
 
 
-class GameWindow : public QWindow {
+class GameWindow : public QMainWindow {
     Q_OBJECT
 
 private:

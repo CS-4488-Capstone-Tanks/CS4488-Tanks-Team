@@ -170,8 +170,8 @@ void GameWindow::changeWidget(int key)
 void GameWindow::displayWidget()
 {
     try {
-        QWidget *wpoint = cacheCheck(activeKey);
-        wpoint->show();
+        QWidget* wpoint = cacheCheck(activeKey);
+        this->setCentralWidget(wpoint);
     }
     catch(std::exception& e) {
         std::cerr << "Error encountered in GameWindow: " << e.what() << std::endl;
