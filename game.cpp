@@ -68,3 +68,27 @@ void Game::tick() {
 
     rend->doneWithFrame();
 }
+
+/**
+ * @author Luna Steed
+ * @time Spring 2024
+ * @brief Game::pause: Pause the game
+ * @details Pause the game by stopping the timer and setting inGame to false.
+ */
+void Game::pause() {
+    timer.stop();
+    inGame = false;
+    sc->setPaused(true);
+}
+
+/**
+ * @author Luna Steed
+ * @time Spring 2024
+ * @brief Game::resume: Resume the game
+ * @details Resume the game by starting the timer and setting inGame to true.
+ */
+void Game::resume() {
+    timer.start();
+    inGame = true;
+    sc->setPaused(false);
+}

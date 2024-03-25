@@ -137,7 +137,7 @@ QWidget* GameWindow::cacheMiss(int key)
  */
 GameWindow::GameWindow(): menuMan(MenuManager()), win(QWindow()), renderer(Renderer()), widgetCache({})
 {
-    activeKey = MAIN_MENU_KEY; // Start at main menu
+    activeKey = GAME_KEY;
     changeWidget(activeKey);
 
     win.create();

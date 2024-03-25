@@ -21,6 +21,8 @@ private:
 
 private slots:
     void tick();
+    void pause();
+    void resume();
 
 public:
     // Public Functions
