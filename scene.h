@@ -17,7 +17,7 @@ public:
      * @param char stateFilename[]
      * @param QObject* parent = nullptr
     */
-    explicit Scene(float deltaTime, char stateFilename[], QObject *parent = nullptr);
+    explicit Scene(float deltaTime, char const stateFilename[], QObject *parent = nullptr);
 
     /**
      * @brief Start the scene
@@ -32,6 +32,9 @@ public:
      * @param bool isPaused
     */
     void setPaused(bool isPaused);
+
+    [[nodiscard]] std::vector<GameObject*>::const_iterator begin() const;
+    [[nodiscard]] std::vector<GameObject*>::const_iterator end() const;
 private:
     // NetworkManager networkManager
     GameState gameState;
