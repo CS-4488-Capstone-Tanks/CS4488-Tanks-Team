@@ -72,8 +72,9 @@ target_include_directories(tanks PRIVATE
 )
 
 # Add a post-build step to copy over the assets folder
-add_custom_command(TARGET tanks POST_BUILD
+add_custom_target(copy_assets ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     "${CMAKE_CURRENT_SOURCE_DIR}/assets"
     "$<TARGET_FILE_DIR:tanks>/assets"
 )
+add_dependencies(copy_assets tanks)
