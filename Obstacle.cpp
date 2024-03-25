@@ -6,7 +6,7 @@
 
 //Constructor initializing the obstacle with its position and collider
 Obstacle::Obstacle(QObject *parent, uint32_t entityID, const glm::vec3& position, float colliderRadius)
-        : GameObject(parent), collider(position, colliderRadius) {
+        : GameObject(type, parent), collider(position, colliderRadius) {
     this->entityID = entityID;
     this->position = position;
     //Set the game object's type to Obstacle

@@ -1,20 +1,20 @@
 #include "gamestate.h"
 #include "jsonhelpers.h"
-// #include <QDir>
+#include "Obstacle.h"
 
 const char LEVELS_PATH[] = "assets/levels/";
 
+// Game object keys
 const char PLAYER_KEY[] = "playerTank";
 const char ENEMY_KEY[] = "enemyTank";
 const char OBSTACLES_KEY[] = "obstacles";
 
+// Property keys
 const char POS_KEY[] = "position";
 const char DIR_KEY[] = "direction";
+const char RAD_KEY[] = "radius";
 
-GameState::GameState()
-{
-
-}
+GameState::GameState() {}
 
 void GameState::startState()
 {
@@ -30,56 +30,96 @@ void GameState::updateState(float deltaTime)
     }
 }
 
-void GameState::loadState(char filename[])
+void GameState::loadState(std::string filename)
 {
-    QString filepath = /*QDir::currentPath() +*/ LEVELS_PATH + QString::fromStdString(filename) + ".json";
+    QString filepath = LEVELS_PATH + QString::fromStdString(filename) + ".json";
     QFile stateFile(filepath);
 
-    // We'll only need one file check or the other
-    if (!std::filesystem::exists(filepath.toStdString()))
-        throw "read error: couldn't find specified path \"" + filepath.toStdString() + "\"";
-    if (!stateFile.open(QFile::ReadOnly | QFile::Text))
-        throw "read error: " + stateFile.errorString().toStdString();
+    if (!stateFile.open(QIODevice::ReadOnly | QIODevice::Text))
+        throw "read error: couldn't open file \"" + filepath.toStdString() + "\"";
 
     QByteArray stateData = stateFile.readAll();
     QJsonDocument saveDoc(QJsonDocument::fromJson(stateData));
     QJsonObject jsonObj = saveDoc.object();
 
+    // Load player tank
     if (const QJsonValue v = jsonObj[PLAYER_KEY]; v.isObject())
     {
-        QJsonObject jsonPlayerObj = v.toObject();
+        try {
+            QJsonObject jsonPlayerObj = v.toObject();
+            vec3 position, direction;
 
-        vec3 position;
-        vec3 direction;
+            if (const QJsonValue posVal = jsonPlayerObj[POS_KEY]; posVal.isArray())
+                position = JsonHelpers::getVec3FromJson(posVal.toArray());
+            else
+                throw std::invalid_argument("Expected an array for \"position\"");
 
-        if (const QJsonValue posVal = jsonPlayerObj[POS_KEY]; posVal.isArray())
-            position = JsonHelpers::getVec3FromJson(posVal.toArray());
-        else
-            qWarning("Expected an array for \"position\"");
+            if (const QJsonValue dirVal = jsonPlayerObj[DIR_KEY]; dirVal.isArray())
+                direction = JsonHelpers::getVec3FromJson(dirVal.toArray());
+            else
+                throw std::invalid_argument("Expected an array for \"direction\"");
 
-        if (const QJsonValue dirVal = jsonPlayerObj[DIR_KEY]; dirVal.isArray())
-            direction = JsonHelpers::getVec3FromJson(dirVal.toArray());
-        else
-            qWarning("Expected an array for \"direction\"");
-
-        // TODO: construct and add object
-        // obj = PlayerTank(position, direction);
-        // addObject(obj);
+            // TODO: construct and add object
+            // obj = PlayerTank(position, direction);
+            // addObject(obj);
+        }
+        catch (std::invalid_argument &e) {
+            qWarning("Error loading player tank: %s", e.what());
+        }
     }
 
+    // Load enemy tank
     if (const QJsonValue v = jsonObj[ENEMY_KEY]; v.isObject())
     {
-        QJsonObject jsonEnemyObj = v.toObject();
-        // TODO
+        try {
+            QJsonObject jsonEnemyObj = v.toObject();
+            vec3 position, direction;
+
+            if (const QJsonValue posVal = jsonEnemyObj[POS_KEY]; posVal.isArray())
+                position = JsonHelpers::getVec3FromJson(posVal.toArray());
+            else
+                throw std::invalid_argument("Expected an array for \"position\"");
+
+            if (const QJsonValue dirVal = jsonEnemyObj[DIR_KEY]; dirVal.isArray())
+                direction = JsonHelpers::getVec3FromJson(dirVal.toArray());
+            else
+                throw std::invalid_argument("Expected an array for \"direction\"");
+
+            // TODO: construct and add object
+            // obj = EnemyTank(position, direction);
+            // addObject(obj);
+        }
+        catch (std::invalid_argument &e) {
+            qWarning("Error loading enemy tank: %s", e.what());
+        }
     }
 
+    // Load obstacles
     if (const QJsonValue v = jsonObj[OBSTACLES_KEY]; v.isArray())
     {
         const QJsonArray jsonObstacleObjs = v.toArray();
         for (const QJsonValue &obsVal : jsonObstacleObjs)
         {
-            QJsonObject jsonObstacleObj = obsVal.toObject();
-            // TODO
+            try {
+                QJsonObject jsonObstacleObj = obsVal.toObject();
+                vec3 position;
+                float radius;
+
+                if (const QJsonValue posVal = jsonObstacleObj[POS_KEY]; posVal.isArray())
+                    position = JsonHelpers::getVec3FromJson(posVal.toArray());
+                else
+                    throw std::invalid_argument("Expected an array for \"position\"");
+
+                if (const QJsonValue radVal = jsonObstacleObj[RAD_KEY]; radVal.isDouble())
+                    radius = radVal.toDouble();
+                else
+                    throw std::invalid_argument("Expected a double for \"radius\"");
+
+                addObject(new Obstacle(nullptr, 0, position, radius));
+            }
+            catch (std::invalid_argument &e) {
+                qWarning("Error loading an obstacle: %s", e.what());
+            }
         }
     }
 }
@@ -103,3 +143,10 @@ std::vector<GameObject*>::const_iterator GameState::end() const {
     return objs.end();
 }
 
+std::vector<GameObject*>::const_iterator GameState::begin() const {
+    return objs.begin();
+}
+
+std::vector<GameObject*>::const_iterator GameState::end() const {
+    return objs.end();
+}
