@@ -28,7 +28,7 @@ public:
 
     // Constructor and destructor
     explicit OptionsMenu(QWidget *parent = nullptr);
-    ~OptionsMenu() override;
+    ~OptionsMenu() default;
 
 };
 

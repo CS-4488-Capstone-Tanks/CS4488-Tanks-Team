@@ -31,17 +31,3 @@ MainMenu::MainMenu(QWidget *parent) : QWidget(parent) {
     // Set layout
     this->setLayout(layout);
 }
-
-/**
- * @author Luna Steed
- * @time 3/24/2024
- * @brief Destructor for the main menu
- */
-MainMenu::~MainMenu() {
-    delete title;
-    delete playButton;
-    delete optionsButton;
-    delete exitButton;
-    delete layout;
-    delete this;
-}

@@ -41,22 +41,3 @@ OptionsMenu::OptionsMenu(QWidget *parent) {
     // Set layout
     this->setLayout(layout);
 }
-
-/**
- * @author Luna Steed
- * @time 3/24/2024
- * @brief Destructor for the options menu
- */
-OptionsMenu::~OptionsMenu() {
-    delete returnButton;
-    delete menuTitle;
-    delete volumeLabel;
-    delete volumeSlider;
-    delete resolutionLabel;
-    delete resolutionComboBox;
-    delete resolutions;
-    delete fullscreenLabel;
-    delete fullscreenCheckBox;
-    delete layout;
-    delete this;
-}

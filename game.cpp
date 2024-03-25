@@ -31,10 +31,8 @@ Game::Game(int argc, char** argv) : QApplication(argc, argv), timer(new QTimer(t
  * @details Destructor for the Game class. Deletes the GameWindow and Scene objects.
  */
 Game::~Game() {
-    delete &timer;
     delete gw;
     delete sc;
-    delete this;
 }
 
 
