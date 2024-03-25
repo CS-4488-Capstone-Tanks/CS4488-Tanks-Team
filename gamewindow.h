@@ -10,10 +10,6 @@
 class GameWindow : public QWindow {
     Q_OBJECT
 
-protected:
-    // Protected Variables
-    QWindow win; // win is protected so that any child classes can access it, if need be.
-
 private:
     // Private Variables
     MenuManager menuMan;

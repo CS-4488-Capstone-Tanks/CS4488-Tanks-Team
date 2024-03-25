@@ -135,14 +135,14 @@ QWidget* GameWindow::cacheMiss(int key)
  * @brief GameWindow: Constructor
  * @details Constructor for the GameWindow class. Initializes the MenuManager, QWindow, Renderer, and widgetCache.
  */
-GameWindow::GameWindow(): menuMan(MenuManager()), win(QWindow()), renderer(Renderer()), widgetCache({})
+GameWindow::GameWindow(): menuMan(MenuManager()), renderer(Renderer()), widgetCache({})
 {
     activeKey = GAME_KEY;
     changeWidget(activeKey);
 
-    win.create();
+    this->create();
     QSize qsize = QSize(1200, 900);
-    win.setBaseSize(qsize);
+    this->setBaseSize(qsize);
 }
 
 /**
