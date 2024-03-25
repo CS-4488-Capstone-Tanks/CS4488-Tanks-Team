@@ -7,12 +7,14 @@
 
 #include "scene.h"
 #include "gamewindow.h"
+#include <QObject>
 #include <QApplication>
 #include <QTimer>
 #include <QKeyEvent>
 #include <iostream>
 
 class Game : public QApplication{
+    Q_OBJECT
 private:
     // Private Variables
     GameWindow* gw;
