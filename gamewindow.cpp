@@ -89,3 +89,29 @@ void GameWindow::hideWidget()
         throw e;
     }
 }
+
+// Public Q Slots: keyPressEvent(QKeyEvent *event), keyReleaseEvent(QKeyEvent *event)
+/**
+ * @author Luna Steed
+ * @time Spring 2024
+ * @brief GameWindow::keyPressEvent: Handle key press events
+ * @details Handle key press events by passing them to the game window.
+ * @param event The key press event
+ */
+void GameWindow::keyPressEvent(QKeyEvent *event)
+{
+    emit keySignal(event);
+}
+
+
+/**
+ * @author Luna Steed
+ * @time Spring 2024
+ * @brief GameWindow::keyReleaseEvent: Handle key release events
+ * @details Handle key release events by passing them on to
+ * @param event The key release event
+ */
+void GameWindow::keyReleaseEvent(QKeyEvent *event)
+{
+    emit keySignal(event);
+}

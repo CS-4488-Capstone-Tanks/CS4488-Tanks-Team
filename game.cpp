@@ -13,9 +13,14 @@ Game::Game(int argc, char** argv) : QApplication(argc, argv), timer(new QTimer(t
     activeKey = MAIN_MENU_KEY;
     gw = new GameWindow();
     gw->show();
-    const char stateFilename[] = "test_game_state";
-    sc = new Scene(60.0f/1000, const_cast<char *>(stateFilename));
+    std::string stateFilename = "test_game_state";
+    sc = new Scene(60.0f/1000, stateFilename);
     inGame = false;
+
+    connect(gw, &GameWindow::keySignal, this, &Game::filterKeyEvent); // Connect the GameWindow's keySignal to the Game's filterKeyEvent
+    auto *playerTank = sc->getPlayerTank(); // The scene holds a reference to the player tank, so we retrieve it
+    // connect(this, &Game::playerControlSignal, playerTank, Tank::handleKeyEvent);
+    // Waiting on Tank::handleKeyEvent to be implemented
 }
 
 
@@ -26,8 +31,6 @@ Game::Game(int argc, char** argv) : QApplication(argc, argv), timer(new QTimer(t
  * @details Destructor for the Game class. Deletes the GameWindow and Scene objects.
  */
 Game::~Game() {
-    delete &activeKey;
-    delete &inGame;
     delete &timer;
     delete gw;
     delete sc;
@@ -155,7 +158,7 @@ void Game::filterKeyEvent(QKeyEvent *event) {
                 gw->changeWidget(activeKey);
                 break;
             }
-        // Player controls
+        // Player controls. DOES NOT HANDLE PRESS/RELEASE EVENTS: PlayerTank must handle this.
         // WASD
         case Qt::Key_W:
         case Qt::Key_A:
@@ -170,7 +173,7 @@ void Game::filterKeyEvent(QKeyEvent *event) {
         case Qt::Key_Space:
         {
             if (inGame) {
-                emit playerControlSignal();
+                emit Game::playerControlSignal(event);
                 break;
             }
             else { // Functionality should only be available in-game
@@ -178,6 +181,4 @@ void Game::filterKeyEvent(QKeyEvent *event) {
             }
         }
     }
-
 }
-// PUBLIC Q Signal: playerControlSignal();

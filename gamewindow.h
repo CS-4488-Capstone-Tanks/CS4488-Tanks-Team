@@ -36,6 +36,12 @@ public:
     QWidget* changeWidget(int key);
     void displayWidget();
     void hideWidget();
+
+public slots:
+    void keyPressEvent(QKeyEvent *event) override;
+    void keyReleaseEvent(QKeyEvent *event) override;
+signals:
+    void keySignal(QKeyEvent *event);
 };
 
 

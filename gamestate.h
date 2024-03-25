@@ -62,23 +62,22 @@ public:
      */
     void addObject(GameObject *const obj);
 
-    [[nodiscard]] std::vector<GameObject*>::const_iterator begin() const;
-    [[nodiscard]] std::vector<GameObject*>::const_iterator end() const;
+
+
 
 	/**
 	 * @return A constant iterator pointing to the beginning of the vector of GameObject pointers.
 	 * @author Tyson Cox (implemented by Koda Koziol)
 	 * @date SPRING 2024
 	 */
-    std::vector<GameObject*>::const_iterator begin() const;
+    [[nodiscard]] std::vector<GameObject*>::const_iterator begin() const;
 
 	/**
 	 * @return A constant iterator pointing to the end of the vector of GameObject pointers.
 	 * @author Tyson Cox (implemented by Koda Koziol)
 	 * @date SPRING 2024
 	 */
-    std::vector<GameObject*>::const_iterator end() const;
-
+    [[nodiscard]] std::vector<GameObject*>::const_iterator end() const;
 
 
 private:

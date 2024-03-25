@@ -33,6 +33,14 @@ std::vector<GameObject*>::const_iterator Scene::end() const {
     return gameState.end();
 }
 
+GameObject* Scene::getPlayerTank(){
+    for (auto it : *this){
+        if (it->getType() == GameObjectType::PlayerTank){
+            return it;
+        }
+    }
+    return nullptr;
+}
 
 void Scene::update()
 {

@@ -142,11 +142,3 @@ std::vector<GameObject*>::const_iterator GameState::begin() const {
 std::vector<GameObject*>::const_iterator GameState::end() const {
     return objs.end();
 }
-
-std::vector<GameObject*>::const_iterator GameState::begin() const {
-    return objs.begin();
-}
-
-std::vector<GameObject*>::const_iterator GameState::end() const {
-    return objs.end();
-}

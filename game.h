@@ -23,7 +23,7 @@ private:
 
 
     // Private Functions
-    int start();
+
     void pause();
     void resume();
     void end();
@@ -36,12 +36,13 @@ public:
     // Public Functions
     Game(int argc, char** argv);
     ~Game() override;
+    int start();
 
 public slots:
     void filterKeyEvent(QKeyEvent *event);
 
 signals:
-    void playerControlSignal();
+    void playerControlSignal(QKeyEvent *event);
 };
 
 #endif //TANKS_GAME_H
