@@ -2,7 +2,7 @@
 #include <QMessageBox>
 #include <iostream>
 
-Scene::Scene(float dT, char stateFilename[], QObject *parent)
+Scene::Scene(float dT, std::string stateFilename, QObject *parent)
     : QObject{parent}
 {
     deltaTime = dT;
@@ -23,6 +23,16 @@ void Scene::setPaused(bool p)
 {
     isPaused = p;
 }
+
+
+std::vector<GameObject*>::const_iterator Scene::begin() const {
+    return gameState.begin();
+}
+
+std::vector<GameObject*>::const_iterator Scene::end() const {
+    return gameState.end();
+}
+
 
 void Scene::update()
 {
