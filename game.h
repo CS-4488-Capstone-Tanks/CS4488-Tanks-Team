@@ -18,11 +18,12 @@ private:
     Scene* sc;
     QTimer timer;
     bool inGame;
+    void pause();
+    void resume();
 
 private slots:
     void tick();
-    void pause();
-    void resume();
+
 
 public:
     // Public Functions
