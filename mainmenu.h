@@ -18,7 +18,7 @@ public:
     QGridLayout *layout;
 
     explicit MainMenu(QWidget *parent = nullptr);
-    ~MainMenu() default;
+    ~MainMenu() = default;
 };
 
 

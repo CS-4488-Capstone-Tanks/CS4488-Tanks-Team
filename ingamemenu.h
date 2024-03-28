@@ -15,7 +15,7 @@ class InGameMenu : public QWidget {
 
 public:
     explicit InGameMenu(QWidget *parent = nullptr);
-    ~InGameMenu() default;
+    ~InGameMenu() = default;
 };
 
 
