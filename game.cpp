@@ -10,9 +10,9 @@
  * @details Constructor for the Game class. Initializes the GameWindow and Scene objects, and sets inGame to false.
  */
 Game::Game(int argc, char** argv) : QApplication(argc, argv), timer(new QTimer(this)) {
-    activeKey = GAME_KEY;
+    activeKey = MAIN_MENU_KEY;
     gw = new GameWindow(this, activeKey);
-    QSize qsize = QSize(1200, 900); // Set the size of the window
+    QSize qsize = QSize(800, 600); // Set the size of the window
     gw->setFixedSize(qsize); // Set the fixed size of the window (no resizing allowed
     gw->show();
     std::string stateFilename = "test_game_state";
