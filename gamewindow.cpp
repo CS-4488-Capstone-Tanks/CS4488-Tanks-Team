@@ -10,7 +10,7 @@
  * @brief GameWindow: Constructor
  * @details Constructor for the GameWindow class. Initializes the MenuManager, QWindow, Renderer, and widgetCache.
  */
-GameWindow::GameWindow()
+GameWindow::GameWindow(QObject *parent, int startKey)
 {
     // Set up the widget cache
     rend = new Renderer();
@@ -25,13 +25,11 @@ GameWindow::GameWindow()
             {OPTIONS_MENU_KEY, optionsMenu}
     };
 
-    activeKey = MAIN_MENU_KEY;
+    activeKey = startKey;
 
     changeWidget(activeKey);
 
     this->create();
-    QSize qsize = QSize(1200, 900);
-    this->setBaseSize(qsize);
 }
 
 /**

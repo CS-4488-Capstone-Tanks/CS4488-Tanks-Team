@@ -32,7 +32,7 @@ private:
 
 public:
     // Public Functions
-    GameWindow();
+    explicit GameWindow(QObject *parent = nullptr, int startKey = MAIN_MENU_KEY);
     QWidget* changeWidget(int key);
     void displayWidget();
     void hideWidget();
