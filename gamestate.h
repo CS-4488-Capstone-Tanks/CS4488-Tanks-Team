@@ -62,6 +62,14 @@ public:
      */
     void addObject(GameObject *const obj);
 
+    /**
+     * @brief Remove a GameObject from the GameState.
+     * @param entityID
+     * @author Koda Koziol
+     * @date SPRING 2024
+     */
+    void removeObject(uint32_t entityID);
+
 
 
 
@@ -83,14 +91,6 @@ public:
 private:
     std::vector<GameObject*> objs;
     int nextFreeEntityID = 0;
-
-    /**
-     * @brief Remove a GameObject from the GameState.
-     * @param entityID
-     * @author Koda Koziol
-     * @date SPRING 2024
-     */
-    void removeObject(uint32_t entityID);
 };
 
 #endif // GAMESTATE_H
