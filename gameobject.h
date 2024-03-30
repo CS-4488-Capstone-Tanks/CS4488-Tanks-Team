@@ -7,36 +7,94 @@
 
 using namespace glm;
 
+
+/**
+ * @brief The GameObject class is the base class for all objects in the game.
+    It holds the properties that all objects have, such as position and direction.
+    It also has methods for updating the object's state and for initializing the object.
+ * @author Koda Koziol
+ * @date SPRING 2024
+ */
 class GameObject : public QObject
 {
     Q_OBJECT
+	
 public:
-    explicit GameObject(QObject *parent = nullptr);
+
+    /**
+     * @brief Constructor for the GameObject.
+     * @param type: The GameObjectType of the GameObject. This is used so
+        the renderer can differentiate between different types of GameObjects.
+     * @param parent: The parent of the GameObject.
+     * @author Koda Koziol
+     * @date SPRING 2024
+     */
+    explicit GameObject(GameObjectType type, QObject *parent = nullptr);
 
 
     /**
-     * This method gets called once immediately before the very first
-        doUpdate() call. Initialize GameObject properties here.
+     * @brief This method gets called once immediately before the very first
+        doUpdate() call. Override and initialize GameObject properties here.
+     * @author Koda Koziol
+     * @date SPRING 2024
      */
     virtual void doStart();
 
     /**
-     * This method gets called once every update period on every GameObject.
-     * Override it to change position, direction,
-       or other properties over time.
+     * @brief This method gets called once every update period on every GameObject.
+        Override it to change position, direction, or other properties over time.
      * @param float deltaTime: The time elapsed since the last update in
         seconds(?). This is a fixed value. Example: If you increment a
         property every frame by a number, its "speed" will be measured in
         units-per-frame (or meters-per-frame if you wish). If you want to
         work in units-per-second, multiply "speed" by deltaTime to convert to
         units-per-frame.
+     * @author Koda Koziol
+     * @date SPRING 2024
      */
     virtual void doUpdate(float deltaTime);
 
-    vec3 getPosition();
-    vec3 getDirection();
-    GameObjectType getType();
-    uint32_t getEntityID();
+    /**
+     * @return The position of the GameObject in 3D space.
+     * @author Koda Koziol
+     * @date SPRING 2024
+     */
+    vec3 getPosition() const;
+
+    /**
+     * @return The direction the GameObject is facing in 3D space.
+     * @author Koda Koziol
+     * @date SPRING 2024
+     */
+    vec3 getDirection() const;
+
+    /**
+     * @return The GameObjectType of the GameObject. This is used to
+        differentiate between different types of GameObjects.
+     * @author Koda Koziol
+     * @date SPRING 2024
+    */
+    GameObjectType getType() const;
+
+    /**
+     * @return The Entity ID of the GameObject. This is a unique identifier
+        for each GameObject in the game. It is used to differentiate between
+        different GameObjects and is assigned by the GameState when the
+        GameObject is added to the GameState.
+     * @author Koda Koziol
+     * @date SPRING 2024
+    */
+    uint32_t getEntityID() const;
+
+    /**
+     * @brief Set the Entity ID of the GameObject. This should only be called by the GameState
+        when the GameObject is added to the GameState. It should not be called by the GameObject
+        itself.
+     * @param id: The Entity ID to set for the GameObject. This should be a unique identifier
+        for each GameObject in the game.
+     * @author Koda Koziol
+     * @date SPRING 2024
+    */
     void setEntityID(int id);
 
 
@@ -47,7 +105,6 @@ protected:
     uint32_t entityID;
     GameObjectType type;
 
-signals:
 };
 
 #endif // GAMEOBJECT_H

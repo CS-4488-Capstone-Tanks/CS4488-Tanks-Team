@@ -7,7 +7,7 @@
 
 //Constructor for the Projectile class
 Projectile::Projectile(QObject *parent, uint32_t entityID)
-        : GameObject(parent), velocity(glm::vec3(0.0f)), lifetime(10.0f), collider(glm::vec3(0.0f), 1.0f) {
+        : GameObject(type, parent), velocity(glm::vec3(0.0f)), lifetime(10.0f), collider(glm::vec3(0.0f), 1.0f) {
     this->entityID = entityID;
     //Set the game object's type to Projectile
     this->type = GameObjectType::Projectile;

@@ -9,7 +9,8 @@ int main(int argc, char** argv) {
     label.show();
 
     // example
-    Scene scene(60.0f/1000, "test_game_state");
+    std::string stateName = "test_game_state";
+    Scene scene(60.0f/1000, stateName);
     scene.start();
     scene.update(); //This will a slot called by signals
     // example
