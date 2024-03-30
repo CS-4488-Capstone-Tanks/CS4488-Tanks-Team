@@ -6,10 +6,19 @@
 #define TANKS_ENEMYTANK_H
 
 
+#include <QTimer>
 #include "Tank.h"
 
 class EnemyTank : public Tank {
     Q_OBJECT
+
+public:
+    explicit EnemyTank();
+
+    void doUpdate(float deltaTime) override;
+
+private:
+    QTimer shotTimer;
 
 //TODO: implement collider to detect when an obstacle has been hit. Use this for AI logic
 //TODO: Implement shooting at player

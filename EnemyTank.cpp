@@ -3,4 +3,23 @@
 //
 
 #include "EnemyTank.h"
+#include "glm/geometric.hpp"
 
+EnemyTank::EnemyTank() {
+
+}
+
+void EnemyTank::doUpdate(float deltaTime) {
+
+    //TODO have Tank face direction of PlayerTank
+
+    // Calculate the displacement vector based on speed, direction, and time
+    // Normalized so that the magnitude of the direction vector is always 1.
+    glm::vec3 displacement = glm::normalize(direction) * speed * deltaTime;
+
+    this->position += displacement;
+
+    this -> speed = 0;
+
+    this->shoot(direction)
+}

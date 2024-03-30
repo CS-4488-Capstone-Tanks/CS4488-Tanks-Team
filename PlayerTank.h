@@ -1,13 +1,20 @@
 #ifndef PLAYERTANK_H
 #define PLAYERTANK_H
 
+#include <QDataStream>
+#include <QTimer>
 #include "Tank.h"
 
 class PlayerTank : public Tank {
 Q_OBJECT
 
 public:
-    void doUpdate(float deltaTime) override {};
+    explicit PlayerTank();
+
+    void doUpdate(float deltaTime) override;
+
+private:
+    QTimer shotTimer;
 
 public slots:
     void moveForward();
@@ -15,7 +22,6 @@ public slots:
     void turnLeft();
     void moveBackward();
 
-private:
 };
 
 #endif // PLAYERTANK_H

@@ -22,7 +22,11 @@ public:
     ~Tank() override = default;
 
 protected:
-    int cooldown = 8; //Cooldown for firing is 8 seconds as per requirements.
-    const int MAX_COOLDOWN = 8;
+    const int MAX_COOLDOWN = 8000; //Cooldown for firing is 8 seconds as per requirements. Must be in millis.
+    bool canShoot = true;
+
+protected slots:
+    void allowShot() { canShoot = true; };
+
 };
 #endif //TANKS_TANK_H

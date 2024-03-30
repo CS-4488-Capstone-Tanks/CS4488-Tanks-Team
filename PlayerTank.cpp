@@ -3,12 +3,26 @@
 //
 #include <QKeyEvent>
 #include <glm/glm.hpp>
+#include <QDataStream>
 #include "PlayerTank.h"
 #include "glm/ext/matrix_transform.inl"
 
+explicit PlayerTank::PlayerTank(){
+    shotTimer = new QTimer(this);
+    connect(shotTimer, &QTimer::timeout, this, &PlayerTank::allowShot);
+}
 
-// Threw the constructor into the header since it wasn't happy here. It's in a better place now.
 
+void PlayerTank::doUpdate(float deltaTime) {
+
+    // Calculate the displacement vector based on speed, direction, and time
+    // Normalized so that the magnitude of the direction vector is always 1.
+    glm::vec3 displacement = glm::normalize(direction) * speed * deltaTime;
+
+    this->position += displacement;
+
+    this -> speed = 0;
+}
 
 void PlayerTank::moveForward() {
     this->speed = 1.0;
@@ -38,4 +52,12 @@ void PlayerTank::turnLeft() {
 
 void PlayerTank::moveBackward() {
     this->speed = -1.0;
+}
+
+void PlayerTank::shoot(glm::vec3 direction) {
+    if (canShoot){
+        canShoot = false;
+        shotTimer->start(this->MAX_COOLDOWN);
+        //TODO spawn and add projectile to gamestate
+    }
 }
