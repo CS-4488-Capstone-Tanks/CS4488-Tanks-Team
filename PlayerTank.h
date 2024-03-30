@@ -9,7 +9,7 @@ class PlayerTank : public Tank {
 Q_OBJECT
 
 public:
-    explicit PlayerTank();
+    explicit PlayerTank(QObject *parent = nullptr);
 
     void doUpdate(float deltaTime) override;
 

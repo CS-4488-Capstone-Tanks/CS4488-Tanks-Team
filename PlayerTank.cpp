@@ -7,7 +7,7 @@
 #include "PlayerTank.h"
 #include "glm/ext/matrix_transform.inl"
 
-PlayerTank::PlayerTank(){
+PlayerTank::PlayerTank(QObject *parent): Tank(parent, GameObjectType::PlayerTank){
     //shotTimer = new QTimer(this);
     //connect(shotTimer, &QTimer::timeout, this, &PlayerTank::allowShot);
 }

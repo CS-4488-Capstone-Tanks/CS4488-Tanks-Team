@@ -10,7 +10,7 @@
 class Tank : public GameObject {
 Q_OBJECT
 public:
-    explicit Tank(QObject *parent = nullptr): GameObject(parent) {
+    explicit Tank(QObject *parent = nullptr, GameObjectType type = GameObjectType::EnemyTank): GameObject(type, parent) {
         // Initialize player tank position, speed, etc.
         // Connect key events to handleKeyPress() slot
     };
