@@ -132,7 +132,15 @@ void GameState::addObject(GameObject *const obj)
 
 void GameState::removeObject(uint32_t entityID)
 {
-    // TODO
+    for (auto it = objs.begin(); it != objs.end(); ++it)
+    {
+        if ((*it)->getEntityID() == entityID)
+        {
+            delete *it;
+            objs.erase(it);
+            return;
+        }
+    }
 }
 
 
