@@ -7,9 +7,9 @@
 #include "PlayerTank.h"
 #include "glm/ext/matrix_transform.inl"
 
-explicit PlayerTank::PlayerTank(){
-    shotTimer = new QTimer(this);
-    connect(shotTimer, &QTimer::timeout, this, &PlayerTank::allowShot);
+PlayerTank::PlayerTank(){
+    //shotTimer = new QTimer(this);
+    //connect(shotTimer, &QTimer::timeout, this, &PlayerTank::allowShot);
 }
 
 
@@ -54,10 +54,10 @@ void PlayerTank::moveBackward() {
     this->speed = -1.0;
 }
 
-void PlayerTank::shoot(glm::vec3 direction) {
+void Tank::shoot(glm::vec3 direction) {
     if (canShoot){
         canShoot = false;
-        shotTimer->start(this->MAX_COOLDOWN);
+        //shotTimer->start(this->MAX_COOLDOWN);
         //TODO spawn and add projectile to gamestate
     }
 }

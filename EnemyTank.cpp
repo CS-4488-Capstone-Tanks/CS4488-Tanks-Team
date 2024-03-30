@@ -21,5 +21,5 @@ void EnemyTank::doUpdate(float deltaTime) {
 
     this -> speed = 0;
 
-    this->shoot(direction)
+    this->shoot(direction);
 }
