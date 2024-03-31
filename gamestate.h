@@ -13,6 +13,12 @@
  * The GameState class manages the game objects in the Scene.
  * It is responsible for loading (and saving later) the state of the game.
  * It also updates all game objects in the scene.
+ * 
+ * Be aware that this is a singleton class, so you should not create an instance of it,
+ * but instead use the getInstance() method to get the instance of the GameState.
+ * 
+ * Also be aware that this class is not currently thread-safe.
+ * 
  * @author Koda Koziol
  * @date SPRING 2024
 */
