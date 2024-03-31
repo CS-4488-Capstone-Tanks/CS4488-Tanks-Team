@@ -23,3 +23,11 @@ void EnemyTank::doUpdate(float deltaTime) {
 
     this->shoot(direction);
 }
+
+void EnemyTank::shoot(glm::vec3 direction) {
+    if (canShoot){
+        canShoot = false;
+        //shotTimer->start(this->MAX_COOLDOWN);
+        //TODO spawn and add projectile to gamestate
+    }
+}

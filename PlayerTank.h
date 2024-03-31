@@ -15,6 +15,7 @@ public:
 
 private:
     QTimer shotTimer;
+    void shoot(glm::vec3 direction) override;
 
 public slots:
     void moveForward();

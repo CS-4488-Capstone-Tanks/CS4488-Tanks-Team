@@ -19,6 +19,7 @@ public:
 
 private:
     QTimer shotTimer;
+    void shoot(glm::vec3 direction) override;
 
 //TODO: implement collider to detect when an obstacle has been hit. Use this for AI logic
 //TODO: Implement shooting at player

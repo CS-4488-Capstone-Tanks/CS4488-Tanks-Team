@@ -54,7 +54,7 @@ void PlayerTank::moveBackward() {
     this->speed = -1.0;
 }
 
-void Tank::shoot(glm::vec3 direction) {
+void PlayerTank::shoot(glm::vec3 direction) {
     if (canShoot){
         canShoot = false;
         //shotTimer->start(this->MAX_COOLDOWN);
