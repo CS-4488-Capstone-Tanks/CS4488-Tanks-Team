@@ -124,10 +124,11 @@ void GameState::loadState(std::string filename)
     }
 }
 
-void GameState::addObject(GameObject *const obj)
+int GameState::addObject(GameObject *const obj)
 {
-    obj->setEntityID(nextFreeEntityID++);
+    obj->setEntityID(nextFreeEntityID);
     objs.push_back(obj);
+    return nextFreeEntityID++;
 }
 
 void GameState::removeObject(uint32_t entityID)
