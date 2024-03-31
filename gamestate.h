@@ -60,7 +60,7 @@ public:
      * @author Koda Koziol
      * @date SPRING 2024
      */
-    void addObject(GameObject *const obj);
+    int addObject(GameObject *const obj);
 
     /**
      * @brief Remove a GameObject from the GameState.
