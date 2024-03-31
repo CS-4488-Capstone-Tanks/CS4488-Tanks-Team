@@ -224,7 +224,7 @@ void Renderer::togglePeriscope() {
 }
 
 
-void Renderer::drawObject(GameObject* object) {
+void Renderer::drawObject(const GameObject* object) {
     DrawCommand cmd{};
 
     /* TODO: uncomment this once objects are implemented

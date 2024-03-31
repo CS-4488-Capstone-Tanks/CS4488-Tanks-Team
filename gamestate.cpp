@@ -143,7 +143,6 @@ void GameState::removeObject(uint32_t entityID)
     }
 }
 
-
 std::vector<GameObject*>::const_iterator GameState::begin() const {
     return objs.begin();
 }

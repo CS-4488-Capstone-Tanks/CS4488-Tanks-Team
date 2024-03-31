@@ -68,6 +68,12 @@ private:
 
 signals:
 public slots:
+    /**
+     * @author Luna Steed
+     * @time Spring 2024
+     * @brief Scene::getPlayerTank() returns the player's tank
+     */
+     GameObject* getPlayerTank();
 
     /**
      * @brief Update the scene. This should be called once per frame.
