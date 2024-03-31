@@ -7,7 +7,7 @@ Scene::Scene(float dT, std::string stateFilename, QObject *parent)
 {
     deltaTime = dT;
     try {
-        gameState.loadState(stateFilename);
+        gameState->loadState(stateFilename);
     }
     catch (std::string errStr){
         std::cout << "GameState failed to load: " + errStr << std::endl;
@@ -16,7 +16,7 @@ Scene::Scene(float dT, std::string stateFilename, QObject *parent)
 
 void Scene::start()
 {
-    gameState.startState();
+    gameState->startState();
 }
 
 void Scene::setPaused(bool p)
@@ -26,11 +26,11 @@ void Scene::setPaused(bool p)
 
 
 std::vector<GameObject*>::const_iterator Scene::begin() const {
-    return gameState.begin();
+    return gameState->begin();
 }
 
 std::vector<GameObject*>::const_iterator Scene::end() const {
-    return gameState.end();
+    return gameState->end();
 }
 
 GameObject* Scene::getPlayerTank(){
@@ -45,5 +45,5 @@ GameObject* Scene::getPlayerTank(){
 void Scene::update()
 {
     if (!isPaused)
-        gameState.updateState(deltaTime);
+        gameState->updateState(deltaTime);
 }
