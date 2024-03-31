@@ -16,6 +16,16 @@ const char RAD_KEY[] = "radius";
 
 GameState::GameState() {}
 
+GameState* GameState::instance = nullptr;
+
+GameState* GameState::getInstance()
+{
+    if (instance == nullptr)
+        instance = new GameState();
+
+    return instance;
+}
+
 void GameState::startState()
 {
     foreach (GameObject *const obj, objs) {

@@ -19,12 +19,13 @@
 class GameState
 {
 public:
-    /**
-     * @brief Constructor for the GameState.
-     * @author Koda Koziol
-     * @date SPRING 2024
-     */
-    GameState();
+	/**
+	 * @brief Get the instance of the GameState. If the GameState has not been created yet,
+		it will be created.
+	 * @return GameState*: The instance of the GameState. This is a singleton class.
+	 * @date SPRING 2024
+	 */
+	static GameState* getInstance();
 
     /**
      * @brief Should be once at the start of the game. This method will call the doStart()
@@ -71,8 +72,6 @@ public:
     void removeObject(uint32_t entityID);
 
 
-
-
 	/**
 	 * @return A constant iterator pointing to the beginning of the vector of GameObject pointers.
 	 * @author Tyson Cox (implemented by Koda Koziol)
@@ -91,6 +90,15 @@ public:
 private:
     std::vector<GameObject*> objs;
     int nextFreeEntityID = 0;
+
+   /**
+    * @brief Constructor for the GameState.
+    * @author Koda Koziol
+    * @date SPRING 2024
+    */
+   GameState();
+
+   static GameState* instance;
 };
 
 #endif // GAMESTATE_H
