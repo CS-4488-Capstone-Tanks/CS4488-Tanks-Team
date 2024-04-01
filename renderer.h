@@ -36,7 +36,9 @@ class Renderer : public QOpenGLWidget, public QOpenGLExtraFunctions {
     struct Mesh {
         unsigned int vao;
         unsigned int vbo;
+        unsigned int ebo;
         int vertexCount;
+        int indexCount;
     };
 
     std::unordered_map<std::string, Mesh> meshes;
@@ -52,7 +54,7 @@ class Renderer : public QOpenGLWidget, public QOpenGLExtraFunctions {
     unsigned int texturedShader;
 
     bool usingPeriscope;
-    static const glm::vec3 constexpr cameraTopPosition = glm::vec3(0, 10, -5);
+    static const glm::vec3 constexpr cameraTopPosition = glm::vec3(0, 20, -30);
 
     glm::mat4 view;
     glm::mat4 projection;

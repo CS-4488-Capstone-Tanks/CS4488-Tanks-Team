@@ -37,7 +37,8 @@ out vec4 fragColor;
 uniform sampler2D imageTexture;
 
 void main() {
-    fragColor = texture(imageTexture, texCoord);
+    //fragColor = texture(imageTexture, texCoord);
+    fragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 })";
 
 
@@ -61,10 +62,12 @@ Renderer::Mesh Renderer::meshFromFile(const std::filesystem::path& path) {
     // Create the vertex array and buffer
     glGenVertexArrays(1, &m.vao);
     glGenBuffers(1, &m.vbo);
+    glGenBuffers(1, &m.ebo);
 
     // Bind them, and upload the data to the GPU buffer
     glBindVertexArray(m.vao);
     glBindBuffer(GL_ARRAY_BUFFER, m.vbo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m.ebo);
 
     const aiMesh* mesh = scene->mMeshes[0];
 
@@ -73,11 +76,10 @@ Renderer::Mesh Renderer::meshFromFile(const std::filesystem::path& path) {
 
     std::vector<float> interleavedBuffer;
     for(size_t i = 0; i < mesh->mNumVertices; i++) {
-        if (mesh->HasPositions()) {
-            interleavedBuffer.push_back(mesh->mVertices[i].x);
-            interleavedBuffer.push_back(mesh->mVertices[i].y);
-            interleavedBuffer.push_back(mesh->mVertices[i].z);
-        }
+        interleavedBuffer.push_back(mesh->mVertices[i].x);
+        interleavedBuffer.push_back(mesh->mVertices[i].y);
+        interleavedBuffer.push_back(mesh->mVertices[i].z);
+
         if (mesh->HasTextureCoords(0)) { // Assuming the first set of texture coordinates
             interleavedBuffer.push_back(mesh->mTextureCoords[0][i].x);
             interleavedBuffer.push_back(mesh->mTextureCoords[0][i].y);
@@ -89,35 +91,51 @@ Renderer::Mesh Renderer::meshFromFile(const std::filesystem::path& path) {
         }
     }
 
+    std::vector<unsigned int> indices;
+    for(size_t i = 0; i < mesh->mNumFaces; i++) {
+        const auto& face = mesh->mFaces[i];
+
+        for(size_t j = 0; j < face.mNumIndices; j++) {
+            indices.push_back(face.mIndices[j]);
+        }
+    }
+
+
     // Upload our data to the GPU
     // Store it in the array buffer
     // Pass how big our data is, and the pointer to it
     // Lastly, it won't change often, so we use static draw
     glBufferData(GL_ARRAY_BUFFER, interleavedBuffer.size() * sizeof(float), interleavedBuffer.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+
+    // Stride is the total size of a vertex in bytes
+    GLsizei stride = 3 * sizeof(float);
+
+    if (mesh->HasTextureCoords(0)) { stride += 2 * sizeof(float); }
+    if (mesh->HasNormals()) { stride += 3 * sizeof(float); }
+
 
     size_t bufferOffset = 0;
 
-    if (mesh->HasPositions()) {
-        // Tell the vertex array that we want to:
-        // Enable attribute 0
-        // Which has three components (a vec3)
-        // of type float
-        // that is not normalized
-        // has total data size per element of 3 * sizeof(float)
-        // and starts at a certain offset in the buffer
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)bufferOffset);
-        glEnableVertexAttribArray(0);
-        bufferOffset += 3 * sizeof(float);
-    }
+    // Tell the vertex array that we want to:
+    // Enable attribute 0
+    // Which has three components (a vec3)
+    // of type float
+    // that is not normalized
+    // has total data size per vertex of stride
+    // and starts at a certain offset in the buffer
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)bufferOffset);
+    glEnableVertexAttribArray(0);
+    bufferOffset += 3 * sizeof(float);
 
     if (mesh->HasTextureCoords(0)) {
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)bufferOffset);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)bufferOffset);
         glEnableVertexAttribArray(1);
         bufferOffset += 2 * sizeof(float);
     }
 
     if (mesh->HasNormals()) {
-        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)bufferOffset);
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, (void*)bufferOffset);
         glEnableVertexAttribArray(2);
     }
 
@@ -125,6 +143,7 @@ Renderer::Mesh Renderer::meshFromFile(const std::filesystem::path& path) {
     glBindVertexArray(0);
 
     m.vertexCount = mesh->mNumVertices;
+    m.indexCount = indices.size();
 
     return m;
 }
@@ -318,8 +337,11 @@ void Renderer::paintGL() {
                 break;
         }
 
+        glBindVertexArray(m.vao);
+
         glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));  // set our mvp matrix for this draw
-        glDrawArrays(GL_TRIANGLES, 0, m.vertexCount);                       // execute a draw call
+        //glDrawArrays(GL_TRIANGLES, 0, m.vertexCount);                       // execute a draw call
+        glDrawElements(GL_TRIANGLES, m.indexCount, GL_UNSIGNED_INT, 0);
     }
 }
 
