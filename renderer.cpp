@@ -10,7 +10,7 @@
 #include <filesystem>
 
 
-//#include "gameobject.h"
+#include "gameobject.h"
 
 static const char* texturedVertexSource = R"(
 #version 450
@@ -227,7 +227,6 @@ void Renderer::togglePeriscope() {
 void Renderer::drawObject(const GameObject* object) {
     DrawCommand cmd{};
 
-    /* TODO: uncomment this once objects are implemented
     switch(object->getType()) {
         case GameObjectType::PlayerTank:
             cmd.type = DrawCommandType::Player;
@@ -247,6 +246,14 @@ void Renderer::drawObject(const GameObject* object) {
     // of its forward direction, and the world's up vector
     glm::vec3 pos = object->getPosition();
     glm::vec3 objectForward = object->getDirection();
+
+    if (objectForward == glm::vec3(0, 0, 0)) {
+        objectForward = glm::vec3(0, 0, -1);
+    }
+    else {
+        objectForward = glm::normalize(objectForward);
+    }
+
     glm::vec3 worldUp = glm::vec3(0, 1, 0);
     glm::vec3 objectRight = glm::normalize(glm::cross(worldUp, objectForward));
 
@@ -256,7 +263,6 @@ void Renderer::drawObject(const GameObject* object) {
     cmd.transform[3] = glm::vec4(pos, 1.0f);
 
     cmd.forwardPoint = pos + glm::normalize(objectForward);
-    */
 
     curFrame.emplace_back(cmd);
 }
