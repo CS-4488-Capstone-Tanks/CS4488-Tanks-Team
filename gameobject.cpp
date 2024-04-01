@@ -1,7 +1,12 @@
 #include "gameobject.h"
 
 // GameObject::GameObject(QObject *parent) { } //getting phased out
-GameObject::GameObject(GameObjectType type, QObject *parent) : type(type) { }
+GameObject::GameObject(GameObjectType type, QObject *parent)
+: type(type),
+position(0),
+direction(glm::vec3(0, 0, -1)),
+speed(0)
+{ }
 
 vec3 GameObject::getPosition() const { return position; }
 vec3 GameObject::getDirection() const { return direction; }
