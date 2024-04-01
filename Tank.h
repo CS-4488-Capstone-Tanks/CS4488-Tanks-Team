@@ -15,7 +15,6 @@ public:
         // Connect key events to handleKeyPress() slot
     };
 
-    // virtual void shoot(vec3 position, vec3 angle) = 0; // Commented out by Koda because my compiler didn't like that this function isn't implemented.
     void doUpdate(float deltaTime) override {};
 
     virtual void shoot(vec3 direction); //TODO spawn bullet outside collision box in direction tank is pointing (or mouse? unsure)
