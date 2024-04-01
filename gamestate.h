@@ -29,6 +29,7 @@ public:
 	 * @brief Get the instance of the GameState. If the GameState has not been created yet,
 		it will be created.
 	 * @return GameState*: The instance of the GameState. This is a singleton class.
+	 * @author Koda Koziol
 	 * @date SPRING 2024
 	 */
 	static GameState* getInstance();
@@ -103,6 +104,13 @@ private:
     * @date SPRING 2024
     */
    GameState();
+
+   /**
+	* @brief Destructor for the GameState. This will delete all GameObjects in the GameState.
+	* @author Koda Koziol
+	* @date SPRING 2024
+	*/
+   ~GameState();
 
    static GameState* instance;
 };
