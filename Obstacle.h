@@ -25,7 +25,7 @@ public:
      * @param entityID The unique identifier for this game object.
      * @param position The initial position of this game object in the game world.
      * @param colliderRadius The radius of the collider for this obstacle.
-     * @param direction The initial facing direction of this game object.
+     * @param direction The initial facing direction of this game object. Initialized to (0,0,-1)
      * @author Parker Hyde
      * @date SPRING 2024
      */
