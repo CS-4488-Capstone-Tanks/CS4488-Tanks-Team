@@ -337,7 +337,7 @@ void Renderer::drawObject(const GameObject* object) {
     glm::vec3 pos = object->getPosition();
     glm::vec3 objectForward = object->getDirection();
 
-    if (objectForward == glm::vec3(0, 0, 0)) {
+    if (glm::length(objectForward) < 0.001f) {
         objectForward = glm::vec3(0, 0, -1);
     }
     else {
