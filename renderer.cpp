@@ -27,6 +27,19 @@ void main() {
     texCoord = tex;
 })";
 
+static const char* coloredFragmentSource = R"(
+#version 450
+
+in vec2 texCoord;
+
+out vec4 fragColor;
+
+uniform vec3 color;
+
+void main() {
+    fragColor = vec4(color, 1.0f);
+})";
+
 static const char* texturedFragmentSource = R"(
 #version 450
 
@@ -155,7 +168,7 @@ void Renderer::meshDestroy(Renderer::Mesh& mesh) {
     mesh = {};
 }
 
-unsigned int Renderer::shaderFromSource(const char* vertex, const char* fragment) {
+Renderer::Shader Renderer::shaderFromSource(const char* vertex, const char* fragment) {
     // Create the two shader modules
     unsigned int vshader = glCreateShader(GL_VERTEX_SHADER);
     unsigned int fshader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -226,7 +239,28 @@ unsigned int Renderer::shaderFromSource(const char* vertex, const char* fragment
     glDeleteShader(vshader);
     glDeleteShader(fshader);
 
-    return program;
+    Shader shader {
+        .program = program
+    };
+
+    // Read out all the uniforms (variables we can set on the shader)
+
+    GLint numUniforms = 0;
+    glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &numUniforms);
+
+    GLchar uniformName[256];
+    for(GLint i = 0; i < numUniforms; i++) {
+        GLsizei length;
+        GLint size;
+        GLenum type;
+
+        glGetActiveUniform(program, i, sizeof(uniformName), &length, & size, &type, uniformName);
+        GLint location = glGetUniformLocation(program, uniformName);
+
+        shader.uniforms[uniformName] = location;
+    }
+
+    return shader;
 }
 
 void Renderer::doneWithFrame() {
@@ -311,11 +345,7 @@ void Renderer::paintGL() {
     glm::mat4 vp = projection * view;
     glm::mat4 mvp;
 
-    // Use the appropriate shader for drawing
-    glUseProgram(texturedShader);
 
-    // Get the numeric identifier of our uniform, for uploading data to
-    int mvpLocation = glGetUniformLocation(texturedShader, "mvp");
 
     for(auto& cmd : lastFrame) {
         mvp = vp * cmd.transform;
@@ -337,10 +367,18 @@ void Renderer::paintGL() {
                 break;
         }
 
+        Shader shader = shaders["textured"];
+
+        // Use the appropriate shader for drawing
+        glUseProgram(shader.program);
+
+        if (!shader.hasUniform("mvp")) {
+            std::cerr << "Invalid shader, has no mvp uniform\n";
+        }
+
         glBindVertexArray(m.vao);
 
-        glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(mvp));  // set our mvp matrix for this draw
-        //glDrawArrays(GL_TRIANGLES, 0, m.vertexCount);                       // execute a draw call
+        glUniformMatrix4fv(shader.uniforms["mvp"], 1, GL_FALSE, glm::value_ptr(mvp));  // set our mvp matrix for this draw
         glDrawElements(GL_TRIANGLES, m.indexCount, GL_UNSIGNED_INT, 0);
     }
 }
@@ -382,7 +420,7 @@ void Renderer::initializeGL() {
     usingPeriscope = false;
 
     try {
-        texturedShader = shaderFromSource(texturedVertexSource, texturedFragmentSource);
+        shaders["textured"] = shaderFromSource(texturedVertexSource, texturedFragmentSource);
 
         // Ensure the data exists as an empty mesh, so at worst, if the meshes aren't on disk, we just
         // don't draw them instead of crashing or something
@@ -419,4 +457,8 @@ Renderer::~Renderer() {
     }
 
     meshes.clear();
+}
+
+bool Renderer::Shader::hasUniform(const char* name) const {
+    return uniforms.find(name) != uniforms.end();
 }

@@ -41,7 +41,15 @@ class Renderer : public QOpenGLWidget, public QOpenGLExtraFunctions {
         int indexCount;
     };
 
+    struct Shader {
+        unsigned int program;
+        std::unordered_map<std::string, unsigned int> uniforms;
+
+        bool hasUniform(const char* name) const;
+    };
+
     std::unordered_map<std::string, Mesh> meshes;
+    std::unordered_map<std::string, Shader> shaders;
 
     // The list of draw commands for the last complete frame, and the currently being built frame
     // They are separate to ensure it never draws a half frame
@@ -51,8 +59,6 @@ class Renderer : public QOpenGLWidget, public QOpenGLExtraFunctions {
     unsigned int playerTexture;
     unsigned int enemyTexture;
 
-    unsigned int texturedShader;
-
     bool usingPeriscope;
     static const glm::vec3 constexpr cameraTopPosition = glm::vec3(0, 20, -30);
 
@@ -61,7 +67,7 @@ class Renderer : public QOpenGLWidget, public QOpenGLExtraFunctions {
 
     Mesh meshFromFile(const std::filesystem::path& path);
     void meshDestroy(Mesh& mesh);
-    unsigned int shaderFromSource(const char* vertex, const char* fragment);
+    Shader shaderFromSource(const char* vertex, const char* fragment);
 
 
     // The following are configuration parameters that can be easily tweaked
