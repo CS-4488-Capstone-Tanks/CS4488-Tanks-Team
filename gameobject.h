@@ -97,6 +97,21 @@ public:
     */
     void setEntityID(int id);
 
+	/**
+	 * @brief Queue the GameObject for destruction. This will mark the GameObject for
+		destruction and it will be removed from the GameState at the next update.
+	 * @author Koda Koziol
+	 * @date SPRING 2024
+	*/
+	void selfDestruct();
+
+	/**
+	 * @return True if the GameObject is queued for destruction, false otherwise.
+	 * @author Koda Koziol
+	 * @date SPRING 2024
+	*/
+	bool isQueuedForDestruction() const;
+
 
 protected:
     vec3 position = vec3(0,0,0);
@@ -104,6 +119,10 @@ protected:
     float speed = 0.0f;
     uint32_t entityID;
     GameObjectType type;
+
+
+private:
+	bool _isQueuedForDestruction = false;
 
 };
 

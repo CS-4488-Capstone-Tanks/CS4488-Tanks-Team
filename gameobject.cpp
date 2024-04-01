@@ -8,5 +8,7 @@ vec3 GameObject::getDirection() const { return direction; }
 GameObjectType GameObject::getType() const { return type; }
 uint32_t GameObject::getEntityID() const { return entityID; }
 void GameObject::setEntityID(int id) {entityID = id; }
+void GameObject::selfDestruct() { _isQueuedForDestruction = true; }
+bool GameObject::isQueuedForDestruction() const { return _isQueuedForDestruction; }
 void GameObject::doStart(){}
 void GameObject::doUpdate(float deltaTime){}
