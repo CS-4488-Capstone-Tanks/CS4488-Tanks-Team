@@ -61,9 +61,8 @@ public:
 
 
 private:
-    // NetworkManager networkManager
-    GameState gameState;
-    float deltaTime; // This should probably be initialized in game.h, where the QTimer is
+    GameState* gameState = GameState::getInstance();
+    float deltaTime;
     bool isPaused = false;
 
 signals:
