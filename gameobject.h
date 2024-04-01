@@ -127,9 +127,9 @@ public:
 
 
 protected:
-    vec3 position = vec3(0,0,0);
-    vec3 direction = vec3(0,0,0);
-    float speed = 0.0f;
+    vec3 position;
+    vec3 direction;
+    float speed;
     uint32_t entityID;
     GameObjectType type;
 
