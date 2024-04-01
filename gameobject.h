@@ -86,17 +86,6 @@ public:
     */
     uint32_t getEntityID() const;
 
-    /**
-     * @brief Set the Entity ID of the GameObject. This should only be called by the GameState
-        when the GameObject is added to the GameState. It should not be called by the GameObject
-        itself.
-     * @param id: The Entity ID to set for the GameObject. This should be a unique identifier
-        for each GameObject in the game.
-     * @author Koda Koziol
-     * @date SPRING 2024
-    */
-    void setEntityID(int id);
-
 	/**
 	 * @brief Queue the GameObject for destruction. This will mark the GameObject for
 		destruction and it will be removed from the GameState at the next update.

@@ -1,6 +1,7 @@
 #include "gamestate.h"
 #include "jsonhelpers.h"
 #include "Obstacle.h"
+#include "PlayerTank.h"
 
 const char LEVELS_PATH[] = "assets/levels/";
 
@@ -83,8 +84,7 @@ void GameState::loadState(std::string filename)
             else
                 throw std::invalid_argument("Expected an array for \"direction\"");
 
-            // TODO: construct and add object
-            // obj = PlayerTank(position, direction);
+            // auto obj = new PlayerTank(nullptr);
             // addObject(obj);
         }
         catch (std::invalid_argument &e) {
@@ -139,7 +139,8 @@ void GameState::loadState(std::string filename)
                 else
                     throw std::invalid_argument("Expected a double for \"radius\"");
 
-                addObject(new Obstacle(nullptr, 0, position, radius));
+                auto obj = new Obstacle(nullptr, getNextFreeEntityID(), position, radius);
+                addObject(obj);
             }
             catch (std::invalid_argument &e) {
                 qWarning("Error loading an obstacle: %s", e.what());
@@ -148,11 +149,15 @@ void GameState::loadState(std::string filename)
     }
 }
 
+int GameState::getNextFreeEntityID()
+{
+    return nextFreeEntityID++;
+}
+
 int GameState::addObject(GameObject *const obj)
 {
-    obj->setEntityID(nextFreeEntityID);
     objs.push_back(obj);
-    return nextFreeEntityID++;
+    return obj->getEntityID();
 }
 
 void GameState::removeObject(uint32_t entityID)
