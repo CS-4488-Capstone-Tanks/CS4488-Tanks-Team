@@ -6,25 +6,45 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include <QImage>
+
 #include <iostream>
 #include <filesystem>
 
 
+
 #include "gameobject.h"
+
+// These are the magic names that the renderer looks for when loading assets
+
+static const std::string TANK_MESH_FILE = "tank";
+static const std::string OBSTACLE_MESH_FILE = "obstacle";
+static const std::string BULLET_MESH_FILE = "bullet";
+
+static const std::string PLAYER_TEXTURE_FILE = "player";
+static const std::string ENEMY_TEXTURE_FILE = "enemy";
+static const std::string OBSTACLE_TEXTURE_FILE = "obstacle";
+
+
+
+
 
 static const char* texturedVertexSource = R"(
 #version 450
 
 layout (location = 0) in vec3 pos;
 layout (location = 1) in vec2 tex;
+layout (location = 2) in vec3 norm;
 
 out vec2 texCoord;
+out vec3 normal;
 
 uniform mat4 mvp;
 
 void main() {
     gl_Position = mvp * vec4(pos, 1.0f);
     texCoord = tex;
+    normal = norm;
 })";
 
 static const char* coloredFragmentSource = R"(
@@ -44,14 +64,26 @@ static const char* texturedFragmentSource = R"(
 #version 450
 
 in vec2 texCoord;
+in vec3 normal;
 
 out vec4 fragColor;
 
-uniform sampler2D imageTexture;
+uniform sampler2D albedo;
+
+vec3 lightPos = vec3(10, 5, 7);
+float ambient = 0.2;
 
 void main() {
-    //fragColor = texture(imageTexture, texCoord);
-    fragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    float surfaceAlignment = clamp(dot(normalize(normal), normalize(lightPos)), 0.0f, 1.0f);
+    vec4 color = texture(albedo, texCoord) * (surfaceAlignment + ambient);
+    color += vec4(ambient, ambient, ambient, 0.0f);
+
+    fragColor = vec4(
+        color[0],
+        color[1],
+        color[2],
+        1.0f
+    );
 })";
 
 
@@ -263,9 +295,14 @@ Renderer::Shader Renderer::shaderFromSource(const char* vertex, const char* frag
     return shader;
 }
 
+void Renderer::shaderDestroy(Shader& shader) {
+    glDeleteProgram(shader.program);
+}
+
 void Renderer::doneWithFrame() {
     lastFrame = curFrame;
     curFrame.clear();
+    update();
 }
 
 void Renderer::togglePeriscope() {
@@ -340,11 +377,14 @@ void Renderer::paintGL() {
            }
        }
     }
+    else {
+        //advanceCamera();
+    }
+
 
     // Compute half the mvp, the last bit computed per object
     glm::mat4 vp = projection * view;
     glm::mat4 mvp;
-
 
 
     for(auto& cmd : lastFrame) {
@@ -352,28 +392,78 @@ void Renderer::paintGL() {
 
         Mesh m{};
 
+        bool hasTexture = false;
+        unsigned int texture = 0;
+        float color[] = { 1.0f, 1.0f, 1.0f };
+
         switch(cmd.type) {
             case DrawCommandType::Player:
-                m = meshes["tank"];            // find the mesh we care about
+                m = meshes[TANK_MESH_FILE];            // find the mesh we care about
+
+                color[0] = 0.0f; // green
+                color[1] = 1.0f,
+                color[2] = 0.0f;
+
+                if ((hasTexture = textureExists(PLAYER_TEXTURE_FILE))) {
+                    texture = textures[PLAYER_TEXTURE_FILE];
+                }
+
                 break;
             case DrawCommandType::Enemy:
-                m = meshes["tank"];
+                m = meshes[TANK_MESH_FILE];
+
+                color[0] = 1.0f; // red
+                color[1] = 0.0f,
+                color[2] = 0.0f;
+
+                if ((hasTexture = textureExists(ENEMY_TEXTURE_FILE))) {
+                    texture = textures[ENEMY_TEXTURE_FILE];
+                }
+
                 break;
             case DrawCommandType::Obstacle:
-                m = meshes["obstacle"];
+                m = meshes[OBSTACLE_MESH_FILE];
+
+                color[0] = 0.58; // brown
+                color[1] = 0.29f,
+                color[2] = 0.0f;
+
+                if ((hasTexture = textureExists(OBSTACLE_TEXTURE_FILE))) {
+                    texture = textures[OBSTACLE_TEXTURE_FILE];
+                }
+
                 break;
             case DrawCommandType::Bullet:
-                m = meshes["bullet"];
+                m = meshes[BULLET_MESH_FILE];
+                color[0] = 1.0f; // yellow
+                color[1] = 1.0f;
+                color[2] = 0.0f;
+
                 break;
         }
 
-        Shader shader = shaders["textured"];
+        Shader shader = hasTexture ? shaders["textured"] : shaders["colored"];
 
         // Use the appropriate shader for drawing
         glUseProgram(shader.program);
 
         if (!shader.hasUniform("mvp")) {
             std::cerr << "Invalid shader, has no mvp uniform\n";
+        }
+
+        if (shader.hasUniform("color")) {
+            glUniform3fv(shader.uniforms["color"], 1, color);
+        }
+
+        if (shader.hasUniform("albedo")) {
+            if (!hasTexture) {
+                std::cerr << "Shader requested a texture, but not found\n";
+                continue;
+            }
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glUniform1i(shader.uniforms["albedo"], 0);
         }
 
         glBindVertexArray(m.vao);
@@ -399,6 +489,8 @@ void Renderer::initializeGL() {
     QOpenGLWidget::initializeGL();
     QOpenGLExtraFunctions::initializeOpenGLFunctions();
 
+    glEnable(GL_DEPTH_TEST);
+
     // Set the background color of the window when nothing is on it
     glClearColor(backgroundRed, backgroundBlue, backgroundGreen, 1.0f);
 
@@ -421,6 +513,7 @@ void Renderer::initializeGL() {
 
     try {
         shaders["textured"] = shaderFromSource(texturedVertexSource, texturedFragmentSource);
+        shaders["colored"] = shaderFromSource(texturedVertexSource, coloredFragmentSource);
 
         // Ensure the data exists as an empty mesh, so at worst, if the meshes aren't on disk, we just
         // don't draw them instead of crashing or something
@@ -441,6 +534,21 @@ void Renderer::initializeGL() {
         else {
             throw std::runtime_error("No assets/models directory is available. Can't draw any 3D meshes");
         }
+
+        if (std::filesystem::exists("assets/textures")) {
+            for(const auto& entry : std::filesystem::directory_iterator("assets/textures")) {
+                if (entry.is_regular_file()) {
+                    const auto& path = entry.path();
+                    unsigned int loaded = textureFromFile(path);
+
+                    textures[path.stem().string()] = loaded;
+                }
+            }
+        }
+        else {
+            std::cerr << "Renderer: No textures available, using coloring instead\n";
+        }
+
     }
     catch (std::exception& ex) {
         std::string msg = "The following error occurred while initializing the renderer:\n\n";
@@ -457,6 +565,64 @@ Renderer::~Renderer() {
     }
 
     meshes.clear();
+
+    for(auto& kvpair : shaders) {
+        shaderDestroy(kvpair.second);
+    }
+
+    shaders.clear();
+
+    for(auto& kvpair : textures) {
+        glDeleteTextures(1, &kvpair.second);
+    }
+
+    textures.clear();
+}
+
+bool Renderer::textureExists(const char* name) {
+    return textures.find(name) != textures.end();
+}
+
+bool Renderer::textureExists(const std::string& name) {
+    return textures.find(name) != textures.end();
+}
+
+unsigned int Renderer::textureFromFile(const std::filesystem::path& path) {
+    // Use QT to load the image
+    QImage image(path.c_str());
+    if (image.isNull()) {
+        std::cerr << "Failed to load image: " << path << "\n";
+        return 0;
+    }
+
+    // OpenGL requires specific data formatting
+    QImage glImage = image.mirrored().convertToFormat(QImage::Format_RGBA8888);
+
+    // Generate a texture
+    GLuint texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    // Set texture parameters, like how the texture should be resized and what to do if it doesn't quite fit right
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Upload the image data to the texture
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, glImage.width(), glImage.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, glImage.bits());
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    return texture;
+}
+
+void Renderer::advanceCamera() {
+    glm::vec3 cameraPos = cameraTopPosition;
+    cameraPos[0] = cos(cameraTime) * cameraRadius;
+    cameraPos[2] = sin(cameraTime) * cameraRadius;
+    cameraTime += cameraSpeed;
+
+    view = glm::lookAt(cameraPos, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 }
 
 bool Renderer::Shader::hasUniform(const char* name) const {

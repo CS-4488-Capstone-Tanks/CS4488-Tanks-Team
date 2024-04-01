@@ -50,25 +50,32 @@ class Renderer : public QOpenGLWidget, public QOpenGLExtraFunctions {
 
     std::unordered_map<std::string, Mesh> meshes;
     std::unordered_map<std::string, Shader> shaders;
+    std::unordered_map<std::string, unsigned int> textures;
 
     // The list of draw commands for the last complete frame, and the currently being built frame
     // They are separate to ensure it never draws a half frame
     std::vector<DrawCommand> lastFrame;
     std::vector<DrawCommand> curFrame;
 
-    unsigned int playerTexture;
-    unsigned int enemyTexture;
-
     bool usingPeriscope;
-    static const glm::vec3 constexpr cameraTopPosition = glm::vec3(0, 20, -30);
+    float cameraTime;
+    static const glm::vec3 constexpr cameraTopPosition = glm::vec3(0, 17, -25);
 
     glm::mat4 view;
     glm::mat4 projection;
 
+    unsigned int textureFromFile(const std::filesystem::path& path);
+
     Mesh meshFromFile(const std::filesystem::path& path);
     void meshDestroy(Mesh& mesh);
-    Shader shaderFromSource(const char* vertex, const char* fragment);
 
+    Shader shaderFromSource(const char* vertex, const char* fragment);
+    void shaderDestroy(Shader& shader);
+
+    bool textureExists(const char* name);
+    bool textureExists(const std::string& name);
+
+    void advanceCamera();
 
     // The following are configuration parameters that can be easily tweaked
     static const float constexpr cameraFOVDegrees = 45.0f;
@@ -76,6 +83,9 @@ class Renderer : public QOpenGLWidget, public QOpenGLExtraFunctions {
     static const float constexpr backgroundRed = 0.0f;
     static const float constexpr backgroundGreen = 0.0f;
     static const float constexpr backgroundBlue = 0.0f;
+
+    static const float constexpr cameraRadius = 20.0f;
+    static const float constexpr cameraSpeed = 0.01f;
 
 public:
     ~Renderer() override;
