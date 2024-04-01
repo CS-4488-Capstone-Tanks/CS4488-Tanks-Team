@@ -1,6 +1,7 @@
 #include "gamestate.h"
 #include "jsonhelpers.h"
 #include "Obstacle.h"
+#include "PlayerTank.h"
 
 const char LEVELS_PATH[] = "assets/levels/";
 
@@ -16,6 +17,27 @@ const char RAD_KEY[] = "radius";
 
 GameState::GameState() {}
 
+GameState::~GameState() {
+    for (GameObject *const obj : objs)
+        delete obj;
+    objs.clear();
+
+    if (instance != nullptr)
+        delete instance;
+    instance = nullptr;
+    nextFreeEntityID = 0;
+}
+
+GameState* GameState::instance = nullptr;
+
+GameState* GameState::getInstance()
+{
+    if (instance == nullptr)
+        instance = new GameState();
+
+    return instance;
+}
+
 void GameState::startState()
 {
     foreach (GameObject *const obj, objs) {
@@ -26,7 +48,10 @@ void GameState::startState()
 void GameState::updateState(float deltaTime)
 {
     foreach (GameObject *const obj, objs) {
-        obj->doUpdate(deltaTime);
+        if (obj->isQueuedForDestruction())
+            removeObject(obj->getEntityID());
+        else
+            obj->doUpdate(deltaTime);
     }
 }
 
@@ -59,8 +84,7 @@ void GameState::loadState(std::string filename)
             else
                 throw std::invalid_argument("Expected an array for \"direction\"");
 
-            // TODO: construct and add object
-            // obj = PlayerTank(position, direction);
+            // auto obj = new PlayerTank(nullptr);
             // addObject(obj);
         }
         catch (std::invalid_argument &e) {
@@ -115,7 +139,8 @@ void GameState::loadState(std::string filename)
                 else
                     throw std::invalid_argument("Expected a double for \"radius\"");
 
-                addObject(new Obstacle(nullptr, 0, position, radius));
+                auto obj = new Obstacle(nullptr, getNextFreeEntityID(), position, radius);
+                addObject(obj);
             }
             catch (std::invalid_argument &e) {
                 qWarning("Error loading an obstacle: %s", e.what());
@@ -124,10 +149,15 @@ void GameState::loadState(std::string filename)
     }
 }
 
-void GameState::addObject(GameObject *const obj)
+int GameState::getNextFreeEntityID()
 {
-    obj->setEntityID(nextFreeEntityID++);
+    return nextFreeEntityID++;
+}
+
+int GameState::addObject(GameObject *const obj)
+{
     objs.push_back(obj);
+    return obj->getEntityID();
 }
 
 void GameState::removeObject(uint32_t entityID)
