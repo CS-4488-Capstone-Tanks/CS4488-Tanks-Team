@@ -62,6 +62,16 @@ public:
      */
     void loadState(std::string filename);
 
+	/**
+	 * @brief Get the next free entity ID. This is used to assign a unique ID to each GameObject.
+	 * @return int: The next free entity ID. This is a unique identifier for each GameObject in the game.
+		It is used to differentiate between different GameObjects and is assigned by the GameState when the
+		GameObject is added to the GameState. This method will increment the next free entity ID by 1.
+	 * @author Koda Koziol
+	 * @date SPRING 2024
+	 */
+    int getNextFreeEntityID();
+
     /**
      * @brief Add a GameObject to the GameState.
      * @param obj: The GameObject to add to the GameState.
@@ -97,16 +107,6 @@ public:
 private:
     std::vector<GameObject*> objs;
     int nextFreeEntityID = 0;
-
-	/**
-	 * @brief Get the next free entity ID. This is used to assign a unique ID to each GameObject.
-	 * @return int: The next free entity ID. This is a unique identifier for each GameObject in the game.
-		It is used to differentiate between different GameObjects and is assigned by the GameState when the
-		GameObject is added to the GameState. This method will increment the next free entity ID by 1.
-	 * @author Koda Koziol
-	 * @date SPRING 2024
-	 */
-    int getNextFreeEntityID();
 
    /**
     * @brief Constructor for the GameState.

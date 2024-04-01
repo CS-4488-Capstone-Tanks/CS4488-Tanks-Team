@@ -1,6 +1,13 @@
 #include "gameobject.h"
 
 GameObject::GameObject(GameObjectType type, QObject *parent) : type(type) { }
+GameObject::GameObject(
+        GameObjectType type,
+        uint32_t entityID,
+        const vec3 &position,
+        const vec3 &direction,
+        QObject *parent
+) : type(type), entityID(entityID), position(position), direction(direction) { }
 
 vec3 GameObject::getPosition() const { return position; }
 vec3 GameObject::getDirection() const { return direction; }
