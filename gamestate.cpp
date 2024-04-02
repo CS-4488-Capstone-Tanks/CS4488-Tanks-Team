@@ -184,6 +184,37 @@ void GameState::removeObject(uint32_t entityID)
     }
 }
 
+GameObject* GameState::getGameObject(uint32_t entityID) const
+{
+    for (GameObject *const obj : objs)
+    {
+        if (obj->getEntityID() == entityID)
+            return obj;
+    }
+    return nullptr;
+}
+
+GameObject* GameState::getGameObject(GameObjectType type) const
+{
+    for (GameObject *const obj : objs)
+    {
+        if (obj->getType() == type)
+            return obj;
+    }
+    return nullptr;
+}
+
+std::vector<GameObject*> GameState::getGameObjects(GameObjectType type) const
+{
+    std::vector<GameObject*> result;
+    for (GameObject *const obj : objs)
+    {
+        if (obj->getType() == type)
+            result.push_back(obj);
+    }
+    return result;
+}
+
 std::vector<GameObject*>::const_iterator GameState::begin() const {
     return objs.begin();
 }
