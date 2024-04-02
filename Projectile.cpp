@@ -5,12 +5,9 @@
 #include "Projectile.h"
 #include <stdexcept>
 
-//Constructor for the Projectile class
-Projectile::Projectile(QObject *parent, uint32_t entityID)
-        : GameObject(type, parent), velocity(glm::vec3(0.0f)), lifetime(10.0f), collider(glm::vec3(0.0f), 1.0f) {
-    this->entityID = entityID;
-    //Set the game object's type to Projectile
-    this->type = GameObjectType::Projectile;
+//Constructor for Projectiles
+Projectile::Projectile(QObject *parent, uint32_t entityID, const glm::vec3& position, const glm::vec3& velocity, float lifetime, float colliderRadius, const glm::vec3& direction)
+        : GameObject(GameObjectType::Projectile, entityID, position, direction, parent), velocity(velocity), lifetime(lifetime), collider(position, colliderRadius) {
 }
 
 //Empty since projectiles shouldn't need initialization before the first update

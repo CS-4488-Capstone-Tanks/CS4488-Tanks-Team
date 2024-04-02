@@ -10,30 +10,85 @@
 #include <cstdint>
 #include <QObject>
 
-//The Projectile class represents a moving game entity that can interact with other game entities
-//It inherits from GameObject, and it has a lifespan, velocity, and collider for collision detection
+
+/**
+ * @brief Represents a moving game entity that can interact with other game entities
+ * Inherits from GameObject and has a lifespan, velocity, and collider for collision detection.
+ * @author Parker Hyde
+ * @date SPRING 2024
+ */
 class Projectile : public GameObject {
 Q_OBJECT
 
 public:
-    //Constructor sets up the projectile with a parent, entity ID, default velocity, and collider
-    explicit Projectile(QObject *parent = nullptr, uint32_t entityID = 0);
+    /**
+     * @brief Constructor for creating a projectile
+     * @param parent Optional parent object.
+     * @param entityID Unique identifier for the projectile.
+     * @param position Initial position in 3D space.
+     * @param velocity Initial velocity vector.
+     * @param lifetime Time until the projectile expires.
+     * @param colliderRadius Radius of the projectile's collider.
+     * @param direction Facing direction of the projectile.
+     * @author Parker Hyde
+     * @date SPRING 2024
+     */
+    explicit Projectile(QObject *parent = nullptr, uint32_t entityID = 0, const glm::vec3& position = glm::vec3(0.0f), const glm::vec3& velocity = glm::vec3(0.0f), float lifetime = 10.0f, float colliderRadius = 1.0f, const glm::vec3& direction = glm::vec3(0, 0, -1));
 
-    //doStart is called before the game starts, so it can be used for initialization
+
+    /**
+     * @brief Called before the game starts for initialization purposes.
+     * Override to configure specific projectile behaviors or properties as needed.
+     * @author Parker Hyde
+     * @date SPRING 2024
+     */
     void doStart() override;
 
-    //called each frame. Used to update the projectile's state such as moving it and reducing its lifetime
+    /**
+     * @brief Updates the projectile's state each frame, handling movement and lifetime.
+     * @param deltaTime Time elapsed since the last frame update, in seconds.
+     * @author Parker Hyde
+     * @date SPRING 2024
+     */
     void doUpdate(float deltaTime) override;
 
-    //checks if the projectile's lifetime has expired
+    /**
+     * @brief Determines if the projectile's lifetime has expired.
+     * @return True if the projectile is dead (lifetime <= 0), otherwise false.
+     * @author Parker Hyde
+     * @date SPRING 2024
+     */
     bool isDead() const;
 
-    //Setters and getters for the projectile's velocity and speed
+    /**
+     * @brief Sets the projectile's velocity vector.
+     * @param vel New velocity vector for the projectile.
+     * @author Parker Hyde
+     * @date SPRING 2024
+     */
     void setVelocity(const glm::vec3& vel);
+    /**
+     * @brief Sets the projectile's movement speed.
+     * Throws an exception if a non-positive speed is provided.
+     * @param spd The new speed of the projectile, must be positive.
+     * @author Parker Hyde
+     * @date SPRING 2024
+     */
     void setSpeed(float spd);
+    /**
+     * @brief Retrieves the current velocity of the projectile.
+     * @return The velocity vector of the projectile.
+     * @author Parker Hyde
+     * @date SPRING 2024
+     */
     glm::vec3 getVelocity() const;
 
-    //Returns the collider for collision detection
+    /**
+     * @brief Retrieves the collider used for collision detection.
+     * @return A CircleCollider defining the projectile's collision boundaries.
+     * @author Parker Hyde
+     * @date SPRING 2024
+     */
     CircleCollider getCollider() const;
 
 private:

@@ -8,23 +8,62 @@
 
 #include <glm/vec3.hpp>
 
-//The CircleCollider class represents a simple circular boundary that can be used for collision detection
+/**
+ * @brief The CircleCollider class represents a simple circular boundary that can be used for collision detection.
+ * @date SPRING 2024
+ */
 class CircleCollider {
 public:
-    //Constructor that initializes a collider with a position and radius
+    /**
+     * @brief Constructor that initializes a collider with a position and radius.
+     * @param position The initial position of the collider in 3D space.
+     * @param radius The radius of the collider.
+     * @author Parker Hyde
+     * @date SPRING 2024
+     */
     CircleCollider(const glm::vec3& position, float radius);
 
-    //Updates the position of the collider to a new position
+
+    /**
+     * @brief Updates the position of the collider to a new position.
+     * @param newPosition The new position of the collider in 3D space.
+     * @author Parker Hyde
+     * @date SPRING 2024
+     */
     void updatePosition(const glm::vec3& newPosition);
-    //Checks if this collider intersects with another collider
+
+    /**
+     * @brief Checks if this collider intersects with another collider.
+     * @param other The other CircleCollider to check collision against.
+     * @return True if there is an intersection, false otherwise.
+     * @author Parker Hyde
+     * @date SPRING 2024
+     */
     bool collidesWith(const CircleCollider& other) const;
-    //Determines if a point is within the bounds of the collider
+
+    /**
+     * @brief Determines if a point is within the bounds of the collider.
+     * @param point The point in 3D space to check.
+     * @return True if the point is within the collider, false otherwise.
+     * @author Parker Hyde
+     * @date SPRING 2024
+     */
     bool containsPoint(const glm::vec3& point) const;
 
-    //Retrieves the current position of the collider
+    /**
+     * @brief Retrieves the current position of the collider.
+     * @return The position of the collider in 3D space.
+     * @author Parker Hyde
+     * @date SPRING 2024
+     */
     glm::vec3 getPosition() const;
 
-    //Retrieves the radius of the collider
+    /**
+     * @brief Retrieves the radius of the collider.
+     * @return The radius of the collider.
+     * @author Parker Hyde
+     * @date SPRING 2024
+     */
     float getRadius() const;
 
 private:
