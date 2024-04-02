@@ -7,7 +7,11 @@ GameObject::GameObject(
         const vec3 &position,
         const vec3 &direction,
         QObject *parent
-) : type(type), entityID(entityID), position(position), direction(direction) { }
+) : type(type), entityID(entityID), position(position), direction(direction)
+{
+    if (direction == vec3(0.0f))
+        throw std::invalid_argument("Direction cannot be the zero vector.");
+}
 
 vec3 GameObject::getPosition() const { return position; }
 vec3 GameObject::getDirection() const { return direction; }

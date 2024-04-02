@@ -51,7 +51,7 @@ public:
       GameObjectType type,
       uint32_t entityID,
       const vec3& position = vec3(0.0f),
-      const vec3& direction = vec3(0.0f),
+      const vec3& direction = vec3(0.0f, 0.0f, -1.0f),
       QObject *parent = nullptr
       );
 
@@ -127,11 +127,11 @@ public:
 
 
 protected:
-    vec3 position;
-    vec3 direction;
-    float speed;
-    uint32_t entityID;
-    GameObjectType type;
+    vec3 position = vec3(0.0f);
+    vec3 direction = vec3(0.0f, 0.0f, 1.0f);
+    float speed = 0.0f;
+    uint32_t entityID = -1;
+    GameObjectType type = GameObjectType::None;
 
 
 private:

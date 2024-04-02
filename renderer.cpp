@@ -589,7 +589,7 @@ bool Renderer::textureExists(const std::string& name) {
 
 unsigned int Renderer::textureFromFile(const std::filesystem::path& path) {
     // Use QT to load the image
-    QImage image(path.c_str());
+    QImage image(QString::fromStdString(path.string()));
     if (image.isNull()) {
         std::cerr << "Failed to load image: " << path << "\n";
         return 0;

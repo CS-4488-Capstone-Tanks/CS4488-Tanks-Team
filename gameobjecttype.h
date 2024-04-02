@@ -5,6 +5,7 @@
 
 enum class GameObjectType
 {
+    None,
     PlayerTank,
     EnemyTank,
     Obstacle,
@@ -15,6 +16,8 @@ inline std::string gameObjectTypeToString(GameObjectType type)
 {
     switch (type)
     {
+        case GameObjectType::None:
+            return "None";
         case GameObjectType::PlayerTank:
             return "PlayerTank";
         case GameObjectType::EnemyTank:
