@@ -88,6 +88,34 @@ public:
      */
     void removeObject(uint32_t entityID);
 
+	/**
+	 * @brief Get a GameObject by its entity ID.
+	 * @param entityID: The entity ID of the GameObject to get.
+	 * @return GameObject*: The GameObject with the given entity ID. If no GameObject
+		with the given entity ID is found, nullptr is returned.
+	 * @author Koda Koziol
+	 * @date SPRING 2024
+	 */
+	GameObject* getGameObject(uint32_t entityID) const;
+
+	/**
+	 * @brief Get a GameObject by its type.
+	 * @param type: The type of GameObject to get.
+	 * @return GameObject*: The first GameObject of the given type found in the GameState.
+	 * If no GameObject of the given type is found, nullptr is returned.
+	 * @author Koda Koziol
+	 * @date SPRING 2024
+	*/
+	GameObject* getGameObject(GameObjectType type) const;
+
+	/**
+	 * @brief Get all GameObjects of a type from the GameState.
+	 * @param type: The type of GameObject to get.
+	 * @return std::vector<GameObject*>: A vector of all GameObjects in the GameState.
+	 * @author Koda Koziol
+	 * @date SPRING 2024
+	 */
+	std::vector<GameObject*> getGameObjects(GameObjectType type) const;
 
 	/**
 	 * @return A constant iterator pointing to the beginning of the vector of GameObject pointers.

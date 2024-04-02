@@ -17,6 +17,9 @@ Scene::Scene(float dT, std::string stateFilename, QObject *parent)
 void Scene::start()
 {
     gameState->startState();
+
+    GameObject* test1 = gameState->getGameObject(0);
+    std::vector<GameObject*> test2 = gameState->getGameObjects(GameObjectType::Obstacle);
 }
 
 void Scene::setPaused(bool p)

@@ -15,6 +15,8 @@ const char POS_KEY[] = "position";
 const char DIR_KEY[] = "direction";
 const char RAD_KEY[] = "radius";
 
+const vec3 DEFAULT_DIRECTION = vec3(0.0f, 0.0f, 1.0f);
+
 GameState::GameState() {}
 
 GameState::~GameState() {
@@ -127,12 +129,21 @@ void GameState::loadState(std::string filename)
             try {
                 QJsonObject jsonObstacleObj = obsVal.toObject();
                 vec3 position;
+                vec3 direction;
                 float radius;
 
                 if (const QJsonValue posVal = jsonObstacleObj[POS_KEY]; posVal.isArray())
                     position = JsonHelpers::getVec3FromJson(posVal.toArray());
                 else
                     throw std::invalid_argument("Expected an array for \"position\"");
+
+                if (const QJsonValue dirVal = jsonObstacleObj[DIR_KEY]; dirVal.isArray())
+                    direction = JsonHelpers::getVec3FromJson(dirVal.toArray());
+                else
+                {
+                    qWarning("Warning: \"direction\" not found for obstacle, using default (%f,%f,%f)", DEFAULT_DIRECTION.x, DEFAULT_DIRECTION.y, DEFAULT_DIRECTION.z);
+                    direction = DEFAULT_DIRECTION;
+                }
 
                 if (const QJsonValue radVal = jsonObstacleObj[RAD_KEY]; radVal.isDouble())
                     radius = radVal.toDouble();
@@ -171,6 +182,37 @@ void GameState::removeObject(uint32_t entityID)
             return;
         }
     }
+}
+
+GameObject* GameState::getGameObject(uint32_t entityID) const
+{
+    for (GameObject *const obj : objs)
+    {
+        if (obj->getEntityID() == entityID)
+            return obj;
+    }
+    return nullptr;
+}
+
+GameObject* GameState::getGameObject(GameObjectType type) const
+{
+    for (GameObject *const obj : objs)
+    {
+        if (obj->getType() == type)
+            return obj;
+    }
+    return nullptr;
+}
+
+std::vector<GameObject*> GameState::getGameObjects(GameObjectType type) const
+{
+    std::vector<GameObject*> result;
+    for (GameObject *const obj : objs)
+    {
+        if (obj->getType() == type)
+            result.push_back(obj);
+    }
+    return result;
 }
 
 std::vector<GameObject*>::const_iterator GameState::begin() const {
