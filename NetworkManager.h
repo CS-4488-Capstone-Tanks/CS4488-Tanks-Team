@@ -12,25 +12,54 @@
 #include <QTcpSocket>
 #include <QDataStream>
 
-//NetworkManager handles the network communication for the game, managing the connection to the server
-//and handling incoming and outgoing data
+
+/**
+ * @brief NetworkManager handles the network communication for the game, managing the connection to the server
+ * and handling incoming and outgoing data.
+ * @author Parker Hyde
+ * @date SPRING 2024
+ */
 class NetworkManager : public QObject {
 Q_OBJECT
 
 public:
-    //Constructor that sets up the network socket and connects signal handlers
+    /**
+     * @brief Constructor that sets up the network socket and connects signal handlers.
+     * @param parent The QObject parent of this network manager.
+     * @author Parker Hyde
+     * @date SPRING 2024
+     */
     explicit NetworkManager(QObject *parent = nullptr);
 
-    //Destructor that ensures the network connection is properly closed
+    /**
+     * @brief Destructor that ensures the network connection is properly closed.
+     * @author Parker Hyde
+     * @date SPRING 2024
+     */
     virtual ~NetworkManager();
 
-    //Initiates a connection to a server with the specified host address and port number
+    /**
+     * @brief Initiates a connection to a server with the specified host address and port number.
+     * @param host The host address of the server to connect to.
+     * @param port The port number on the server to connect to.
+     * @author Parker Hyde
+     * @date SPRING 2024
+     */
     void connectToServer(const QString &host, quint16 port);
 
-    //Disconnects from the server if currently connected
+    /**
+     * @brief Disconnects from the server if currently connected.
+     * @author Parker Hyde
+     * @date SPRING 2024
+     */
     void disconnectFromServer();
 
-    //Sends data to the server if a connection is established
+    /**
+     * @brief Sends data to the server if a connection is established.
+     * @param data The data to send to the server.
+     * @author Parker Hyde
+     * @date SPRING 2024
+     */
     void send(const QByteArray &data);
 
 signals:
@@ -65,7 +94,14 @@ private:
     //The data stream for reading data from the socket
     QDataStream in;
 
-    //Sets up the connections for the QTcpSocket signals to the appropriate slots in this class
+
+    /**
+    * @brief Configures signal-slot connections for the QTcpSocket instance.
+    * This method connects the socket's signals to the appropriate slots in this class,
+    * setting up the necessary event handlers for network communication.
+    * @author Parker Hyde
+    * @date SPRING 2024
+    */
     void setupSocketSignals();
 };
 
