@@ -41,10 +41,7 @@ public:
     int start();
 
 public slots:
-    void filterKeyEvent(QKeyEvent *event);
-
-signals:
-    void playerControlSignal(QKeyEvent *event);
+    bool filterKeyEvent(QKeyEvent* event);
 };
 
 #endif //TANKS_GAME_H

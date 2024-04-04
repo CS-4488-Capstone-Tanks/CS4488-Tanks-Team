@@ -8,6 +8,7 @@
 //Constructor for Projectiles
 Projectile::Projectile(QObject *parent, uint32_t entityID, const glm::vec3& position, const glm::vec3& velocity, float lifetime, float colliderRadius, const glm::vec3& direction)
         : GameObject(GameObjectType::Projectile, entityID, position, direction, parent), velocity(velocity), lifetime(lifetime), collider(position, colliderRadius) {
+    speed = 5.0;
 }
 
 //Empty since projectiles shouldn't need initialization before the first update
