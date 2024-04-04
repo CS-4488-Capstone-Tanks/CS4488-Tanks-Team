@@ -9,11 +9,15 @@
 #include "CircleCollider.h"
 #include <cstdint>
 #include <QObject>
+#include <glm/vec3.hpp>
 
 
 /**
- * @brief Represents a moving game entity that can interact with other game entities
- * Inherits from GameObject and has a lifespan, velocity, and collider for collision detection.
+ * @brief Represents a moving projectile in the game
+ * Inherits from GameObject and has a lifespan, direction, speed, and collider for collision detection.
+ * It moves in a normalized direction at a specified speed.
+ * Lifetime is decremented each frame and the projectile is removed when it expires.
+ * Collision detection is managed through a CircleCollider.
  * @author Parker Hyde
  * @date SPRING 2024
  */
@@ -26,26 +30,30 @@ public:
      * @param parent Optional parent object.
      * @param entityID Unique identifier for the projectile.
      * @param position Initial position in 3D space.
-     * @param velocity Initial velocity vector.
+     * @param speed Initial speed of the projectile, must be positive.
      * @param lifetime Time until the projectile expires.
      * @param colliderRadius Radius of the projectile's collider.
-     * @param direction Facing direction of the projectile.
+     * @param direction Initial normalized direction vector of the projectile.
+     * @exception std::invalid_argument Thrown if direction is a zero vector or speed is not positive.
      * @author Parker Hyde
      * @date SPRING 2024
      */
-    explicit Projectile(QObject *parent = nullptr, uint32_t entityID = 0, const glm::vec3& position = glm::vec3(0.0f), const glm::vec3& velocity = glm::vec3(0.0f), float lifetime = 10.0f, float colliderRadius = 1.0f, const glm::vec3& direction = glm::vec3(0, 0, -1));
 
+    explicit Projectile(QObject *parent = nullptr, uint32_t entityID = 0, const glm::vec3& position = glm::vec3(0.0f), float speed = 0.0f, float lifetime = 10.0f, float colliderRadius = 1.0f, const glm::vec3& direction = glm::vec3(0, 0, -1));
 
     /**
-     * @brief Called before the game starts for initialization purposes.
-     * Override to configure specific projectile behaviors or properties as needed.
+     * @brief Initialization logic for the projectile
+     * Currently empty as projectiles do not require initialization before the first update.
+     * Can be overridden for specialized projectiles that require setup.
      * @author Parker Hyde
      * @date SPRING 2024
      */
     void doStart() override;
 
     /**
-     * @brief Updates the projectile's state each frame, handling movement and lifetime.
+     * @brief Updates the projectile's state each frame
+     * Moves the projectile based on its normalized direction and speed.
+     * Updates the collider's position and decrements the projectile's lifetime.
      * @param deltaTime Time elapsed since the last frame update, in seconds.
      * @author Parker Hyde
      * @date SPRING 2024
@@ -60,23 +68,45 @@ public:
      */
     bool isDead() const;
 
+
+
     /**
-     * @brief Sets the projectile's velocity vector.
-     * @param vel New velocity vector for the projectile.
+     * @brief Sets the projectile's normalized direction vector
+     * @param dir New normalized direction vector for the projectile.
+     * @exception std::invalid_argument Thrown if dir is a zero vector.
      * @author Parker Hyde
      * @date SPRING 2024
      */
-    void setVelocity(const glm::vec3& vel);
+    void setDirection(const glm::vec3& dir);
+
     /**
-     * @brief Sets the projectile's movement speed.
-     * Throws an exception if a non-positive speed is provided.
+     * @brief Sets the projectile's movement speed
      * @param spd The new speed of the projectile, must be positive.
+     * @exception std::invalid_argument Thrown if spd is not positive.
      * @author Parker Hyde
      * @date SPRING 2024
      */
     void setSpeed(float spd);
+
     /**
-     * @brief Retrieves the current velocity of the projectile.
+     * @brief Retrieves the current normalized direction vector of the projectile
+     * @return The normalized direction vector of the projectile.
+     * @author Parker Hyde
+     * @date SPRING 2024
+     */
+    glm::vec3 getDirection() const;
+
+    /**
+     * @brief Retrieves the current speed of the projectile
+     * @return The speed of the projectile as a scalar value.
+     * @author Parker Hyde
+     * @date SPRING 2024
+     */
+    float getSpeed() const;
+
+    /**
+     * @brief Calculates and retrieves the current velocity of the projectile
+     * Velocity is computed as the product of the normalized direction vector and the speed scalar.
      * @return The velocity vector of the projectile.
      * @author Parker Hyde
      * @date SPRING 2024
@@ -92,8 +122,10 @@ public:
     CircleCollider getCollider() const;
 
 private:
-    //The current velocity vector of the projectile
-    glm::vec3 velocity;
+    //The normalized direction vector of the projectile
+    glm::vec3 direction;
+    //The scalar speed of the projectile
+    float speed;
     //The remaining lifetime of the projectile
     float lifetime;
     //The collider used for detecting collisions with other objects
