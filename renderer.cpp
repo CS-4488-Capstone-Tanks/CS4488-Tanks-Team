@@ -305,15 +305,6 @@ void Renderer::doneWithFrame() {
     update();
 }
 
-void Renderer::togglePeriscope() {
-    usingPeriscope = !usingPeriscope;
-
-    if (!usingPeriscope) {
-        view = glm::lookAt(cameraTopPosition, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-    }
-}
-
-
 void Renderer::drawObject(const GameObject* object) {
     DrawCommand cmd{};
 
@@ -365,22 +356,27 @@ void Renderer::paintGL() {
 
     // If the periscope is enabled, make a pass through the draw commands to ensure
     // we find where the player is and set the camera to be there for first person view
-    if (usingPeriscope) {
-       for(auto& cmd : lastFrame) {
-           if (cmd.type == DrawCommandType::Player) {
-               glm::vec3 playerPos = glm::vec3(cmd.transform[3][0], cmd.transform[3][1], cmd.transform[3][2]);
-               glm::vec3 up = glm::vec3(0, 1, 0);
 
-               view = glm::lookAt(cmd.forwardPoint, playerPos, up);
+    switch (camMode) {
+        case CameraMode::Static: break;
+        case CameraMode::Periscope:
+            for(auto& cmd : lastFrame) {
+                if (cmd.type == DrawCommandType::Player) {
+                    glm::vec3 playerPos = glm::vec3(cmd.transform[3][0], cmd.transform[3][1], cmd.transform[3][2]);
+                    glm::vec3 up = glm::vec3(0, 1, 0);
 
-               break;
-           }
-       }
+                    view = glm::lookAt(cmd.forwardPoint, playerPos, up);
+
+                    break;
+                }
+            }
+            break;
+        case CameraMode::Chasing:
+            break;
+        case CameraMode::Orbiting:
+           advanceCamera();
+           break;
     }
-    else {
-        //advanceCamera();
-    }
-
 
     // Compute half the mvp, the last bit computed per object
     glm::mat4 vp = projection * view;
@@ -398,6 +394,10 @@ void Renderer::paintGL() {
 
         switch(cmd.type) {
             case DrawCommandType::Player:
+                if (camMode == CameraMode::Periscope) {
+                    continue;
+                }
+
                 m = meshes[TANK_MESH_FILE];            // find the mesh we care about
 
                 color[0] = 0.0f; // green
@@ -507,9 +507,8 @@ void Renderer::initializeGL() {
         100.0f
     );
 
-    view = glm::lookAt(cameraTopPosition, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-
-    usingPeriscope = false;
+    //view = glm::lookAt(cameraTopPosition, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+    setCameraMode(CameraMode::Static);
 
     try {
         shaders["textured"] = shaderFromSource(texturedVertexSource, texturedFragmentSource);
@@ -623,6 +622,14 @@ void Renderer::advanceCamera() {
     cameraTime += cameraSpeed;
 
     view = glm::lookAt(cameraPos, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+}
+
+void Renderer::setCameraMode(Renderer::CameraMode mode) {
+    camMode = mode;
+
+    if (camMode == CameraMode::Static) {
+        view = glm::lookAt(cameraTopPosition, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+    }
 }
 
 bool Renderer::Shader::hasUniform(const char* name) const {

@@ -173,6 +173,34 @@ bool Game::filterKeyEvent(QKeyEvent* event) {
                 if (inGame) {
                     return dynamic_cast<PlayerTank*>(sc->getPlayerTank())->handleKeyEvent(event);
                 }
+            case Qt::Key_1:
+                if (inGame) {
+                    QWidget* widg = gw->changeWidget(GAME_KEY);
+                    auto* rend = dynamic_cast<Renderer*>(widg);
+                    rend->setCameraMode(Renderer::CameraMode::Static);
+                }
+                return true;
+            case Qt::Key_2:
+                if (inGame) {
+                    QWidget* widg = gw->changeWidget(GAME_KEY);
+                    auto* rend = dynamic_cast<Renderer*>(widg);
+                    rend->setCameraMode(Renderer::CameraMode::Periscope);
+                }
+                return true;
+            case Qt::Key_3:
+                if (inGame) {
+                    QWidget* widg = gw->changeWidget(GAME_KEY);
+                    auto* rend = dynamic_cast<Renderer*>(widg);
+                    rend->setCameraMode(Renderer::CameraMode::Chasing);
+                }
+                return true;
+            case Qt::Key_4:
+                if (inGame) {
+                    QWidget* widg = gw->changeWidget(GAME_KEY);
+                    auto* rend = dynamic_cast<Renderer*>(widg);
+                    rend->setCameraMode(Renderer::CameraMode::Orbiting);
+                }
+                return true;
             default:
                 return false;
         }
