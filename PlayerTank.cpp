@@ -17,15 +17,19 @@ void PlayerTank::doUpdate(float deltaTime) {
 
     // Calculate the displacement vector based on speed, direction, and time
     // Normalized so that the magnitude of the direction vector is always 1.
-    glm::vec3 displacement = glm::normalize(direction) * speed * deltaTime;
+    vec3 pos = this->getPosition();
+    vec3 dir = this->getDirection();
+    float spd = this->getSpeed();
+    glm::vec3 displacement = dir * spd * deltaTime;
 
-    this->position += displacement;
+    pos += displacement;
+    this->setPosition(pos);
 
-    this -> speed = 0;
+    this->setSpeed(0.0);
 }
 
 void PlayerTank::moveForward() {
-    this->speed = 1.0;
+    this->setSpeed(1.0);
 }
 
 void PlayerTank::turnRight() {
@@ -36,7 +40,8 @@ void PlayerTank::turnRight() {
     glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), angleRadians, glm::vec3(0.0f, 0.0f, 1.0f));
 
     // Rotate the vector
-    this->direction = glm::vec3(rotationMatrix * glm::vec4(this->direction, 1.0f));
+    vec3 dir = this->getDirection();
+    this->setDirection(glm::vec3(rotationMatrix * glm::vec4(dir, 1.0f)));
 }
 
 void PlayerTank::turnLeft() {
@@ -47,11 +52,12 @@ void PlayerTank::turnLeft() {
     glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), angleRadians, glm::vec3(0.0f, 0.0f, 1.0f));
 
     // Rotate the vector
-    this->direction = glm::vec3(rotationMatrix * glm::vec4(this->direction, 1.0f));
+    vec3 dir = this->getDirection();
+    this->setDirection(glm::vec3(rotationMatrix * glm::vec4(dir, 1.0f)));
 }
 
 void PlayerTank::moveBackward() {
-    this->speed = -1.0;
+    this->setSpeed(-1.0);
 }
 
 void PlayerTank::shoot(glm::vec3 direction) {

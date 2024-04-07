@@ -25,8 +25,10 @@ void Projectile::doStart() {
 void Projectile::doUpdate(float deltaTime) {
     if (!isDead()) {
         //Use normalized direction and speed to determine velocity
-        position += glm::normalize(direction) * speed * deltaTime;
-        collider.updatePosition(position);
+        vec3 pos = getPosition();
+        pos += glm::normalize(direction) * speed * deltaTime;
+        collider.updatePosition(pos);
+        setPosition(pos);
         lifetime -= deltaTime;
     }
 }

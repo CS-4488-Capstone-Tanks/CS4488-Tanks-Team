@@ -15,13 +15,18 @@ void EnemyTank::doUpdate(float deltaTime) {
 
     // Calculate the displacement vector based on speed, direction, and time
     // Normalized so that the magnitude of the direction vector is always 1.
-    glm::vec3 displacement = glm::normalize(direction) * speed * deltaTime;
+    vec3 dir = this->getDirection();
+    vec3 pos = this->getPosition();
+    float spd = this->getSpeed();
 
-    this->position += displacement;
+    glm::vec3 displacement = glm::normalize(dir) * spd * deltaTime;
 
-    this -> speed = 0;
+    pos += displacement;
+    this->setPosition(pos);
 
-    this->shoot(direction);
+    this->setSpeed(0.0);
+
+    this->shoot(dir);
 }
 
 void EnemyTank::shoot(glm::vec3 direction) {

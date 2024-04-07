@@ -78,6 +78,15 @@ public:
      */
     virtual void doUpdate(float deltaTime);
 
+	/**
+	 * @brief This method gets called when a collision is detected between this GameObject
+	 * and another GameObject. Override this method to implement collision behavior.
+	 * @param other: The GameObject that this GameObject collided with.
+	 * @author Koda Koziol
+	 * @date SPRING 2024
+	*/
+	virtual void doCollision(GameObject* other);
+
     /**
      * @return The position of the GameObject in 3D space.
      * @author Koda Koziol
@@ -85,12 +94,47 @@ public:
      */
     vec3 getPosition() const;
 
+	/**
+	 * @brief Set the position of the GameObject in 3D space.
+	 * @param pos: The new position of the GameObject in 3D space.
+	 * @author Koda Koziol
+	 * @date SPRING 2024
+	 */
+	void setPosition(const vec3& pos);
+
     /**
      * @return The direction the GameObject is facing in 3D space.
      * @author Koda Koziol
      * @date SPRING 2024
      */
     vec3 getDirection() const;
+
+	/**
+	 * @brief Set the normalized direction the GameObject is facing in 3D space.
+	 * @param dir: The new direction the GameObject is facing in 3D space.
+	 * @note The direction vector should be normalized. If it is not, it will be normalized
+	 * before being set as the direction of the GameObject. If the direction vector is the zero
+	 * vector, an invalid_argument exception will be thrown.
+	 * @author Koda Koziol
+	 * @date SPRING 2024
+	 */
+	void setDirection(const vec3& dir);
+
+    /**
+	 * @return The speed of the GameObject.
+	 * @author Koda Koziol
+	 * @date SPRING 2024
+	*/
+    float getSpeed() const;
+
+	/**
+	 * @brief Set the speed of the GameObject.
+	 * @param spd: The new speed of the GameObject. Must be positive.
+	 * @note If the speed is not positive, an invalid_argument exception will be thrown.
+	 * @author Koda Koziol
+	 * @date SPRING 2024
+	 */
+	void setSpeed(float spd);
 
     /**
      * @return The GameObjectType of the GameObject. This is used to
@@ -125,18 +169,26 @@ public:
 	*/
 	bool isQueuedForDestruction() const;
 
+	/**
+	 * @return True if the GameObject has changed since the last update, false otherwise.
+	 * @note This is used to determine whether it's necessary to perform collision calculations (TODO).
+	 * @author Koda Koziol
+	 * @date SPRING 2024
+	*/
+	bool hasChanged() const;
+
 
 protected:
-    vec3 position = vec3(0.0f);
-    vec3 direction = vec3(0.0f, 0.0f, 1.0f);
-    float speed = 0.0f;
     uint32_t entityID = -1;
     GameObjectType type = GameObjectType::None;
 
 
 private:
+	vec3 position = vec3(0.0f);
+	vec3 direction = vec3(0.0f, 0.0f, 1.0f);
+	float speed = 0.0f;
 	bool _isQueuedForDestruction = false;
-
+	bool _hasChanged = false;
 };
 
 #endif // GAMEOBJECT_H
