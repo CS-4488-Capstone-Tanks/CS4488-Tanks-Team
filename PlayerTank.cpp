@@ -3,7 +3,6 @@
 //
 #include <QKeyEvent>
 #include <glm/glm.hpp>
-#include <QDataStream>
 #include "PlayerTank.h"
 #include "glm/ext/matrix_transform.inl"
 
@@ -61,3 +60,4 @@ void PlayerTank::shoot(glm::vec3 direction) {
         //TODO spawn and add projectile to gamestate
     }
 }
+

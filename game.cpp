@@ -1,10 +1,11 @@
 // Created by Luna Steed and Tyson Cox 03/2024
 
 #include "game.h"
+#include "PlayerTank.h"
 
 
 /**
- * @author Tyson Cox, Luna Steed
+ * @author Tyson Cox, Luna Steed, Grant Madson
  * @time Spring 2024
  * @brief Game::Game constructor
  * @details Constructor for the Game class. Initializes the GameWindow and Scene objects, and sets inGame to false.
@@ -20,9 +21,8 @@ Game::Game(int argc, char** argv) : QApplication(argc, argv), timer(new QTimer(t
     inGame = false;
 
     connect(gw, &GameWindow::keySignal, this, &Game::filterKeyEvent); // Connect the GameWindow's keySignal to the Game's filterKeyEvent
-    auto *playerTank = sc->getPlayerTank(); // The scene holds a reference to the player tank, so we retrieve it
-    // connect(this, &Game::playerControlSignal, playerTank, Tank::handleKeyEvent);
-    // Waiting on Tank::handleKeyEvent to be implemented
+    auto *playerTank = dynamic_cast<PlayerTank*>(GameState::getInstance()->getGameObject(GameObjectType::PlayerTank)); // The scene holds a reference to the player tank, so we retrieve it
+    connect(this, &Game::playerControlSignal, playerTank, &PlayerTank::handleKeyEvent);
 }
 
 
