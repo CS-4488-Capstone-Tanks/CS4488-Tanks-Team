@@ -42,12 +42,9 @@ void EnemyTank::shoot(glm::vec3 direction) {
     // Don't spawn the bullet right on top of us
     auto bulletPos = this->position + this->direction;
     auto bulletDir = this->direction;
-    auto bulletSpeed = 1.0f;
-    auto bulletVel = bulletDir * bulletSpeed;
-    auto bulletTTL = 10.0f;
     auto bulletSize = 1.0f;
 
-    auto bullet = new Projectile(nullptr, gamestate->getNextFreeEntityID(), bulletPos, bulletVel, bulletTTL, bulletSize, bulletDir);
+    auto bullet = new Projectile(nullptr, gamestate->getNextFreeEntityID(), bulletPos, bulletSize, bulletDir);
 
     gamestate->addObject(bullet);
 }

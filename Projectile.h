@@ -30,8 +30,6 @@ public:
      * @param parent Optional parent object.
      * @param entityID Unique identifier for the projectile.
      * @param position Initial position in 3D space.
-     * @param speed Initial speed of the projectile, must be positive.
-     * @param lifetime Time until the projectile expires.
      * @param colliderRadius Radius of the projectile's collider.
      * @param direction Initial normalized direction vector of the projectile.
      * @exception std::invalid_argument Thrown if direction is a zero vector or speed is not positive.
@@ -39,7 +37,7 @@ public:
      * @date SPRING 2024
      */
 
-    explicit Projectile(QObject *parent = nullptr, uint32_t entityID = 0, const glm::vec3& position = glm::vec3(0.0f), float speed = 0.0f, float lifetime = 10.0f, float colliderRadius = 1.0f, const glm::vec3& direction = glm::vec3(0, 0, -1));
+    explicit Projectile(QObject *parent = nullptr, uint32_t entityID = 0, const glm::vec3& position = glm::vec3(0.0f), float colliderRadius = 1.0f, const glm::vec3& direction = glm::vec3(0, 0, -1));
 
     /**
      * @brief Initialization logic for the projectile
@@ -89,14 +87,6 @@ public:
     void setSpeed(float spd);
 
     /**
-     * @brief Retrieves the current normalized direction vector of the projectile
-     * @return The normalized direction vector of the projectile.
-     * @author Parker Hyde
-     * @date SPRING 2024
-     */
-    glm::vec3 getDirection() const;
-
-    /**
      * @brief Retrieves the current speed of the projectile
      * @return The speed of the projectile as a scalar value.
      * @author Parker Hyde
@@ -122,10 +112,6 @@ public:
     CircleCollider getCollider() const;
 
 private:
-    //The normalized direction vector of the projectile
-    glm::vec3 direction;
-    //The scalar speed of the projectile
-    float speed;
     //The remaining lifetime of the projectile
     float lifetime;
     //The collider used for detecting collisions with other objects
