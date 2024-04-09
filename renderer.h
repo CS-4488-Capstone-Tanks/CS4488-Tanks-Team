@@ -20,6 +20,14 @@ class GameObject;
  * from the QOpenGLExtraFunctions to gain access to the GL drawing functions required
  */
 class Renderer : public QOpenGLWidget, public QOpenGLExtraFunctions {
+public:
+    enum class CameraMode {
+        Static,
+        Chasing,
+        Periscope,
+        Orbiting
+    };
+protected:
     enum class DrawCommandType {
         Player,
         Enemy,
@@ -57,7 +65,7 @@ class Renderer : public QOpenGLWidget, public QOpenGLExtraFunctions {
     std::vector<DrawCommand> lastFrame;
     std::vector<DrawCommand> curFrame;
 
-    bool usingPeriscope;
+    CameraMode camMode;
     float cameraTime;
     static const glm::vec3 constexpr cameraTopPosition = glm::vec3(0, 17, -25);
 
@@ -88,6 +96,7 @@ class Renderer : public QOpenGLWidget, public QOpenGLExtraFunctions {
     static const float constexpr cameraSpeed = 0.01f;
 
 public:
+
     ~Renderer() override;
 
     /**
@@ -99,8 +108,7 @@ public:
     /** Called when all objects for the frame have been drawn */
     void doneWithFrame();
 
-    /** Toggle the renderer to display the scene in first person */
-    void togglePeriscope();
+    void setCameraMode(CameraMode mode);
 
     void initializeGL() override;
     void paintGL() override;

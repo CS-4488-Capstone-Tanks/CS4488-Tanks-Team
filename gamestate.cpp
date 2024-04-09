@@ -2,6 +2,7 @@
 #include "jsonhelpers.h"
 #include "Obstacle.h"
 #include "PlayerTank.h"
+#include "EnemyTank.h"
 
 const char LEVELS_PATH[] = "assets/levels/";
 
@@ -86,8 +87,8 @@ void GameState::loadState(std::string filename)
             else
                 throw std::invalid_argument("Expected an array for \"direction\"");
 
-            // auto obj = new PlayerTank(nullptr);
-            // addObject(obj);
+             auto obj = new PlayerTank(getNextFreeEntityID(), position, direction);
+             addObject(obj);
         }
         catch (std::invalid_argument &e) {
             qWarning("Error loading player tank: %s", e.what());
@@ -111,9 +112,8 @@ void GameState::loadState(std::string filename)
             else
                 throw std::invalid_argument("Expected an array for \"direction\"");
 
-            // TODO: construct and add object
-            // obj = EnemyTank(position, direction);
-            // addObject(obj);
+            auto obj = new EnemyTank(getNextFreeEntityID(), position, direction);
+            addObject(obj);
         }
         catch (std::invalid_argument &e) {
             qWarning("Error loading enemy tank: %s", e.what());
