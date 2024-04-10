@@ -67,7 +67,6 @@ protected:
 
     CameraMode camMode;
     float cameraTime;
-    static const glm::vec3 constexpr cameraTopPosition = glm::vec3(0, 17, -25);
 
     glm::mat4 view;
     glm::mat4 projection;
@@ -85,6 +84,8 @@ protected:
 
     void advanceCamera();
 
+    void drawMesh(const Mesh& mesh, const glm::mat4& mvp, unsigned int texture = 0, float* color = nullptr);
+
     // The following are configuration parameters that can be easily tweaked
     static const float constexpr cameraFOVDegrees = 45.0f;
 
@@ -95,6 +96,13 @@ protected:
     static const float constexpr cameraRadius = 20.0f;
     static const float constexpr cameraSpeed = 0.01f;
 
+    static const glm::vec3 constexpr cameraTopLookPos = glm::vec3(0, 0, 0);
+    static const glm::vec3 constexpr cameraTopPosition = glm::vec3(0, 17, -25);
+
+    static const float constexpr periscopeHeight = 0.25f;
+
+    static const float constexpr groundScale = 50.0f;
+    static const float constexpr groundHeight = -0.5f;
 public:
 
     ~Renderer() override;

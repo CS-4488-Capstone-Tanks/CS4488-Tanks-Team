@@ -17,13 +17,15 @@
 
 // These are the magic names that the renderer looks for when loading assets
 
-static const std::string TANK_MESH_FILE = "tank";
-static const std::string OBSTACLE_MESH_FILE = "obstacle";
-static const std::string BULLET_MESH_FILE = "bullet";
+static const char* TANK_MESH_FILE = "tank";
+static const char* OBSTACLE_MESH_FILE = "obstacle";
+static const char* BULLET_MESH_FILE = "bullet";
+static const char* GROUND_MESH_FILE = "ground";
 
-static const std::string PLAYER_TEXTURE_FILE = "player";
-static const std::string ENEMY_TEXTURE_FILE = "enemy";
-static const std::string OBSTACLE_TEXTURE_FILE = "obstacle";
+static const char* PLAYER_TEXTURE_FILE = "player";
+static const char* ENEMY_TEXTURE_FILE = "enemy";
+static const char* OBSTACLE_TEXTURE_FILE = "obstacle";
+static const char* GROUND_TEXTURE_FILE = "ground";
 
 
 
@@ -362,10 +364,12 @@ void Renderer::paintGL() {
         case CameraMode::Periscope:
             for(auto& cmd : lastFrame) {
                 if (cmd.type == DrawCommandType::Player) {
-                    glm::vec3 playerPos = glm::vec3(cmd.transform[3][0], cmd.transform[3][1], cmd.transform[3][2]);
+                    glm::vec3 camPos = glm::vec3(cmd.transform[3][0], cmd.transform[3][1] + periscopeHeight, cmd.transform[3][2]);
                     glm::vec3 up = glm::vec3(0, 1, 0);
 
-                    view = glm::lookAt(cmd.forwardPoint, playerPos, up);
+                    glm::vec3 lookPoint = cmd.forwardPoint + glm::vec3(0, periscopeHeight, 0);
+
+                    view = glm::lookAt(camPos, lookPoint, up);
 
                     break;
                 }
@@ -382,6 +386,21 @@ void Renderer::paintGL() {
     glm::mat4 vp = projection * view;
     glm::mat4 mvp;
 
+
+    if (meshes.find(GROUND_MESH_FILE) != meshes.end()) {
+        const auto& mesh = meshes[GROUND_MESH_FILE];
+
+        mat4 groundTransform = mat4(1.0f);
+        groundTransform = glm::scale(groundTransform, glm::vec3(groundScale, 0.0f, groundScale));
+
+        groundTransform[3][1] = groundHeight;
+
+        mvp = vp * groundTransform;
+
+        float groundColor[] = {0.25, 0.25, 0.25};
+
+        drawMesh(mesh, mvp, 0, groundColor);
+    }
 
     for(auto& cmd : lastFrame) {
         mvp = vp * cmd.transform;
@@ -439,37 +458,11 @@ void Renderer::paintGL() {
                 color[1] = 1.0f;
                 color[2] = 0.0f;
 
+
                 break;
         }
 
-        Shader shader = hasTexture ? shaders["textured"] : shaders["colored"];
-
-        // Use the appropriate shader for drawing
-        glUseProgram(shader.program);
-
-        if (!shader.hasUniform("mvp")) {
-            std::cerr << "Invalid shader, has no mvp uniform\n";
-        }
-
-        if (shader.hasUniform("color")) {
-            glUniform3fv(shader.uniforms["color"], 1, color);
-        }
-
-        if (shader.hasUniform("albedo")) {
-            if (!hasTexture) {
-                std::cerr << "Shader requested a texture, but not found\n";
-                continue;
-            }
-
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, texture);
-            glUniform1i(shader.uniforms["albedo"], 0);
-        }
-
-        glBindVertexArray(m.vao);
-
-        glUniformMatrix4fv(shader.uniforms["mvp"], 1, GL_FALSE, glm::value_ptr(mvp));  // set our mvp matrix for this draw
-        glDrawElements(GL_TRIANGLES, m.indexCount, GL_UNSIGNED_INT, 0);
+        drawMesh(m, mvp, texture, color);
     }
 }
 
@@ -630,6 +623,47 @@ void Renderer::setCameraMode(Renderer::CameraMode mode) {
     if (camMode == CameraMode::Static) {
         view = glm::lookAt(cameraTopPosition, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
     }
+}
+
+void Renderer::drawMesh(const Renderer::Mesh& mesh, const glm::mat4& mvp, unsigned int texture, float* passedColor) {
+    float color[] = { 1.0f, 1.0f, 1.0f };
+
+    if (passedColor != nullptr) {
+        memcpy(color, passedColor, 3 * sizeof(float));
+    }
+
+    bool hasTexture = texture != 0;
+
+    Shader shader = hasTexture ? shaders["textured"] : shaders["colored"];
+
+    // Use the appropriate shader for drawing
+    glUseProgram(shader.program);
+
+    if (!shader.hasUniform("mvp")) {
+        std::cerr << "Invalid shader, has no mvp uniform\n";
+    }
+
+    if (shader.hasUniform("color")) {
+        glUniform3fv(shader.uniforms["color"], 1, color);
+    }
+
+    if (shader.hasUniform("albedo")) {
+        if (!hasTexture) {
+            std::cerr << "Shader requested a texture, but not found\n";
+            return;
+        }
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glUniform1i(shader.uniforms["albedo"], 0);
+    }
+
+    glBindVertexArray(mesh.vao);
+
+    glUniformMatrix4fv(shader.uniforms["mvp"], 1, GL_FALSE, glm::value_ptr(mvp));  // set our mvp matrix for this draw
+    glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, 0);
+
+
 }
 
 bool Renderer::Shader::hasUniform(const char* name) const {
