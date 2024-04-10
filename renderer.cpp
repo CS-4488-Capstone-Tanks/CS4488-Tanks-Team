@@ -376,6 +376,24 @@ void Renderer::paintGL() {
             }
             break;
         case CameraMode::Chasing:
+            for(auto& cmd : lastFrame) {
+                if (cmd.type == DrawCommandType::Player) {
+                    glm::vec3 camPos = glm::vec3(cmd.transform[3][0], cmd.transform[3][1], cmd.transform[3][2]);
+                    glm::vec3 up = glm::vec3(0, 1, 0);
+
+                    glm::vec3 lookPoint = camPos;
+
+                    glm::vec3 forwardDir = cmd.forwardPoint - camPos;
+
+                    camPos += glm::vec3(0.0f, cameraTopPosition[1], 0.0f);
+                    camPos -= forwardDir * cameraChaseDistance;
+
+                    view = glm::lookAt(camPos, lookPoint, up);
+
+                    break;
+                }
+            }
+            break;
             break;
         case CameraMode::Orbiting:
            advanceCamera();
@@ -500,7 +518,6 @@ void Renderer::initializeGL() {
         100.0f
     );
 
-    //view = glm::lookAt(cameraTopPosition, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
     setCameraMode(CameraMode::Static);
 
     try {
@@ -614,14 +631,14 @@ void Renderer::advanceCamera() {
     cameraPos[2] = sin(cameraTime) * cameraRadius;
     cameraTime += cameraSpeed;
 
-    view = glm::lookAt(cameraPos, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+    view = glm::lookAt(cameraPos, cameraTopLookPos, glm::vec3(0, 1, 0));
 }
 
 void Renderer::setCameraMode(Renderer::CameraMode mode) {
     camMode = mode;
 
     if (camMode == CameraMode::Static) {
-        view = glm::lookAt(cameraTopPosition, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+        view = glm::lookAt(cameraTopPosition, cameraTopLookPos, glm::vec3(0, 1, 0));
     }
 }
 

@@ -99,6 +99,8 @@ protected:
     static const glm::vec3 constexpr cameraTopLookPos = glm::vec3(0, 0, 0);
     static const glm::vec3 constexpr cameraTopPosition = glm::vec3(0, 17, -25);
 
+    static const float constexpr cameraChaseDistance = 25.0f;
+
     static const float constexpr periscopeHeight = 0.25f;
 
     static const float constexpr groundScale = 50.0f;
