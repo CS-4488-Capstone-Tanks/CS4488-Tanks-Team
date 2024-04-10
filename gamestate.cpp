@@ -15,6 +15,7 @@ const char OBSTACLES_KEY[] = "obstacles";
 const char POS_KEY[] = "position";
 const char DIR_KEY[] = "direction";
 const char RAD_KEY[] = "radius";
+const char TYPE_KEY[] = "type";
 
 const vec3 DEFAULT_DIRECTION = vec3(0.0f, 0.0f, 1.0f);
 
@@ -131,6 +132,7 @@ void GameState::loadState(std::string filename)
                 vec3 position;
                 vec3 direction;
                 float radius;
+                std::string type;
 
                 if (const QJsonValue posVal = jsonObstacleObj[POS_KEY]; posVal.isArray())
                     position = JsonHelpers::getVec3FromJson(posVal.toArray());
@@ -150,7 +152,12 @@ void GameState::loadState(std::string filename)
                 else
                     throw std::invalid_argument("Expected a double for \"radius\"");
 
-                auto obj = new Obstacle(nullptr, getNextFreeEntityID(), position, radius);
+                if (const QJsonValue typeVal = jsonObstacleObj[TYPE_KEY]; typeVal.isString())
+                    type = typeVal.toString().toStdString();
+                else
+                    throw std::invalid_argument("Expected a string for \"type\"");
+
+                auto obj = new Obstacle(nullptr, getNextFreeEntityID(), position, radius, direction, Obstacle::convertNameToObstacleType(type));
                 addObject(obj);
             }
             catch (std::invalid_argument &e) {

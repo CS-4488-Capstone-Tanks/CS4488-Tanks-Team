@@ -10,7 +10,7 @@
     },
     "obstacles": [
         {
-            "type": "Rock",
+            "type": "Boulder",
             "position": [-2, 0, 0],
             "radius": 1
         },
