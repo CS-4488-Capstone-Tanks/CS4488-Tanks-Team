@@ -18,13 +18,11 @@
 // These are the magic names that the renderer looks for when loading assets
 
 static const char* TANK_MESH_FILE = "tank";
-static const char* OBSTACLE_MESH_FILE = "obstacle";
 static const char* BULLET_MESH_FILE = "bullet";
 static const char* GROUND_MESH_FILE = "ground";
 
 static const char* PLAYER_TEXTURE_FILE = "player";
 static const char* ENEMY_TEXTURE_FILE = "enemy";
-static const char* OBSTACLE_TEXTURE_FILE = "obstacle";
 static const char* GROUND_TEXTURE_FILE = "ground";
 
 
@@ -437,7 +435,6 @@ void Renderer::initializeGL() {
         // Ensure the data exists as an empty mesh, so at worst, if the meshes aren't on disk, we just
         // don't draw them instead of crashing or something
         meshes[TANK_MESH_FILE] = {};
-        meshes[OBSTACLE_MESH_FILE] = {};
         meshes[BULLET_MESH_FILE] = {};
 
         if (std::filesystem::exists("assets/models")) {
@@ -661,14 +658,7 @@ void Renderer::drawObstacle(const Renderer::DrawCommand& cmd) {
     if (obstacleTypeName.empty() || meshes.find(obstacleTypeName) == meshes.end()) {
         std::string errorName = obstacleTypeName.empty() ? "(empty)" : obstacleTypeName;
         std::cerr << "Renderer: No obstacle by type " << errorName << "\n";
-        m = meshes[OBSTACLE_MESH_FILE];
-
-        if (textureExists(obstacleTypeName)) {
-            texture = textures[obstacleTypeName];
-        }
-        else {
-            std::cerr << "Renderer: Obstacle type mesh found, but no texture: " << obstacleTypeName << "\n";
-        }
+        return;
     }
     else {
         m = meshes[obstacleTypeName];

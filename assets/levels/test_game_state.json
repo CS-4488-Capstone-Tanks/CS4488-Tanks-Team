@@ -15,7 +15,7 @@
             "radius": 1
         },
         {
-            "type": "House",
+            "type": "Tree",
             "position": [7, 0, 0],
             "radius": 5
         }

@@ -6,6 +6,20 @@
 
 #include <iostream>
 
+
+// This is the mapping from strings to the obstacle types. When you want to add a new
+// obstacle type, you must:
+// 1. Add an entry to the enum
+// 2. Add an entry here for the string mapping
+// 3. Create a mesh/texture with that name and put them in assets
+// 4. Add one in the level.json
+static const std::unordered_map<std::string, ObstacleType> oTypeNames = {
+    {"tree", ObstacleType::Tree},
+    {"boulder", ObstacleType::Boulder},
+    {"house", ObstacleType::House}
+};
+
+
 //Constructor for obstacles
 Obstacle::Obstacle(
     QObject *parent,
@@ -52,11 +66,6 @@ std::basic_string<T> toLowercase(const std::basic_string<T>& string) {
     return result;
 }
 
-static const std::unordered_map<std::string, ObstacleType> oTypeNames = {
-    {"tree", ObstacleType::Tree},
-    {"boulder", ObstacleType::Boulder},
-    {"houses", ObstacleType::House}
-};
 
 ObstacleType Obstacle::convertNameToObstacleType(const std::string& name) {
     std::string lower = toLowercase(name);
