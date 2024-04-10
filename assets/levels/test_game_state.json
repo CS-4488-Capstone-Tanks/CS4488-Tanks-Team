@@ -1,6 +1,6 @@
 {
     "playerTank": {
-        "position": [1, 2, 3],
+        "position": [1, 0, 3],
         "direction": [0, 0, 1]
     },
     "enemyTank": {
@@ -10,12 +10,12 @@
     },
     "obstacles": [
         {
-            "type": "Rock",
-            "position": [-2, -2, 0],
+            "type": "Boulder",
+            "position": [-2, 0, 0],
             "radius": 1
         },
         {
-            "type": "House",
+            "type": "Tree",
             "position": [7, 0, 0],
             "radius": 5
         }
