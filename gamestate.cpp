@@ -2,6 +2,7 @@
 #include "jsonhelpers.h"
 #include "Obstacle.h"
 #include "PlayerTank.h"
+#include "EnemyTank.h"
 
 const char LEVELS_PATH[] = "assets/levels/";
 
@@ -43,17 +44,35 @@ GameState* GameState::getInstance()
 void GameState::startState()
 {
     foreach (GameObject *const obj, objs) {
-        obj->doStart();
+        obj->startState();
     }
 }
 
 void GameState::updateState(float deltaTime)
 {
+    // Update all objects, or remove them if they are queued for destruction
     foreach (GameObject *const obj, objs) {
         if (obj->isQueuedForDestruction())
             removeObject(obj->getEntityID());
         else
-            obj->doUpdate(deltaTime);
+            obj->updateState(deltaTime);
+    }
+
+    // Check and handle collisions between objects
+    foreach (GameObject *const obj, objs) {
+        if (obj->hasChanged())
+        {
+            foreach (GameObject *const other, objs)
+            {
+                if (obj != other && obj->getCollider().collidesWith(other->getCollider()))
+                {
+                    obj->doCollision(other);
+                    other->doCollision(obj);
+                    obj->resetChanged();
+                    other->resetChanged();
+                }
+            }
+        }
     }
 }
 

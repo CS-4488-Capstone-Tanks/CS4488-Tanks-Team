@@ -128,8 +128,6 @@ private:
     float speed;
     //The remaining lifetime of the projectile
     float lifetime;
-    //The collider used for detecting collisions with other objects
-    CircleCollider collider;
 };
 
 #endif //TANKS_PROJECTILE_H

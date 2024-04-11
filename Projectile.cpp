@@ -8,10 +8,11 @@
 
 //Constructor for Projectiles
 Projectile::Projectile(QObject *parent, uint32_t entityID, const glm::vec3& position, float speed, float lifetime, float colliderRadius, const glm::vec3& direction)
-        : GameObject(GameObjectType::Projectile, entityID, position, glm::normalize(direction), parent), speed(speed), lifetime(lifetime), collider(position, colliderRadius) {
+        : GameObject(GameObjectType::Projectile, entityID, position, glm::normalize(direction), parent), speed(speed), lifetime(lifetime) {
     if (glm::length(direction) == 0.0f) {
         throw std::invalid_argument("Direction vector cannot be zero.");
     }
+    this->collider = CircleCollider(this->getPosition(), colliderRadius);
 }
 
 //Empty since projectiles shouldn't need initialization before the first update
@@ -21,13 +22,11 @@ void Projectile::doStart() {
 
 //Updates the projectile's state. Called once per frame
 //Movement is based on normalized direction and speed
-//Collider's position is updated and lifetime is reduced
 void Projectile::doUpdate(float deltaTime) {
     if (!isDead()) {
         //Use normalized direction and speed to determine velocity
         vec3 pos = getPosition();
         pos += glm::normalize(direction) * speed * deltaTime;
-        collider.updatePosition(pos);
         setPosition(pos);
         lifetime -= deltaTime;
     }

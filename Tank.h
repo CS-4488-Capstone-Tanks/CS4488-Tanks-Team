@@ -11,6 +11,7 @@ class Tank : public GameObject {
 Q_OBJECT
 public:
     explicit Tank(QObject *parent = nullptr, GameObjectType type = GameObjectType::EnemyTank): GameObject(type, parent) {
+        this->collider = CircleCollider(vec3(0,0,0), 1.0f);
         // Initialize player tank position, speed, etc.
         // Connect key events to handleKeyPress() slot
     };

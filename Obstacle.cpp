@@ -6,7 +6,8 @@
 
 //Constructor for obstacles
 Obstacle::Obstacle(QObject *parent, uint32_t entityID, const glm::vec3& position, float colliderRadius, const glm::vec3& direction)
-        : GameObject(GameObjectType::Obstacle, entityID, position, direction, parent), collider(position, colliderRadius) {
+        : GameObject(GameObjectType::Obstacle, entityID, position, direction, parent) {
+    collider = CircleCollider(position, colliderRadius);
 }
 
 void Obstacle::doStart() {
@@ -15,10 +16,4 @@ void Obstacle::doStart() {
 
 void Obstacle::doUpdate(float deltaTime) {
     //Method for obstacle update logic. Not sure if necessary unless they can move, or are destructible
-}
-
-
-//Retrieves the collider used for collision detection
-CircleCollider Obstacle::getCollider() const {
-    return collider;
 }

@@ -48,17 +48,6 @@ public:
      */
     void doUpdate(float deltaTime) override;
 
-    /**
-     * @brief Retrieves the collider used for collision detection.
-     * @return CircleCollider object.
-     * @author Parker Hyde
-     * @date SPRING 2024
-     */
-    CircleCollider getCollider() const;
-
-private:
-    //The collider used for detecting collisions with other objects
-    CircleCollider collider;
 };
 
 #endif //TANKS_OBSTACLE_H
