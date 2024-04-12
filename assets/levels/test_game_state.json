@@ -15,9 +15,14 @@
             "radius": 1
         },
         {
+            "type": "Boulder",
+            "position": [-3, 0, 0],
+            "radius": 0.5
+        },
+        {
             "type": "Tree",
             "position": [7, 0, 0],
-            "radius": 5
+            "radius": 0.5
         }
     ]
 }

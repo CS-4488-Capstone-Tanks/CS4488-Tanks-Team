@@ -43,6 +43,11 @@ void PlayerTank::doUpdate(float deltaTime) {
     shotAccumulator += deltaTime;
 }
 
+void PlayerTank::doCollision(GameObject* other) {
+    if (other->getType() != GameObjectType::PlayerProjectile)
+        selfDestruct();
+}
+
 void PlayerTank::shoot(glm::vec3 direction) {
     if (shotAccumulator < shotThreshold) {
         return;
@@ -54,9 +59,8 @@ void PlayerTank::shoot(glm::vec3 direction) {
     // Don't spawn the bullet right on top of us
     auto bulletPos = this->getPosition() + this->getDirection();
     auto bulletDir = this->getDirection();
-    auto bulletSize = 1.0f;
 
-    auto bullet = new Projectile(nullptr, gamestate->getNextFreeEntityID(), bulletPos, bulletSize, bulletDir, this->getType());
+    auto bullet = new Projectile(nullptr, gamestate->getNextFreeEntityID(), bulletPos, bulletDir, GameObjectType::PlayerProjectile);
 
     gamestate->addObject(bullet);
 }

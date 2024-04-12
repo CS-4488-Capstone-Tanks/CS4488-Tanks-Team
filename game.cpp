@@ -22,6 +22,8 @@ Game::Game(int argc, char** argv) : QApplication(argc, argv), timer(new QTimer(t
 
     connect(gw, &GameWindow::keySignal, this, &Game::filterKeyEvent); // Connect the GameWindow's keySignal to the Game's filterKeyEvent
     auto* playerTank = sc->getPlayerTank(); // The scene holds a reference to the player tank, so we retrieve it
+    if (!playerTank)
+        throw std::runtime_error("Player tank not found in scene");
 
     installEventFilter(this);
 }
@@ -171,7 +173,11 @@ bool Game::filterKeyEvent(QKeyEvent* event) {
             case Qt::Key_Right:
             case Qt::Key_Space:
                 if (inGame) {
-                    return dynamic_cast<PlayerTank*>(sc->getPlayerTank())->handleKeyEvent(event);
+                    PlayerTank* player = dynamic_cast<PlayerTank*>(sc->getPlayerTank());
+                    if (player)
+                        return player->handleKeyEvent(event);
+                    else
+                        return false;
                 }
             case Qt::Key_1:
                 if (inGame) {
@@ -207,7 +213,11 @@ bool Game::filterKeyEvent(QKeyEvent* event) {
     }
     else if (event->type() == QEvent::KeyRelease) {
         if (inGame) {
-            return dynamic_cast<PlayerTank*>(sc->getPlayerTank())->handleKeyEvent(event);
+            PlayerTank* player = dynamic_cast<PlayerTank*>(sc->getPlayerTank());
+            if (player)
+                return player->handleKeyEvent(event);
+            else
+                return false;
         }
         else return false;
     }

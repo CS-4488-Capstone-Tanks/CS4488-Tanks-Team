@@ -17,6 +17,8 @@ void EnemyTank::doUpdate(float deltaTime) {
     vec3 dir = glm::normalize(glm::vec3(cos(angleInRadians), 0.0, sin(angleInRadians)));
     this->setDirection(dir);
     PlayerTank* player = dynamic_cast<PlayerTank*>(GameState::getInstance()->getGameObject(GameObjectType::PlayerTank));
+    if (!player)
+        return;
     auto playerPos = player->getPosition();
 
     float desiredAngle = atan2(playerPos[2] - pos[2], playerPos[0] - pos[0]);
@@ -37,6 +39,11 @@ void EnemyTank::doUpdate(float deltaTime) {
     shoot(dir);
 }
 
+void EnemyTank::doCollision(GameObject* other) {
+    if (other->getType() != GameObjectType::EnemyProjectile)
+        selfDestruct();
+}
+
 void EnemyTank::shoot(glm::vec3 direction) {
     if (shotAccumulator < shotThreshold) {
         return;
@@ -48,9 +55,8 @@ void EnemyTank::shoot(glm::vec3 direction) {
     // Don't spawn the bullet right on top of us
     auto bulletPos = this->getPosition() + this->getDirection();
     auto bulletDir = this->getDirection();
-    auto bulletSize = 1.0f;
 
-    auto bullet = new Projectile(nullptr, gamestate->getNextFreeEntityID(), bulletPos, bulletSize, bulletDir, this->getType());
+    auto bullet = new Projectile(nullptr, gamestate->getNextFreeEntityID(), bulletPos, bulletDir, GameObjectType::EnemyProjectile);
 
     gamestate->addObject(bullet);
 }

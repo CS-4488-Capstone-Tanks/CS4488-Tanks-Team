@@ -37,7 +37,13 @@ public:
      * @date SPRING 2024
      */
 
-    explicit Projectile(QObject *parent = nullptr, uint32_t entityID = 0, const glm::vec3& position = glm::vec3(0.0f), float colliderRadius = 1.0f, const glm::vec3& direction = glm::vec3(0, 0, -1), GameObjectType source = GameObjectType::PlayerTank);
+    explicit Projectile(
+        QObject *parent = nullptr,
+        uint32_t entityID = 0,
+        const glm::vec3& position = glm::vec3(0.0f),
+        const glm::vec3& direction = glm::vec3(0, 0, -1),
+        GameObjectType type = GameObjectType::None
+        );
 
     /**
      * @brief Initialization logic for the projectile
@@ -87,8 +93,6 @@ public:
 private:
     //The remaining lifetime of the projectile
     float lifetime;
-    // The type of GameObject that spawned this projectile
-    GameObjectType source;
 };
 
 #endif //TANKS_PROJECTILE_H
