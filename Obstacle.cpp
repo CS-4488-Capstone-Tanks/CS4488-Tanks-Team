@@ -32,7 +32,7 @@ Obstacle::Obstacle(
     GameObject(GameObjectType::Obstacle, entityID, position, direction, parent),
     obstacleType(obstacleType)
 {
-    this->collider = CircleCollider(position, colliderRadius);
+    this->collider = CircleCollider(colliderRadius);
 }
 
 void Obstacle::doStart() {

@@ -3,15 +3,16 @@
 //
 
 #include "Projectile.h"
-#include <stdexcept>
 #include <glm/glm.hpp>
 
-Projectile::Projectile(QObject* parent, uint32_t entityID, const vec3& position, float colliderRadius, const vec3& direction) :
-    GameObject(GameObjectType::Projectile, entityID, position, direction, parent),
+const float COLLIDER_RADIUS = 0.05f;
+
+Projectile::Projectile(QObject* parent, uint32_t entityID, const vec3& position, const vec3& direction, GameObjectType type) :
+    GameObject(type, entityID, position, direction, parent),
     lifetime(10.0f)
 {
     this->setSpeed(5.0f);
-    this->collider = CircleCollider(position, colliderRadius);
+    this->collider = CircleCollider(COLLIDER_RADIUS);
 }
 
 //Empty since projectiles shouldn't need initialization before the first update
@@ -28,6 +29,18 @@ void Projectile::doUpdate(float deltaTime) {
         setPosition(pos);
         lifetime -= deltaTime;
     }
+    else
+        selfDestruct();
+}
+
+//Called when the projectile collides with another GameObject
+void Projectile::doCollision(GameObject* other) {
+    // *cool explosion effects and noises*
+    if (
+        type == GameObjectType::PlayerProjectile && other->getType() != GameObjectType::PlayerTank
+        || type == GameObjectType::EnemyProjectile && other->getType() != GameObjectType::EnemyTank
+    )
+        selfDestruct();
 }
 
 //Checks whether the projectile's lifetime has run out

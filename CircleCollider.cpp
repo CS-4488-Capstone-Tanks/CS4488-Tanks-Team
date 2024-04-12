@@ -13,8 +13,8 @@
 #include <glm/gtx/norm.hpp>
 
 //Constructor with initial position and radius. Throws an exception if the radius is not positive.
-CircleCollider::CircleCollider(const glm::vec3& position, float radius)
-        : colliderPosition(position), colliderRadius(radius) {
+CircleCollider::CircleCollider(float radius)
+        : colliderRadius(radius) {
     if (radius <= 0.0f) {
         throw std::invalid_argument("Radius must be positive.");
     }

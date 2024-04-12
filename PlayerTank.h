@@ -18,6 +18,7 @@ public:
     );
 
     void doUpdate(float deltaTime) override;
+    void doCollision(GameObject* other) override;
     bool handleKeyEvent(QKeyEvent* event);
 private:
     bool dirTable[4];

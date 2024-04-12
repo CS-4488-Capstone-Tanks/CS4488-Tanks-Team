@@ -317,7 +317,10 @@ void Renderer::drawObject(const GameObject* object) {
         case GameObjectType::EnemyTank:
             cmd.type = DrawCommandType::Enemy;
             break;
-        case GameObjectType::Projectile:
+        case GameObjectType::PlayerProjectile:
+            cmd.type = DrawCommandType::Bullet;
+            break;
+        case GameObjectType::EnemyProjectile:
             cmd.type = DrawCommandType::Bullet;
             break;
         case GameObjectType::Obstacle:

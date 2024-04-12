@@ -5,11 +5,12 @@
 
 enum class GameObjectType
 {
-    None,
     PlayerTank,
     EnemyTank,
     Obstacle,
-    Projectile
+    PlayerProjectile,
+    EnemyProjectile,
+    None
 };
 
 inline std::string gameObjectTypeToString(GameObjectType type)
@@ -24,8 +25,10 @@ inline std::string gameObjectTypeToString(GameObjectType type)
             return "EnemyTank";
         case GameObjectType::Obstacle:
             return "Obstacle";
-        case GameObjectType::Projectile:
-            return "Projectile";
+        case GameObjectType::PlayerProjectile:
+            return "PlayerProjectile";
+        case GameObjectType::EnemyProjectile:
+            return "EnemyProjectile";
         default:
             return "Unknown type";
     }

@@ -21,17 +21,6 @@ class GameObject : public QObject
     Q_OBJECT
 	
 public:
-
-    /**
-     * THIS CONSTRUCTOR IS GETTING PHASED OUT. USE THE CONSTRUCTOR THAT TAKES AN ENTITY ID.
-     * @brief Constructor for the GameObject.
-     * @param type: The GameObjectType of the GameObject. This is used so
-        the renderer can differentiate between different types of GameObjects.
-     * @param parent: The parent of the GameObject.
-     * @author Koda Koziol
-     * @date SPRING 2024
-     */
-    explicit GameObject(GameObjectType type, QObject *parent = nullptr);
     
       /**
       * @brief Constructor for the GameObject.
@@ -57,7 +46,21 @@ public:
       );
 
 
+	/**
+	 * @brief initialize the GameObject state. This method is called by the GameState.
+	 * @note This method should not be called directly. It is called by the GameState
+	 * @author Koda Koziol
+	 * @date SPRING 2024
+	*/
 	virtual void startState();
+
+	/**
+	 * @brief Update the GameObject state. This method is called by the GameState.
+	 * @param deltaTime: The time elapsed since the last update in seconds(?). This is a fixed value.
+	 * @note This method should not be called directly. It is called by the GameState
+	 * @author Koda Koziol
+	 * @date SPRING 2024
+	*/
 	virtual void updateState(float deltaTime);
 
 
@@ -181,7 +184,7 @@ protected:
 	// The type of the GameObject, will be None by default
     GameObjectType type = GameObjectType::None;
     // The collider for the GameObject, will have radius 1 b default
-    CircleCollider collider = CircleCollider(position, 1.0f);
+    CircleCollider collider = CircleCollider(1.0f);
 
     /** 
      * @brief This method gets called once immediately before the very first

@@ -21,6 +21,7 @@ public:
     );
 
     void doUpdate(float deltaTime) override;
+    void doCollision(GameObject* other) override;
 
 private:
     void shoot(glm::vec3 direction) override;
