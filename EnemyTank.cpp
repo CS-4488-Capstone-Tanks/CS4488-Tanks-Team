@@ -3,36 +3,62 @@
 //
 
 #include "EnemyTank.h"
+#include "gamestate.h"
 #include "glm/geometric.hpp"
-
-EnemyTank::EnemyTank() {
-
-}
+#include "PlayerTank.h"
+#include "Projectile.h"
 
 void EnemyTank::doUpdate(float deltaTime) {
 
-    //TODO have Tank face direction of PlayerTank
-
-    // Calculate the displacement vector based on speed, direction, and time
-    // Normalized so that the magnitude of the direction vector is always 1.
-    vec3 dir = this->getDirection();
-    vec3 pos = this->getPosition();
+    vec pos = this->getPosition();
     float spd = this->getSpeed();
 
-    glm::vec3 displacement = glm::normalize(dir) * spd * deltaTime;
+    
+    vec3 dir = glm::normalize(glm::vec3(cos(angleInRadians), 0.0, sin(angleInRadians)));
+    this->setDirection(dir);
+    PlayerTank* player = dynamic_cast<PlayerTank*>(GameState::getInstance()->getGameObject(GameObjectType::PlayerTank));
+    auto playerPos = player->getPosition();
 
-    pos += displacement;
-    this->setPosition(pos);
+    float desiredAngle = atan2(playerPos[2] - pos[2], playerPos[0] - pos[0]);
 
-    this->setSpeed(0.0);
+    if (desiredAngle  > angleInRadians) {
+        angleInRadians += spd * deltaTime;
+    }
+    else {
+        angleInRadians -= spd * deltaTime;
+    }
 
-    this->shoot(dir);
+    if (abs(desiredAngle - angleInRadians) < qDegreesToRadians(90)) {
+        pos += dir * spd * deltaTime;
+        this->setPosition(pos);
+    }
+
+    shotAccumulator += deltaTime;
+    shoot(dir);
 }
 
 void EnemyTank::shoot(glm::vec3 direction) {
-    if (canShoot){
-        canShoot = false;
-        //shotTimer->start(this->MAX_COOLDOWN);
-        //TODO spawn and add projectile to gamestate
+    if (shotAccumulator < shotThreshold) {
+        return;
     }
+
+    shotAccumulator = 0.0;
+    GameState* gamestate = GameState::getInstance();
+
+    // Don't spawn the bullet right on top of us
+    auto bulletPos = this->getPosition() + this->getDirection();
+    auto bulletDir = this->getDirection();
+    auto bulletSize = 1.0f;
+
+    auto bullet = new Projectile(nullptr, gamestate->getNextFreeEntityID(), bulletPos, bulletSize, bulletDir);
+
+    gamestate->addObject(bullet);
+}
+
+EnemyTank::EnemyTank(uint32_t entityID, const vec3& position, const vec3& direction, QObject* parent)
+: Tank(GameObjectType::EnemyTank, entityID, position, direction, parent),
+shotAccumulator(0),
+shotThreshold(10)
+{
+    this->setSpeed(0.5);
 }

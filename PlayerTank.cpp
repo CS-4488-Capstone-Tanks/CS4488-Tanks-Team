@@ -5,65 +5,127 @@
 #include <glm/glm.hpp>
 #include <QDataStream>
 #include "PlayerTank.h"
+#include "gamestate.h"
+#include "Projectile.h"
 #include "glm/ext/matrix_transform.inl"
-
-PlayerTank::PlayerTank(QObject *parent): Tank(parent, GameObjectType::PlayerTank){
-    //shotTimer = new QTimer(this);
-    //connect(shotTimer, &QTimer::timeout, this, &PlayerTank::allowShot);
-}
 
 
 void PlayerTank::doUpdate(float deltaTime) {
-
-    // Calculate the displacement vector based on speed, direction, and time
-    // Normalized so that the magnitude of the direction vector is always 1.
     vec3 pos = this->getPosition();
-    vec3 dir = this->getDirection();
     float spd = this->getSpeed();
-    glm::vec3 displacement = dir * spd * deltaTime;
+    
+    
+    vec3 dir = glm::vec3(cos(angleInRadians), 0, sin(angleInRadians));
+    this->setDirection(dir);
 
-    pos += displacement;
-    this->setPosition(pos);
+    if (dirTable[0]) {
+        pos += dir * spd * deltaTime;
+        this->setPosition(pos);
+    }
 
-    this->setSpeed(0.0);
-}
+    if (dirTable[1]) {
+        pos -= dir * spd * deltaTime;
+        this->setPosition(pos);
+    }
 
-void PlayerTank::moveForward() {
-    this->setSpeed(1.0);
-}
+    if (dirTable[2]) {
+        angleInRadians -= spd * deltaTime;
+    }
 
-void PlayerTank::turnRight() {
-    // Angle in radians to rotate by
-    float angleRadians = glm::radians(45.0f);
+    if (dirTable[3]) {
+        angleInRadians += spd * deltaTime;
+    }
 
-    // Create rotation matrix
-    glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), angleRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+    if (wantFire) {
+        shoot(dir);
+    }
 
-    // Rotate the vector
-    vec3 dir = this->getDirection();
-    this->setDirection(glm::vec3(rotationMatrix * glm::vec4(dir, 1.0f)));
-}
-
-void PlayerTank::turnLeft() {
-    // Angle in radians to rotate by
-    float angleRadians = glm::radians(-45.0f);
-
-    // Create rotation matrix
-    glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), angleRadians, glm::vec3(0.0f, 0.0f, 1.0f));
-
-    // Rotate the vector
-    vec3 dir = this->getDirection();
-    this->setDirection(glm::vec3(rotationMatrix * glm::vec4(dir, 1.0f)));
-}
-
-void PlayerTank::moveBackward() {
-    this->setSpeed(-1.0);
+    shotAccumulator += deltaTime;
 }
 
 void PlayerTank::shoot(glm::vec3 direction) {
-    if (canShoot){
-        canShoot = false;
-        //shotTimer->start(this->MAX_COOLDOWN);
-        //TODO spawn and add projectile to gamestate
+    if (shotAccumulator < shotThreshold) {
+        return;
+    }
+
+    shotAccumulator = 0.0;
+    GameState* gamestate = GameState::getInstance();
+
+    // Don't spawn the bullet right on top of us
+    auto bulletPos = this->getPosition() + this->getDirection();
+    auto bulletDir = this->getDirection();
+    auto bulletSize = 1.0f;
+
+    auto bullet = new Projectile(nullptr, gamestate->getNextFreeEntityID(), bulletPos, bulletSize, bulletDir);
+
+    gamestate->addObject(bullet);
+}
+
+PlayerTank::PlayerTank(uint32_t entityID, const vec3& position, const vec3& direction, QObject* parent)
+: Tank(GameObjectType::PlayerTank, entityID, position, direction, parent),
+shotAccumulator(0),
+shotThreshold(10),
+wantFire(false)
+{
+    for(auto& val : dirTable) {
+        val = false;
+    }
+
+    this->setSpeed(0.8);
+}
+
+bool PlayerTank::handleKeyEvent(QKeyEvent* event) {
+    if (event->type() == QEvent::KeyPress) {
+        switch (event->key()) {
+            case Qt::Key_W:
+            case Qt::Key_Up:
+                dirTable[0] = true;
+                return true;
+            case Qt::Key_S:
+            case Qt::Key_Down:
+                dirTable[1] = true;
+                return true;
+            case Qt::Key_A:
+            case Qt::Key_Left:
+                dirTable[2] = true;
+                return true;
+            case Qt::Key_D:
+            case Qt::Key_Right:
+                dirTable[3] = true;
+                return true;
+            case Qt::Key_Space:
+                wantFire = true;
+                return true;
+            default:
+                return false;
+        }
+    }
+    else if (event->type() == QEvent::KeyRelease) {
+        switch (event->key()) {
+            case Qt::Key_W:
+            case Qt::Key_Up:
+                dirTable[0] = false;
+                return true;
+            case Qt::Key_S:
+            case Qt::Key_Down:
+                dirTable[1] = false;
+                return true;
+            case Qt::Key_A:
+            case Qt::Key_Left:
+                dirTable[2] = false;
+                return true;
+            case Qt::Key_D:
+            case Qt::Key_Right:
+                dirTable[3] = false;
+                return true;
+            case Qt::Key_Space:
+                wantFire = false;
+                return true;
+            default:
+                return false;
+        }
+    }
+    else {
+        return false;
     }
 }

@@ -9,6 +9,12 @@
 #include "CircleCollider.h"
 #include <QObject>
 
+enum class ObstacleType {
+    Tree,
+    Boulder,
+    House
+};
+
 /**
  * @brief The Obstacle class represents a static game entity that can't move but can be collided with.
  * It inherits from GameObject and has a collider to handle collisions.
@@ -29,7 +35,7 @@ public:
      * @author Parker Hyde
      * @date SPRING 2024
      */
-    explicit Obstacle(QObject *parent = nullptr, uint32_t entityID = 0, const glm::vec3& position = glm::vec3(0.0f), float colliderRadius = 1.0f, const glm::vec3& direction = glm::vec3(0, 0, -1));
+    explicit Obstacle(QObject *parent = nullptr, uint32_t entityID = 0, const glm::vec3& position = glm::vec3(0.0f), float colliderRadius = 1.0f, const glm::vec3& direction = glm::vec3(0, 0, -1), ObstacleType obstacleType = ObstacleType::Tree);
 
     /**
      * @brief Called before the game starts, so it can be used for initialization
@@ -48,6 +54,33 @@ public:
      */
     void doUpdate(float deltaTime) override;
 
+
+    /**
+     * @brief Return the type of obstacle that this obstacle is
+     * @return ObstacleType enum
+     * @author Tyson Cox
+     * @date SPRING 2024
+     */
+    ObstacleType getObstacleType() const;
+
+    /**
+     * @brief Serves as a centralized convenience function for converting obstacle type names (strings) to enums
+     * @param name The name of the obstacle type (e.g. Tree, Rock, House, etc)
+     * @return the corresponding ObstacleType enum
+     * @author Tyson Cox
+     * @date SPRING 2024
+     */
+    static ObstacleType convertNameToObstacleType(const std::string& name);
+
+    /**
+     * @brief Serves as a centralized convenience function for converting obstacle types to their string name
+     * @param type the ObstacleType
+     * @return The name, if available, empty string if not
+     */
+    static std::string convertObstacleTypeToName(ObstacleType type);
+
+private:
+    ObstacleType obstacleType;
 };
 
 #endif //TANKS_OBSTACLE_H

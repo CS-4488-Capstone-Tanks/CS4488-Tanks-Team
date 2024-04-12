@@ -10,11 +10,13 @@
 class Tank : public GameObject {
 Q_OBJECT
 public:
-    explicit Tank(QObject *parent = nullptr, GameObjectType type = GameObjectType::EnemyTank): GameObject(type, parent) {
-        this->collider = CircleCollider(vec3(0,0,0), 1.0f);
-        // Initialize player tank position, speed, etc.
-        // Connect key events to handleKeyPress() slot
-    };
+    explicit Tank(
+        GameObjectType type,
+        uint32_t entityID,
+        const vec3& position = vec3(0.0f),
+        const vec3& direction = vec3(0.0f, 0.0f, -1.0f),
+        QObject *parent = nullptr
+    );
 
     void doUpdate(float deltaTime) override {};
 
@@ -25,6 +27,8 @@ public:
 protected:
     const int MAX_COOLDOWN = 8000; //Cooldown for firing is 8 seconds as per requirements. Must be in millis.
     bool canShoot = true;
+
+    float angleInRadians;
 
 protected slots:
     void allowShot() { canShoot = true; };

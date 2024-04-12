@@ -1,6 +1,7 @@
 // Created by Luna Steed and Tyson Cox 03/2024
 
 #include "game.h"
+#include "PlayerTank.h"
 
 
 /**
@@ -20,9 +21,9 @@ Game::Game(int argc, char** argv) : QApplication(argc, argv), timer(new QTimer(t
     inGame = false;
 
     connect(gw, &GameWindow::keySignal, this, &Game::filterKeyEvent); // Connect the GameWindow's keySignal to the Game's filterKeyEvent
-    auto *playerTank = sc->getPlayerTank(); // The scene holds a reference to the player tank, so we retrieve it
-    // connect(this, &Game::playerControlSignal, playerTank, Tank::handleKeyEvent);
-    // Waiting on Tank::handleKeyEvent to be implemented
+    auto* playerTank = sc->getPlayerTank(); // The scene holds a reference to the player tank, so we retrieve it
+
+    installEventFilter(this);
 }
 
 
@@ -128,8 +129,6 @@ void Game::tick() {
     rend->doneWithFrame();
 }
 
-
-// PUBLIC Q Slots: keyPressEvent(QKeyEvent *event), keyReleaseEvent(QKeyEvent *event)
 /**
  * @author Luna Steed
  * @time Spring 2024
@@ -137,48 +136,80 @@ void Game::tick() {
  * @details Filter key events with switch cases. Handle them in-house or pass them to the player tank object.
  * @param event The key event to filter
  */
-void Game::filterKeyEvent(QKeyEvent *event) {
-    switch (event->key())
-    {
-        case Qt::Key_Escape: // ESC
-            if (inGame) { // in game
-                pause();
-                break;
-            }
-            else if (activeKey == INGAME_MENU_KEY) { // in in-game menu
-                resume();
-                break;
-            }
-            else if (activeKey == MAIN_MENU_KEY){ // main menu
-                this->~Game();
-                break;
-            }
-            else{ // anywhere else, return to main menu
-                activeKey = MAIN_MENU_KEY;
-                gw->changeWidget(activeKey);
-                break;
-            }
-        // Player controls. DOES NOT HANDLE PRESS/RELEASE EVENTS: PlayerTank must handle this.
-        // WASD
-        case Qt::Key_W:
-        case Qt::Key_A:
-        case Qt::Key_S:
-        case Qt::Key_D:
-        // Arrow keys
-        case Qt::Key_Up:
-        case Qt::Key_Left:
-        case Qt::Key_Down:
-        case Qt::Key_Right:
-        // Firing
-        case Qt::Key_Space:
+bool Game::filterKeyEvent(QKeyEvent* event) {
+
+    if (event->type() == QEvent::KeyPress) {
+        switch (event->key())
         {
-            if (inGame) {
-                emit Game::playerControlSignal(event);
-                break;
-            }
-            else { // Functionality should only be available in-game
-                break;
-            }
+            case Qt::Key_Escape: // ESC
+                if (inGame) { // in game
+                    pause();
+                    return true;
+                }
+                else if (activeKey == INGAME_MENU_KEY) { // in in-game menu
+                    resume();
+                    return true;
+                }
+                else if (activeKey == MAIN_MENU_KEY){ // main menu
+                    exit(0);
+                    return true;
+                }
+                else{ // anywhere else, return to main menu
+                    activeKey = MAIN_MENU_KEY;
+                    gw->changeWidget(activeKey);
+                    return true;
+                }
+                // Player controls. DOES NOT HANDLE PRESS/RELEASE EVENTS: PlayerTank must handle this.
+                // WASD
+            case Qt::Key_W:
+            case Qt::Key_A:
+            case Qt::Key_S:
+            case Qt::Key_D:
+            case Qt::Key_Up:
+            case Qt::Key_Left:
+            case Qt::Key_Down:
+            case Qt::Key_Right:
+            case Qt::Key_Space:
+                if (inGame) {
+                    return dynamic_cast<PlayerTank*>(sc->getPlayerTank())->handleKeyEvent(event);
+                }
+            case Qt::Key_1:
+                if (inGame) {
+                    QWidget* widg = gw->changeWidget(GAME_KEY);
+                    auto* rend = dynamic_cast<Renderer*>(widg);
+                    rend->setCameraMode(Renderer::CameraMode::Static);
+                }
+                return true;
+            case Qt::Key_2:
+                if (inGame) {
+                    QWidget* widg = gw->changeWidget(GAME_KEY);
+                    auto* rend = dynamic_cast<Renderer*>(widg);
+                    rend->setCameraMode(Renderer::CameraMode::Periscope);
+                }
+                return true;
+            case Qt::Key_3:
+                if (inGame) {
+                    QWidget* widg = gw->changeWidget(GAME_KEY);
+                    auto* rend = dynamic_cast<Renderer*>(widg);
+                    rend->setCameraMode(Renderer::CameraMode::Chasing);
+                }
+                return true;
+            case Qt::Key_4:
+                if (inGame) {
+                    QWidget* widg = gw->changeWidget(GAME_KEY);
+                    auto* rend = dynamic_cast<Renderer*>(widg);
+                    rend->setCameraMode(Renderer::CameraMode::Orbiting);
+                }
+                return true;
+            default:
+                return false;
         }
     }
+    else if (event->type() == QEvent::KeyRelease) {
+        if (inGame) {
+            return dynamic_cast<PlayerTank*>(sc->getPlayerTank())->handleKeyEvent(event);
+        }
+        else return false;
+    }
+    else return false;
 }

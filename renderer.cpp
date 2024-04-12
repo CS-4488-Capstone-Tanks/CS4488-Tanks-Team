@@ -17,16 +17,13 @@
 
 // These are the magic names that the renderer looks for when loading assets
 
-static const std::string TANK_MESH_FILE = "tank";
-static const std::string OBSTACLE_MESH_FILE = "obstacle";
-static const std::string BULLET_MESH_FILE = "bullet";
+static const char* TANK_MESH_FILE = "tank";
+static const char* BULLET_MESH_FILE = "bullet";
+static const char* GROUND_MESH_FILE = "ground";
 
-static const std::string PLAYER_TEXTURE_FILE = "player";
-static const std::string ENEMY_TEXTURE_FILE = "enemy";
-static const std::string OBSTACLE_TEXTURE_FILE = "obstacle";
-
-
-
+static const char* PLAYER_TEXTURE_FILE = "player";
+static const char* ENEMY_TEXTURE_FILE = "enemy";
+static const char* GROUND_TEXTURE_FILE = "ground";
 
 
 static const char* texturedVertexSource = R"(
@@ -305,16 +302,12 @@ void Renderer::doneWithFrame() {
     update();
 }
 
-void Renderer::togglePeriscope() {
-    usingPeriscope = !usingPeriscope;
-
-    if (!usingPeriscope) {
-        view = glm::lookAt(cameraTopPosition, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-    }
-}
-
-
 void Renderer::drawObject(const GameObject* object) {
+    if (!object) {
+        std::cerr << "Renderer: received null object\n";
+        return;
+    }
+
     DrawCommand cmd{};
 
     switch(object->getType()) {
@@ -330,6 +323,9 @@ void Renderer::drawObject(const GameObject* object) {
         case GameObjectType::Obstacle:
             cmd.type = DrawCommandType::Obstacle;
             break;
+        case GameObjectType::None:
+            std::cerr << "Renderer: Can't draw none-type object\n";
+            return;
     }
 
     // Compute the basis vectors of the object's rotation using the cross product
@@ -354,6 +350,12 @@ void Renderer::drawObject(const GameObject* object) {
 
     cmd.forwardPoint = pos + glm::normalize(objectForward);
 
+    if (cmd.type == DrawCommandType::Obstacle) {
+        cmd.obstacleType = dynamic_cast<const Obstacle*>(object)->getObstacleType();
+    }
+
+    specialCaseAdjusment(cmd);
+
     curFrame.emplace_back(cmd);
 }
 
@@ -363,113 +365,29 @@ void Renderer::paintGL() {
     // Clear both the color buffer and depth buffer, preparing to draw an entirely fresh frame
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // If the periscope is enabled, make a pass through the draw commands to ensure
-    // we find where the player is and set the camera to be there for first person view
-    if (usingPeriscope) {
-       for(auto& cmd : lastFrame) {
-           if (cmd.type == DrawCommandType::Player) {
-               glm::vec3 playerPos = glm::vec3(cmd.transform[3][0], cmd.transform[3][1], cmd.transform[3][2]);
-               glm::vec3 up = glm::vec3(0, 1, 0);
+    // Handle setting any camera properties needed for this frame
+    frameSetCamera();
 
-               view = glm::lookAt(cmd.forwardPoint, playerPos, up);
+    // Always draw the ground
+    drawGround();
 
-               break;
-           }
-       }
-    }
-    else {
-        //advanceCamera();
-    }
-
-
-    // Compute half the mvp, the last bit computed per object
-    glm::mat4 vp = projection * view;
-    glm::mat4 mvp;
-
-
+    // Loop through the commands, and draw each object at its appropriate location/type/etc
     for(auto& cmd : lastFrame) {
-        mvp = vp * cmd.transform;
-
-        Mesh m{};
-
-        bool hasTexture = false;
-        unsigned int texture = 0;
-        float color[] = { 1.0f, 1.0f, 1.0f };
 
         switch(cmd.type) {
             case DrawCommandType::Player:
-                m = meshes[TANK_MESH_FILE];            // find the mesh we care about
-
-                color[0] = 0.0f; // green
-                color[1] = 1.0f,
-                color[2] = 0.0f;
-
-                if ((hasTexture = textureExists(PLAYER_TEXTURE_FILE))) {
-                    texture = textures[PLAYER_TEXTURE_FILE];
-                }
-
+                drawPlayerTank(cmd);
                 break;
             case DrawCommandType::Enemy:
-                m = meshes[TANK_MESH_FILE];
-
-                color[0] = 1.0f; // red
-                color[1] = 0.0f,
-                color[2] = 0.0f;
-
-                if ((hasTexture = textureExists(ENEMY_TEXTURE_FILE))) {
-                    texture = textures[ENEMY_TEXTURE_FILE];
-                }
-
+                drawEnemyTank(cmd);
                 break;
             case DrawCommandType::Obstacle:
-                m = meshes[OBSTACLE_MESH_FILE];
-
-                color[0] = 0.58; // brown
-                color[1] = 0.29f,
-                color[2] = 0.0f;
-
-                if ((hasTexture = textureExists(OBSTACLE_TEXTURE_FILE))) {
-                    texture = textures[OBSTACLE_TEXTURE_FILE];
-                }
-
+                drawObstacle(cmd);
                 break;
             case DrawCommandType::Bullet:
-                m = meshes[BULLET_MESH_FILE];
-                color[0] = 1.0f; // yellow
-                color[1] = 1.0f;
-                color[2] = 0.0f;
-
+                drawProjectile(cmd);
                 break;
         }
-
-        Shader shader = hasTexture ? shaders["textured"] : shaders["colored"];
-
-        // Use the appropriate shader for drawing
-        glUseProgram(shader.program);
-
-        if (!shader.hasUniform("mvp")) {
-            std::cerr << "Invalid shader, has no mvp uniform\n";
-        }
-
-        if (shader.hasUniform("color")) {
-            glUniform3fv(shader.uniforms["color"], 1, color);
-        }
-
-        if (shader.hasUniform("albedo")) {
-            if (!hasTexture) {
-                std::cerr << "Shader requested a texture, but not found\n";
-                continue;
-            }
-
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, texture);
-            glUniform1i(shader.uniforms["albedo"], 0);
-        }
-
-        glBindVertexArray(m.vao);
-
-        glUniformMatrix4fv(shader.uniforms["mvp"], 1, GL_FALSE, glm::value_ptr(mvp));  // set our mvp matrix for this draw
-        glDrawElements(GL_TRIANGLES, m.indexCount, GL_UNSIGNED_INT, 0);
     }
 }
 
@@ -489,6 +407,7 @@ void Renderer::initializeGL() {
     QOpenGLWidget::initializeGL();
     QOpenGLExtraFunctions::initializeOpenGLFunctions();
 
+    // Enable depth buffering/testing (so that objects behind others aren't drawn over top of them)
     glEnable(GL_DEPTH_TEST);
 
     // Set the background color of the window when nothing is on it
@@ -507,9 +426,7 @@ void Renderer::initializeGL() {
         100.0f
     );
 
-    view = glm::lookAt(cameraTopPosition, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-
-    usingPeriscope = false;
+    setCameraMode(CameraMode::Static);
 
     try {
         shaders["textured"] = shaderFromSource(texturedVertexSource, texturedFragmentSource);
@@ -517,9 +434,8 @@ void Renderer::initializeGL() {
 
         // Ensure the data exists as an empty mesh, so at worst, if the meshes aren't on disk, we just
         // don't draw them instead of crashing or something
-        meshes["tank"] = {};
-        meshes["obstacle"] = {};
-        meshes["bullet"] = {};
+        meshes[TANK_MESH_FILE] = {};
+        meshes[BULLET_MESH_FILE] = {};
 
         if (std::filesystem::exists("assets/models")) {
             for(const auto& entry : std::filesystem::directory_iterator("assets/models")) {
@@ -591,7 +507,7 @@ unsigned int Renderer::textureFromFile(const std::filesystem::path& path) {
     // Use QT to load the image
     QImage image(QString::fromStdString(path.string()));
     if (image.isNull()) {
-        std::cerr << "Failed to load image: " << path << "\n";
+        std::cerr << "Renderer: Failed to load image: " << path << "\n";
         return 0;
     }
 
@@ -622,7 +538,198 @@ void Renderer::advanceCamera() {
     cameraPos[2] = sin(cameraTime) * cameraRadius;
     cameraTime += cameraSpeed;
 
-    view = glm::lookAt(cameraPos, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+    view = glm::lookAt(cameraPos, cameraTopLookPos, glm::vec3(0, 1, 0));
+}
+
+void Renderer::setCameraMode(Renderer::CameraMode mode) {
+    camMode = mode;
+
+    if (camMode == CameraMode::Static) {
+        view = glm::lookAt(cameraTopPosition, cameraTopLookPos, glm::vec3(0, 1, 0));
+    }
+}
+
+void Renderer::drawMesh(const Renderer::Mesh& mesh, const glm::mat4& mvp, unsigned int texture, float* passedColor) {
+    float color[] = { 1.0f, 1.0f, 1.0f };
+
+    if (passedColor != nullptr) {
+        memcpy(color, passedColor, 3 * sizeof(float));
+    }
+
+    bool hasTexture = texture != 0;
+
+    Shader shader = hasTexture ? shaders["textured"] : shaders["colored"];
+
+    // Use the appropriate shader for drawing
+    glUseProgram(shader.program);
+
+    if (!shader.hasUniform("mvp")) {
+        std::cerr << "Renderer: Invalid shader, has no mvp uniform\n";
+    }
+
+    if (shader.hasUniform("color")) {
+        glUniform3fv(shader.uniforms["color"], 1, color);
+    }
+
+    if (shader.hasUniform("albedo")) {
+        if (!hasTexture) {
+            std::cerr << "Renderer: Shader requested a texture, but not found\n";
+            return;
+        }
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glUniform1i(shader.uniforms["albedo"], 0);
+    }
+
+    glBindVertexArray(mesh.vao);
+
+    glUniformMatrix4fv(shader.uniforms["mvp"], 1, GL_FALSE, glm::value_ptr(mvp));  // set our mvp matrix for this draw
+    glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, 0);
+
+
+}
+
+void Renderer::specialCaseAdjusment(Renderer::DrawCommand& cmd) {
+    if (cmd.type != DrawCommandType::Obstacle) {
+        return;
+    }
+
+    // Trees need scooted down to be flat with the ground
+    // if at some point, some enterprising individual fixes the alignment in the mesh itself,
+    // this is no longer required
+    if (cmd.obstacleType == ObstacleType::Tree) {
+        cmd.transform = glm::translate(cmd.transform, glm::vec3(0.0f, -0.5f, 0.0f));
+    }
+}
+
+void Renderer::drawPlayerTank(const Renderer::DrawCommand& cmd) {
+    // Skip drawing the player in periscope mode, so we're not looking at its
+    // insides. Alternatively, can enable backface culling
+    if (camMode == CameraMode::Periscope) {
+        return;
+    }
+
+    Mesh m = meshes[TANK_MESH_FILE];
+
+    float color[] = {0.0f, 1.0f, 0.0f}; // green
+    unsigned int texture = 0;
+    glm::mat4 mvp = projection * view * cmd.transform;
+
+    if (textureExists(PLAYER_TEXTURE_FILE)) {
+        texture = textures[PLAYER_TEXTURE_FILE];
+    }
+
+    drawMesh(m, mvp, texture, color);
+}
+
+void Renderer::drawEnemyTank(const Renderer::DrawCommand& cmd) {
+    Mesh m = meshes[TANK_MESH_FILE];
+
+    float color[] = {1.0f, 0.0f, 0.0f}; // red
+    unsigned int texture = 0;
+    glm::mat4 mvp = projection * view * cmd.transform;
+
+    if (textureExists(ENEMY_TEXTURE_FILE)) {
+        texture = textures[ENEMY_TEXTURE_FILE];
+    }
+
+    drawMesh(m, mvp, texture, color);
+}
+
+void Renderer::drawProjectile(const Renderer::DrawCommand& cmd) {
+    Mesh m = meshes[BULLET_MESH_FILE];
+
+    float color[] = {1.0f, 1.0f, 0.0f}; // yellow
+    glm::mat4 mvp = projection * view * cmd.transform;
+
+
+    drawMesh(m, mvp, 0, color);
+}
+
+void Renderer::drawObstacle(const Renderer::DrawCommand& cmd) {
+    Mesh m{};
+    std::string obstacleTypeName = Obstacle::convertObstacleTypeToName(cmd.obstacleType);
+
+    float color[] {0.58, 0.29f, 0.0f}; // brown
+    glm::mat4 mvp = projection * view * cmd.transform;
+    unsigned int texture = 0;
+
+    if (obstacleTypeName.empty() || meshes.find(obstacleTypeName) == meshes.end()) {
+        std::string errorName = obstacleTypeName.empty() ? "(empty)" : obstacleTypeName;
+        std::cerr << "Renderer: No obstacle by type " << errorName << "\n";
+        return;
+    }
+    else {
+        m = meshes[obstacleTypeName];
+
+        if (textureExists(obstacleTypeName)) {
+            texture = textures[obstacleTypeName];
+        }
+    }
+
+    drawMesh(m, mvp, texture, color);
+}
+
+void Renderer::drawGround() {
+    if (meshes.find(GROUND_MESH_FILE) != meshes.end()) {
+        const auto& mesh = meshes[GROUND_MESH_FILE];
+
+        mat4 groundTransform = mat4(1.0f);
+        groundTransform = glm::scale(groundTransform, glm::vec3(groundScale, 0.0f, groundScale));
+
+        groundTransform[3][1] = groundHeight;
+
+        glm::mat4 mvp = projection * view * groundTransform;
+
+        float groundColor[] = {0.25, 0.25, 0.25};
+
+        int groundTex = textures.find(GROUND_TEXTURE_FILE) == textures.end() ? 0 : textures[GROUND_TEXTURE_FILE];
+
+        drawMesh(mesh, mvp, groundTex, groundColor);
+    }
+}
+
+void Renderer::frameSetCamera() {
+    switch (camMode) {
+        case CameraMode::Static: break; // No changes needed for a static camera
+        case CameraMode::Periscope:     // In periscope mode, set our camera inside the player tank
+            for(auto& cmd : lastFrame) {
+                if (cmd.type == DrawCommandType::Player) {
+                    glm::vec3 camPos = glm::vec3(cmd.transform[3][0], cmd.transform[3][1] + periscopeHeight, cmd.transform[3][2]);
+                    glm::vec3 up = glm::vec3(0, 1, 0);
+
+                    glm::vec3 lookPoint = cmd.forwardPoint + glm::vec3(0, periscopeHeight, 0);
+
+                    view = glm::lookAt(camPos, lookPoint, up);
+
+                    break;
+                }
+            }
+            break;
+        case CameraMode::Chasing:   // For chasing mode, set our camera above the player tank
+            for(auto& cmd : lastFrame) {
+                if (cmd.type == DrawCommandType::Player) {
+                    glm::vec3 camPos = glm::vec3(cmd.transform[3][0], cmd.transform[3][1], cmd.transform[3][2]);
+                    glm::vec3 up = glm::vec3(0, 1, 0);
+
+                    glm::vec3 lookPoint = camPos;
+
+                    glm::vec3 forwardDir = cmd.forwardPoint - camPos;
+
+                    camPos += glm::vec3(0.0f, cameraTopPosition[1], 0.0f);
+                    camPos -= forwardDir * cameraChaseDistance;
+
+                    view = glm::lookAt(camPos, lookPoint, up);
+
+                    break;
+                }
+            }
+            break;
+        case CameraMode::Orbiting:  // For orbiting mode, calculate the next camera position
+            advanceCamera();
+            break;
+    }
 }
 
 bool Renderer::Shader::hasUniform(const char* name) const {
