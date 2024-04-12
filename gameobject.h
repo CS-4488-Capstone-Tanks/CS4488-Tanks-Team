@@ -4,6 +4,7 @@
 #include <QObject>
 #include <glm/vec3.hpp>
 #include "gameobjecttype.h"
+#include "circlecollider.h"
 
 using namespace glm;
 
@@ -56,27 +57,25 @@ public:
       );
 
 
-    /** 
-     * @brief This method gets called once immediately before the very first
-        doUpdate() call. Override and initialize GameObject properties here.
-     * @author Koda Koziol
-     * @date SPRING 2024
-     */
-    virtual void doStart();
+	virtual void startState();
+	virtual void updateState(float deltaTime);
 
-    /**
-     * @brief This method gets called once every update period on every GameObject.
-        Override it to change position, direction, or other properties over time.
-     * @param float deltaTime: The time elapsed since the last update in
-        seconds(?). This is a fixed value. Example: If you increment a
-        property every frame by a number, its "speed" will be measured in
-        units-per-frame (or meters-per-frame if you wish). If you want to
-        work in units-per-second, multiply "speed" by deltaTime to convert to
-        units-per-frame.
-     * @author Koda Koziol
-     * @date SPRING 2024
-     */
-    virtual void doUpdate(float deltaTime);
+
+	/**
+	 * @brief This method gets called when a collision is detected between this GameObject
+	 * and another GameObject. Override this method to implement collision behavior.
+	 * @param other: The GameObject that this GameObject collided with.
+	 * @author Koda Koziol
+	 * @date SPRING 2024
+	*/
+	virtual void doCollision(GameObject* other);
+
+	/**
+	 * @return The CircleCollider of the GameObject. This is used for collision detection.
+	 * @author Koda Koziol
+	 * @date SPRING 2024
+	*/
+	CircleCollider getCollider() const;
 
     /**
      * @return The position of the GameObject in 3D space.
@@ -85,12 +84,47 @@ public:
      */
     vec3 getPosition() const;
 
+	/**
+	 * @brief Set the position of the GameObject in 3D space.
+	 * @param pos: The new position of the GameObject in 3D space.
+	 * @author Koda Koziol
+	 * @date SPRING 2024
+	 */
+	void setPosition(const vec3& pos);
+
     /**
      * @return The direction the GameObject is facing in 3D space.
      * @author Koda Koziol
      * @date SPRING 2024
      */
     vec3 getDirection() const;
+
+	/**
+	 * @brief Set the normalized direction the GameObject is facing in 3D space.
+	 * @param dir: The new direction the GameObject is facing in 3D space.
+	 * @note The direction vector should be normalized. If it is not, it will be normalized
+	 * before being set as the direction of the GameObject. If the direction vector is the zero
+	 * vector, an invalid_argument exception will be thrown.
+	 * @author Koda Koziol
+	 * @date SPRING 2024
+	 */
+	void setDirection(const vec3& dir);
+
+    /**
+	 * @return The speed of the GameObject.
+	 * @author Koda Koziol
+	 * @date SPRING 2024
+	*/
+    float getSpeed() const;
+
+	/**
+	 * @brief Set the speed of the GameObject.
+	 * @param spd: The new speed of the GameObject. Must be positive.
+	 * @note If the speed is not positive, an invalid_argument exception will be thrown.
+	 * @author Koda Koziol
+	 * @date SPRING 2024
+	 */
+	void setSpeed(float spd);
 
     /**
      * @return The GameObjectType of the GameObject. This is used to
@@ -125,18 +159,65 @@ public:
 	*/
 	bool isQueuedForDestruction() const;
 
+	/**
+	 * @return True if the GameObject has changed since the last update, false otherwise.
+	 * @note This is used to determine whether it's necessary to perform collision calculations (TODO).
+	 * @author Koda Koziol
+	 * @date SPRING 2024
+	*/
+	bool hasChanged() const;
+
+	/**
+	 * @brief Reset the "hasChanged" flag to false. This should be called after collision calculations
+	 * @author Koda Koziol
+	 * @date SPRING 2024
+	*/
+	void resetChanged();
+
 
 protected:
-    vec3 position = vec3(0.0f);
-    vec3 direction = vec3(0.0f, 0.0f, 1.0f);
-    float speed = 0.0f;
+	// The unique identifier for the GameObject
     uint32_t entityID = -1;
+	// The type of the GameObject, will be None by default
     GameObjectType type = GameObjectType::None;
+    // The collider for the GameObject, will have radius 1 b default
+    CircleCollider collider = CircleCollider(position, 1.0f);
+
+    /** 
+     * @brief This method gets called once immediately before the very first
+        doUpdate() call. Override and initialize GameObject properties here.
+     * @author Koda Koziol
+     * @date SPRING 2024
+     */
+    virtual void doStart();
+
+	/**
+     * @brief This method gets called once every update period on every GameObject.
+        Override it to change position, direction, or other properties over time.
+     * @param float deltaTime: The time elapsed since the last update in
+        seconds(?). This is a fixed value. Example: If you increment a
+        property every frame by a number, its "speed" will be measured in
+        units-per-frame (or meters-per-frame if you wish). If you want to
+        work in units-per-second, multiply "speed" by deltaTime to convert to
+        units-per-frame.
+     * @author Koda Koziol
+     * @date SPRING 2024
+     */
+    virtual void doUpdate(float deltaTime);
+
 
 
 private:
+	// The position of the GameObject in 3D space
+	vec3 position = vec3(0.0f);
+	// The direction the GameObject is facing in 3D space, should be normalized (don't confuse with velocity)
+	vec3 direction = vec3(0.0f, 0.0f, 1.0f);
+	// The speed of the GameObject (don't confuse with velocity)
+	float speed = 0.0f;
+	// Flag for whether the GameObject is queued for destruction
 	bool _isQueuedForDestruction = false;
-
+	// Flag for whether the GameObject has changed since the last update
+	bool _hasChanged = false;
 };
 
 #endif // GAMEOBJECT_H

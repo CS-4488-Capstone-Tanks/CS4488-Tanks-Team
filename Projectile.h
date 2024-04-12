@@ -66,34 +66,6 @@ public:
      */
     bool isDead() const;
 
-
-
-    /**
-     * @brief Sets the projectile's normalized direction vector
-     * @param dir New normalized direction vector for the projectile.
-     * @exception std::invalid_argument Thrown if dir is a zero vector.
-     * @author Parker Hyde
-     * @date SPRING 2024
-     */
-    void setDirection(const glm::vec3& dir);
-
-    /**
-     * @brief Sets the projectile's movement speed
-     * @param spd The new speed of the projectile, must be positive.
-     * @exception std::invalid_argument Thrown if spd is not positive.
-     * @author Parker Hyde
-     * @date SPRING 2024
-     */
-    void setSpeed(float spd);
-
-    /**
-     * @brief Retrieves the current speed of the projectile
-     * @return The speed of the projectile as a scalar value.
-     * @author Parker Hyde
-     * @date SPRING 2024
-     */
-    float getSpeed() const;
-
     /**
      * @brief Calculates and retrieves the current velocity of the projectile
      * Velocity is computed as the product of the normalized direction vector and the speed scalar.
@@ -103,19 +75,9 @@ public:
      */
     glm::vec3 getVelocity() const;
 
-    /**
-     * @brief Retrieves the collider used for collision detection.
-     * @return A CircleCollider defining the projectile's collision boundaries.
-     * @author Parker Hyde
-     * @date SPRING 2024
-     */
-    CircleCollider getCollider() const;
-
 private:
     //The remaining lifetime of the projectile
     float lifetime;
-    //The collider used for detecting collisions with other objects
-    CircleCollider collider;
 };
 
 #endif //TANKS_PROJECTILE_H

@@ -11,26 +11,33 @@
 
 
 void PlayerTank::doUpdate(float deltaTime) {
-    direction = glm::vec3(cos(angleInRadians), 0, sin(angleInRadians));
+    vec3 pos = this->getPosition();
+    float spd = this->getSpeed();
+    
+    
+    vec3 dir = glm::vec3(cos(angleInRadians), 0, sin(angleInRadians));
+    this->setDirection(dir);
 
     if (dirTable[0]) {
-        this->position += direction * speed * deltaTime;
+        pos += dir * spd * deltaTime;
+        this->setPosition(pos);
     }
 
     if (dirTable[1]) {
-        this->position -= direction * speed * deltaTime;
+        pos -= dir * spd * deltaTime;
+        this->setPosition(pos);
     }
 
     if (dirTable[2]) {
-        angleInRadians -= speed * deltaTime;
+        angleInRadians -= spd * deltaTime;
     }
 
     if (dirTable[3]) {
-        angleInRadians += speed * deltaTime;
+        angleInRadians += spd * deltaTime;
     }
 
     if (wantFire) {
-        shoot(this->direction);
+        shoot(dir);
     }
 
     shotAccumulator += deltaTime;
@@ -45,8 +52,8 @@ void PlayerTank::shoot(glm::vec3 direction) {
     GameState* gamestate = GameState::getInstance();
 
     // Don't spawn the bullet right on top of us
-    auto bulletPos = this->position + this->direction;
-    auto bulletDir = this->direction;
+    auto bulletPos = this->getPosition() + this->getDirection();
+    auto bulletDir = this->getDirection();
     auto bulletSize = 1.0f;
 
     auto bullet = new Projectile(nullptr, gamestate->getNextFreeEntityID(), bulletPos, bulletSize, bulletDir);
@@ -64,7 +71,7 @@ wantFire(false)
         val = false;
     }
 
-    speed = 0.8;
+    this->setSpeed(0.8);
 }
 
 bool PlayerTank::handleKeyEvent(QKeyEvent* event) {

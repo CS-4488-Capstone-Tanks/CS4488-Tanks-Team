@@ -30,9 +30,10 @@ Obstacle::Obstacle(
     ObstacleType obstacleType
 ) :
     GameObject(GameObjectType::Obstacle, entityID, position, direction, parent),
-    collider(position, colliderRadius),
     obstacleType(obstacleType)
-{}
+{
+    this->collider = CircleCollider(position, colliderRadius);
+}
 
 void Obstacle::doStart() {
     //Method for initializing obstacle specific properties
@@ -43,10 +44,6 @@ void Obstacle::doUpdate(float deltaTime) {
 }
 
 
-//Retrieves the collider used for collision detection
-CircleCollider Obstacle::getCollider() const {
-    return collider;
-}
 
 ObstacleType Obstacle::getObstacleType() const {
     return obstacleType;
