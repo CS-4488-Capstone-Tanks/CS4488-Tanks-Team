@@ -67,6 +67,10 @@ void GameState::updateState(float deltaTime)
             {
                 if (obj != other && obj->getCollider().collidesWith(other->getCollider()))
                 {
+                    qWarning("Collision detected between a %s(%u) and %s(%u)",
+                             gameObjectTypeToString(obj->getType()).c_str(), obj->getEntityID(),
+                             gameObjectTypeToString(other->getType()).c_str(), other->getEntityID()
+                             );
                     obj->doCollision(other);
                     other->doCollision(obj);
                     obj->resetChanged();
