@@ -37,7 +37,7 @@ public:
      * @date SPRING 2024
      */
 
-    explicit Projectile(QObject *parent = nullptr, uint32_t entityID = 0, const glm::vec3& position = glm::vec3(0.0f), float colliderRadius = 1.0f, const glm::vec3& direction = glm::vec3(0, 0, -1));
+    explicit Projectile(QObject *parent = nullptr, uint32_t entityID = 0, const glm::vec3& position = glm::vec3(0.0f), float colliderRadius = 1.0f, const glm::vec3& direction = glm::vec3(0, 0, -1), GameObjectType source = GameObjectType::PlayerTank);
 
     /**
      * @brief Initialization logic for the projectile
@@ -59,6 +59,15 @@ public:
     void doUpdate(float deltaTime) override;
 
     /**
+     * @brief Called when the projectile collides with another GameObject
+     * Currently just destroys the projectile, but we can get fancier in the future.
+     * @param other The GameObject that the projectile collided with.
+     * @author Koda Koziol
+     * @date SPRING 2024
+     */
+    void doCollision(GameObject* other) override;
+
+    /**
      * @brief Determines if the projectile's lifetime has expired.
      * @return True if the projectile is dead (lifetime <= 0), otherwise false.
      * @author Parker Hyde
@@ -78,6 +87,8 @@ public:
 private:
     //The remaining lifetime of the projectile
     float lifetime;
+    // The type of GameObject that spawned this projectile
+    GameObjectType source;
 };
 
 #endif //TANKS_PROJECTILE_H

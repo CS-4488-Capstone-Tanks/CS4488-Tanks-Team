@@ -56,7 +56,7 @@ void PlayerTank::shoot(glm::vec3 direction) {
     auto bulletDir = this->getDirection();
     auto bulletSize = 1.0f;
 
-    auto bullet = new Projectile(nullptr, gamestate->getNextFreeEntityID(), bulletPos, bulletSize, bulletDir);
+    auto bullet = new Projectile(nullptr, gamestate->getNextFreeEntityID(), bulletPos, bulletSize, bulletDir, this->getType());
 
     gamestate->addObject(bullet);
 }
