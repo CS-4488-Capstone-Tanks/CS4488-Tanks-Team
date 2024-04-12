@@ -21,7 +21,7 @@ public:
      * @author Parker Hyde
      * @date SPRING 2024
      */
-    CircleCollider(const glm::vec3& position, float radius);
+    CircleCollider(float radius);
 
 
     /**

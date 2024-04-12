@@ -2,7 +2,6 @@
 #include <glm/glm.hpp>
 
 
-GameObject::GameObject(GameObjectType type, QObject *parent) : type(type) { }
 GameObject::GameObject(
         GameObjectType type,
         uint32_t entityID,

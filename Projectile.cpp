@@ -3,7 +3,6 @@
 //
 
 #include "Projectile.h"
-#include <stdexcept>
 #include <glm/glm.hpp>
 
 const float COLLIDER_RADIUS = 0.05f;
@@ -13,7 +12,7 @@ Projectile::Projectile(QObject* parent, uint32_t entityID, const vec3& position,
     lifetime(10.0f)
 {
     this->setSpeed(5.0f);
-    this->collider = CircleCollider(position, COLLIDER_RADIUS);
+    this->collider = CircleCollider(COLLIDER_RADIUS);
 }
 
 //Empty since projectiles shouldn't need initialization before the first update

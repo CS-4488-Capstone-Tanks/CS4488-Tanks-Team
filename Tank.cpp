@@ -14,6 +14,6 @@ Tank::Tank(GameObjectType type, uint32_t entityID, const vec3& position, const v
 : GameObject(type, entityID, position, direction, parent),
 angleInRadians(0.0)
 {
-    this->collider = CircleCollider(this->getPosition(), COLLIDER_RADIUS); //Second arg is collider radius, set to something appropriate
+    this->collider = CircleCollider(COLLIDER_RADIUS); //Second arg is collider radius, set to something appropriate
 }
 
