@@ -1,8 +1,8 @@
 #include "gamestate.h"
-#include "jsonhelpers.h"
+#include "EnemyTank.h"
 #include "Obstacle.h"
 #include "PlayerTank.h"
-#include "EnemyTank.h"
+#include "jsonhelpers.h"
 
 const char LEVELS_PATH[] = "assets/levels/";
 
@@ -10,18 +10,22 @@ const char LEVELS_PATH[] = "assets/levels/";
 const char PLAYER_KEY[] = "playerTank";
 const char ENEMY_KEY[] = "enemyTank";
 const char OBSTACLES_KEY[] = "obstacles";
+const char MAP_PROPERTIES_KEY[] = "mapProperties";
 
 // Property keys
 const char POS_KEY[] = "position";
 const char DIR_KEY[] = "direction";
 const char RAD_KEY[] = "radius";
 const char TYPE_KEY[] = "type";
+const char XLENGTH_KEY[] = "XLength";
+const char ZLENGTH_KEY[] = "ZLength";
 
 const vec3 DEFAULT_DIRECTION = vec3(0.0f, 0.0f, 1.0f);
 
 GameState::GameState() {}
 
-GameState::~GameState() {
+GameState::~GameState()
+{
     for (GameObject *const obj : objs)
         delete obj;
     objs.clear();
@@ -32,9 +36,9 @@ GameState::~GameState() {
     nextFreeEntityID = 0;
 }
 
-GameState* GameState::instance = nullptr;
+GameState *GameState::instance = nullptr;
 
-GameState* GameState::getInstance()
+GameState *GameState::getInstance()
 {
     if (instance == nullptr)
         instance = new GameState();
@@ -61,16 +65,14 @@ void GameState::updateState(float deltaTime)
 
     // Check and handle collisions between objects
     foreach (GameObject *const obj, objs) {
-        if (obj->hasChanged())
-        {
-            foreach (GameObject *const other, objs)
-            {
-                if (obj != other && obj->getCollider().collidesWith(other->getCollider()))
-                {
+        if (obj->hasChanged()) {
+            foreach (GameObject *const other, objs) {
+                if (obj != other && obj->getCollider().collidesWith(other->getCollider())) {
                     qWarning("Collision detected between a %s(%u) and %s(%u)",
-                             gameObjectTypeToString(obj->getType()).c_str(), obj->getEntityID(),
-                             gameObjectTypeToString(other->getType()).c_str(), other->getEntityID()
-                             );
+                             gameObjectTypeToString(obj->getType()).c_str(),
+                             obj->getEntityID(),
+                             gameObjectTypeToString(other->getType()).c_str(),
+                             other->getEntityID());
                     obj->doCollision(other);
                     other->doCollision(obj);
                     obj->resetChanged();
@@ -93,9 +95,28 @@ void GameState::loadState(std::string filename)
     QJsonDocument saveDoc(QJsonDocument::fromJson(stateData));
     QJsonObject jsonObj = saveDoc.object();
 
+    // Load map properties
+    if (const QJsonValue v = jsonObj[MAP_PROPERTIES_KEY]; v.isObject()) {
+        try {
+            QJsonObject jsonPlayerObj = v.toObject();
+
+            if(const QJsonValue XLength = jsonPlayerObj[XLENGTH_KEY]; XLength.isDouble())
+                MapXLength = XLength.toDouble();
+            else
+                throw std::invalid_argument("Expected a double for \"XLength\"");
+
+            if(const QJsonValue ZLength = jsonPlayerObj[ZLENGTH_KEY]; ZLength.isDouble())
+                MapZLength = ZLength.toDouble();
+            else
+                throw std::invalid_argument("Expected a double for \"ZLength\"");
+
+        } catch (std::invalid_argument &e) {
+            qWarning("Error loading map properties: %s", e.what());
+        }
+    }
+
     // Load player tank
-    if (const QJsonValue v = jsonObj[PLAYER_KEY]; v.isObject())
-    {
+    if (const QJsonValue v = jsonObj[PLAYER_KEY]; v.isObject()) {
         try {
             QJsonObject jsonPlayerObj = v.toObject();
             vec3 position, direction;
@@ -110,17 +131,15 @@ void GameState::loadState(std::string filename)
             else
                 throw std::invalid_argument("Expected an array for \"direction\"");
 
-             auto obj = new PlayerTank(getNextFreeEntityID(), position, direction);
-             addObject(obj);
-        }
-        catch (std::invalid_argument &e) {
+            auto obj = new PlayerTank(getNextFreeEntityID(), position, direction);
+            addObject(obj);
+        } catch (std::invalid_argument &e) {
             qWarning("Error loading player tank: %s", e.what());
         }
     }
 
     // Load enemy tank
-    if (const QJsonValue v = jsonObj[ENEMY_KEY]; v.isObject())
-    {
+    if (const QJsonValue v = jsonObj[ENEMY_KEY]; v.isObject()) {
         try {
             QJsonObject jsonEnemyObj = v.toObject();
             vec3 position, direction;
@@ -137,18 +156,15 @@ void GameState::loadState(std::string filename)
 
             auto obj = new EnemyTank(getNextFreeEntityID(), position, direction);
             addObject(obj);
-        }
-        catch (std::invalid_argument &e) {
+        } catch (std::invalid_argument &e) {
             qWarning("Error loading enemy tank: %s", e.what());
         }
     }
 
     // Load obstacles
-    if (const QJsonValue v = jsonObj[OBSTACLES_KEY]; v.isArray())
-    {
+    if (const QJsonValue v = jsonObj[OBSTACLES_KEY]; v.isArray()) {
         const QJsonArray jsonObstacleObjs = v.toArray();
-        for (const QJsonValue &obsVal : jsonObstacleObjs)
-        {
+        for (const QJsonValue &obsVal : jsonObstacleObjs) {
             try {
                 QJsonObject jsonObstacleObj = obsVal.toObject();
                 vec3 position;
@@ -163,9 +179,12 @@ void GameState::loadState(std::string filename)
 
                 if (const QJsonValue dirVal = jsonObstacleObj[DIR_KEY]; dirVal.isArray())
                     direction = JsonHelpers::getVec3FromJson(dirVal.toArray());
-                else
-                {
-                    qWarning("Warning: \"direction\" not found for obstacle, using default (%f,%f,%f)", DEFAULT_DIRECTION.x, DEFAULT_DIRECTION.y, DEFAULT_DIRECTION.z);
+                else {
+                    qWarning(
+                        "Warning: \"direction\" not found for obstacle, using default (%f,%f,%f)",
+                        DEFAULT_DIRECTION.x,
+                        DEFAULT_DIRECTION.y,
+                        DEFAULT_DIRECTION.z);
                     direction = DEFAULT_DIRECTION;
                 }
 
@@ -179,10 +198,14 @@ void GameState::loadState(std::string filename)
                 else
                     throw std::invalid_argument("Expected a string for \"type\"");
 
-                auto obj = new Obstacle(nullptr, getNextFreeEntityID(), position, radius, direction, Obstacle::convertNameToObstacleType(type));
+                auto obj = new Obstacle(nullptr,
+                                        getNextFreeEntityID(),
+                                        position,
+                                        radius,
+                                        direction,
+                                        Obstacle::convertNameToObstacleType(type));
                 addObject(obj);
-            }
-            catch (std::invalid_argument &e) {
+            } catch (std::invalid_argument &e) {
                 qWarning("Error loading an obstacle: %s", e.what());
             }
         }
@@ -202,10 +225,8 @@ int GameState::addObject(GameObject *const obj)
 
 void GameState::removeObject(uint32_t entityID)
 {
-    for (auto it = objs.begin(); it != objs.end(); ++it)
-    {
-        if ((*it)->getEntityID() == entityID)
-        {
+    for (auto it = objs.begin(); it != objs.end(); ++it) {
+        if ((*it)->getEntityID() == entityID) {
             delete *it;
             objs.erase(it);
             return;
@@ -213,41 +234,48 @@ void GameState::removeObject(uint32_t entityID)
     }
 }
 
-GameObject* GameState::getGameObject(uint32_t entityID) const
+GameObject *GameState::getGameObject(uint32_t entityID) const
 {
-    for (GameObject *const obj : objs)
-    {
+    for (GameObject *const obj : objs) {
         if (obj->getEntityID() == entityID)
             return obj;
     }
     return nullptr;
 }
 
-GameObject* GameState::getGameObject(GameObjectType type) const
+GameObject *GameState::getGameObject(GameObjectType type) const
 {
-    for (GameObject *const obj : objs)
-    {
+    for (GameObject *const obj : objs) {
         if (obj->getType() == type)
             return obj;
     }
     return nullptr;
 }
 
-std::vector<GameObject*> GameState::getGameObjects(GameObjectType type) const
+std::vector<GameObject *> GameState::getGameObjects(GameObjectType type) const
 {
-    std::vector<GameObject*> result;
-    for (GameObject *const obj : objs)
-    {
+    std::vector<GameObject *> result;
+    for (GameObject *const obj : objs) {
         if (obj->getType() == type)
             result.push_back(obj);
     }
     return result;
 }
 
-std::vector<GameObject*>::const_iterator GameState::begin() const {
+std::vector<GameObject *>::const_iterator GameState::begin() const
+{
     return objs.begin();
 }
 
-std::vector<GameObject*>::const_iterator GameState::end() const {
+std::vector<GameObject *>::const_iterator GameState::end() const
+{
     return objs.end();
+}
+
+double GameState::getZLength() {
+    return MapZLength;
+}
+
+double GameState::getXLength(){
+    return MapXLength;
 }

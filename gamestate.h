@@ -1,13 +1,12 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 
-#include <vector>
+#include <QFile>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QJsonArray>
-#include <QFile>
 #include "gameobject.h"
-
+#include <vector>
 
 /**
  * The GameState class manages the game objects in the Scene.
@@ -25,14 +24,14 @@
 class GameState
 {
 public:
-	/**
+    /**
 	 * @brief Get the instance of the GameState. If the GameState has not been created yet,
 		it will be created.
 	 * @return GameState*: The instance of the GameState. This is a singleton class.
 	 * @author Koda Koziol
 	 * @date SPRING 2024
 	 */
-	static GameState* getInstance();
+    static GameState *getInstance();
 
     /**
      * @brief Should be once at the start of the game. This method will call the doStart()
@@ -62,7 +61,7 @@ public:
      */
     void loadState(std::string filename);
 
-	/**
+    /**
 	 * @brief Get the next free entity ID. This is used to assign a unique ID to each GameObject.
 	 * @return int: The next free entity ID. This is a unique identifier for each GameObject in the game.
 		It is used to differentiate between different GameObjects and is assigned by the GameState when the
@@ -88,7 +87,7 @@ public:
      */
     void removeObject(uint32_t entityID);
 
-	/**
+    /**
 	 * @brief Get a GameObject by its entity ID.
 	 * @param entityID: The entity ID of the GameObject to get.
 	 * @return GameObject*: The GameObject with the given entity ID. If no GameObject
@@ -96,9 +95,9 @@ public:
 	 * @author Koda Koziol
 	 * @date SPRING 2024
 	 */
-	GameObject* getGameObject(uint32_t entityID) const;
+    GameObject *getGameObject(uint32_t entityID) const;
 
-	/**
+    /**
 	 * @brief Get a GameObject by its type.
 	 * @param type: The type of GameObject to get.
 	 * @return GameObject*: The first GameObject of the given type found in the GameState.
@@ -106,51 +105,68 @@ public:
 	 * @author Koda Koziol
 	 * @date SPRING 2024
 	*/
-	GameObject* getGameObject(GameObjectType type) const;
+    GameObject *getGameObject(GameObjectType type) const;
 
-	/**
+    /**
 	 * @brief Get all GameObjects of a type from the GameState.
 	 * @param type: The type of GameObject to get.
 	 * @return std::vector<GameObject*>: A vector of all GameObjects in the GameState.
 	 * @author Koda Koziol
 	 * @date SPRING 2024
 	 */
-	std::vector<GameObject*> getGameObjects(GameObjectType type) const;
+    std::vector<GameObject *> getGameObjects(GameObjectType type) const;
 
-	/**
+    /**
+     * @brief Gets the X length of the game map.
+     * @return int: X length of the game map.
+     * @author Grant Madson
+     * @date SPRING 2024
+     */
+     static double getXLength();
+
+    /**
+    * @brief Gets the Z length of the game map.
+    * @return int: Z length of the game map.
+    * @author Grant Madson
+    * @date SPRING 2024
+    */
+    static double getZLength();
+
+    /**
 	 * @return A constant iterator pointing to the beginning of the vector of GameObject pointers.
 	 * @author Tyson Cox (implemented by Koda Koziol)
 	 * @date SPRING 2024
 	 */
-    [[nodiscard]] std::vector<GameObject*>::const_iterator begin() const;
+    [[nodiscard]] std::vector<GameObject *>::const_iterator begin() const;
 
-	/**
+    /**
 	 * @return A constant iterator pointing to the end of the vector of GameObject pointers.
 	 * @author Tyson Cox (implemented by Koda Koziol)
 	 * @date SPRING 2024
 	 */
-    [[nodiscard]] std::vector<GameObject*>::const_iterator end() const;
-
+    [[nodiscard]] std::vector<GameObject *>::const_iterator end() const;
 
 private:
-    std::vector<GameObject*> objs;
+    std::vector<GameObject *> objs;
     int nextFreeEntityID = 0;
+    static inline double MapXLength = 25.0;
+    static inline double MapZLength = 25.0;
 
-   /**
+    /**
     * @brief Constructor for the GameState.
     * @author Koda Koziol
     * @date SPRING 2024
     */
-   GameState();
+    GameState();
 
-   /**
+    /**
 	* @brief Destructor for the GameState. This will delete all GameObjects in the GameState.
 	* @author Koda Koziol
 	* @date SPRING 2024
 	*/
-   ~GameState();
+    ~GameState();
 
-   static GameState* instance;
+    static GameState *instance;
 };
 
 #endif // GAMESTATE_H

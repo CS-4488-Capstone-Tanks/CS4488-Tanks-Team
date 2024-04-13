@@ -24,5 +24,9 @@
             "position": [7, 0, 0],
             "radius": 0.5
         }
-    ]
+    ],
+    "mapProperties":{
+        "XLength": 30.0,
+        "ZLength": 30.0
+    }
 }
