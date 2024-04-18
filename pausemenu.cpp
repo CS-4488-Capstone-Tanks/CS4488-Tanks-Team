@@ -1,42 +1,28 @@
 //
-// Created by Luna Steed on 3/24/2024.
+// Created by lunah on 4/18/2024.
 //
 
-#include "mainmenu.h"
+#include "pausemenu.h"
 #include "gamestate.h"
 #include "game.h"
 
 #include <QPushButton>
 #include <iostream>
 
-
-/**
- * @author Luna Steed
- * @time 3/24/2024
- * @brief Constructor for the main menu
- * @param parent The parent widget
- */
-
-MainMenu::MainMenu(QWidget *parent) {
+PauseMenu::PauseMenu(QWidget *parent) {
     grid = new QGridLayout();
     vbox = new QVBoxLayout();
 
     const int padding = 200;
 
     grid->setContentsMargins(padding, padding, padding, padding);
-    if (std::filesystem::exists("assets/images/mainmenu.png")) {
+    if (std::filesystem::exists("assets/images/pausemenu.png")) {
         hasBackground = true;
-        background = QPixmap("assets/images/mainmenu.png");
+        background = QPixmap("assets/images/pausemenu.png");
     }
 
-    title->setText("TANKS");
-    title->setAlignment(Qt::AlignCenter);
-    title->setStyleSheet("font-size: 50px; font-weight: bold; color: white;");
-
-    vbox->addWidget(title);
-
     size_t id = 0;
-    std::string button_string = "Levels,Exit";
+    std::string button_string = "Resume,Quit,Main Menu";
 
     std::stringstream ss(button_string);
 
@@ -57,7 +43,7 @@ MainMenu::MainMenu(QWidget *parent) {
     }
 }
 
-void MainMenu::buttonClicked(int id) {
+void PauseMenu::buttonClicked(int id) {
     switch (id) {
         case 0:
             Game::getInstance()->getWindow()->changeWidget(GAME_KEY);
@@ -65,22 +51,10 @@ void MainMenu::buttonClicked(int id) {
         case 1:
             Game::destroyInstance();
             break;
+        case 2:
+            Game::getInstance()->getWindow()->changeWidget(MAIN_MENU_KEY);
+            break;
         default:
             break;
-    }
-}
-
-MainMenu::~MainMenu() {
-    delete grid;
-}
-
-void MainMenu::paintEvent(QPaintEvent *event) {
-    QPainter painter(this);
-
-    if (hasBackground) {
-        painter.drawPixmap(0, 0, this->width(), this->height(), background);
-    }
-    else{
-        QWidget::paintEvent(event);
     }
 }

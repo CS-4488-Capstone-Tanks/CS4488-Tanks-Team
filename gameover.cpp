@@ -1,42 +1,37 @@
 //
-// Created by Luna Steed on 3/24/2024.
+// Created by lunah on 4/18/2024.
 //
 
-#include "mainmenu.h"
+#include "gameover.h"
 #include "gamestate.h"
 #include "game.h"
 
 #include <QPushButton>
 #include <iostream>
 
-
-/**
- * @author Luna Steed
- * @time 3/24/2024
- * @brief Constructor for the main menu
- * @param parent The parent widget
- */
-
-MainMenu::MainMenu(QWidget *parent) {
+GameOver::GameOver(QWidget* parent) {
     grid = new QGridLayout();
     vbox = new QVBoxLayout();
 
     const int padding = 200;
 
     grid->setContentsMargins(padding, padding, padding, padding);
-    if (std::filesystem::exists("assets/images/mainmenu.png")) {
+
+    this->setLayout(grid);
+    grid->addLayout(vbox, 0, 0);
+
+    if (std::filesystem::exists("assets/images/gameover.png")) {
         hasBackground = true;
-        background = QPixmap("assets/images/mainmenu.png");
+        background = QPixmap("assets/images/gameover.png");
     }
+    // Game Over text
+    QLabel* label = new QLabel("Game Over");
+    label->setAlignment(Qt::AlignCenter);
+    vbox->addWidget(label);
 
-    title->setText("TANKS");
-    title->setAlignment(Qt::AlignCenter);
-    title->setStyleSheet("font-size: 50px; font-weight: bold; color: white;");
-
-    vbox->addWidget(title);
-
+    // Comma Delimited Buttons. Easy to add new buttons, just add ,ButtonName to the string
     size_t id = 0;
-    std::string button_string = "Levels,Exit";
+    std::string button_string = "Restart,Quit,Main Menu";
 
     std::stringstream ss(button_string);
 
@@ -57,30 +52,33 @@ MainMenu::MainMenu(QWidget *parent) {
     }
 }
 
-void MainMenu::buttonClicked(int id) {
+void GameOver::buttonClicked(int id) {
     switch (id) {
         case 0:
-            Game::getInstance()->getWindow()->changeWidget(GAME_KEY);
+            Game::getInstance()->getWindow()->changeWidget(LEVEL_MENU_KEY);
             break;
         case 1:
             Game::destroyInstance();
+            break;
+        case 2:
+            Game::getInstance()->getWindow()->changeWidget(MAINMENU_KEY);
             break;
         default:
             break;
     }
 }
 
-MainMenu::~MainMenu() {
+GameOver::~GameOver() {
     delete grid;
 }
 
-void MainMenu::paintEvent(QPaintEvent *event) {
+void GameOver::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
 
     if (hasBackground) {
         painter.drawPixmap(0, 0, this->width(), this->height(), background);
     }
-    else{
+    else {
         QWidget::paintEvent(event);
     }
 }

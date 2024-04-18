@@ -65,7 +65,11 @@ add_executable(tanks ${TANK_SOURCE_FILES}
         ingamemenu.cpp
         ingamemenu.h
         optionsmenu.cpp
-        optionsmenu.h)
+        optionsmenu.h
+        gameover.cpp
+        gameover.h
+        pausemenu.cpp
+        pausemenu.h)
 
 # Declare the system libraries we need to link with
 target_link_libraries(tanks PRIVATE ${QT_LIBRARIES} glm::glm assimp)
