@@ -223,3 +223,23 @@ bool Game::filterKeyEvent(QKeyEvent* event) {
     }
     else return false;
 }
+
+GameWindow* Game::getWindow() {
+    return gw;
+}
+
+Game* Game::instance = nullptr;
+
+Game* Game::getInstance(int argc, char** argv) {
+    if (Game::instance) {
+        return Game::instance;
+    }
+    else {
+        return Game::instance = new Game(argc, argv);
+    }
+}
+
+void Game::destroyInstance() {
+    delete instance;
+    instance = nullptr;
+}
