@@ -8,20 +8,22 @@
 #include <QSoundEffect>
 #include <QObject>
 
-class SFXManager: QSoundEffect {
+class SFXManager: public QSoundEffect {
 Q_OBJECT
-public signals:
-    playExplosion();
-    playTankFire();
-    playTankTread();
-    playCollide();
+signals:
+    void playExplosion();
+    void playTankFire();
+    void playTankTread();
+    void playCollide();
+    void stopTankTread();
 public:
     SFXManager();
     ~SFXManager() = default;
-    manualExplosion(); // Manual functions in case slots fail
-    manualTankFire();
-    manualTankTread();
-    manualCollide();
+    void manualExplosion(); // Manual functions in case slots fail
+    void manualTankFire();
+    void manualTankTread();
+    void manualCollide();
+    void manualStopTankTread();
 
 private:
     QSoundEffect explosion;

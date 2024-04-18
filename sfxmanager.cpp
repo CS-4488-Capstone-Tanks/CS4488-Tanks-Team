@@ -5,40 +5,43 @@
 #include "sfxmanager.h"
 
 SFXManager::SFXManager(): explosion(this), tankFire(this), tankTread(this), collide(this){
-    explosion.setSource(QUrl::fromLocalFile(QFile(./resources/sfx/explosion.wav).absoluteFilePath()));
+    explosion.setSource(QUrl::fromLocalFile("./assets/sfx/explosion.wav"));
     explosion.setVolume(0.5f);
 
-    tankFire.setSource(QUrl::fromLocalFile(QFile(./resources/sfx/tankFire.wav).absoluteFilePath()));
+    tankFire.setSource(QUrl::fromLocalFile("./assets/sfx/tankFire.wav"));
     tankFire.setVolume(0.5f);
 
-    tankTread.setSource(QUrl::fromLocalFile(QFile(./resources/sfx/tankTread.wav).absoluteFilePath()));
+    tankTread.setSource(QUrl::fromLocalFile("./assets/sfx/tankTread.wav"));
     tankTread.setLoopCount(QSoundEffect::Infinite);
-    tankTread.setVolume(0.25f);
+    tankTread.setVolume(1.0f);
 
-    collide.setSource(QUrl::fromLocalFile(QFile(./resources/sfx/collide.wav).absoluteFilePath()));
+    collide.setSource(QUrl::fromLocalFile("./assets/sfx/collide.wav"));
     collide.setVolume(0.25f);
 
-    connect(&explosion, &QSoundEffect::play, this, &SFXManager::playExplosion);
-    connect(&tankFire, &QSoundEffect::play, this, &SFXManager::playTankFire);
-    connect(&tankTread, &QSoundEffect::play, this, &SFXManager::playTankTread);
-    connect(&collide, &QSoundEffect::play, this, &SFXManager::playCollide);
+    connect(this, &SFXManager::playExplosion, &explosion, &QSoundEffect::play);
+    connect(this, &SFXManager::playTankFire, &tankFire, &QSoundEffect::play);
+    connect(this, &SFXManager::playTankTread, &tankTread, &QSoundEffect::play);
+    connect(this, &SFXManager::playCollide, &collide, &QSoundEffect::play);
+    connect(this, &SFXManager::stopTankTread, &tankTread, &QSoundEffect::stop);
 }
 
-int SFXManager::manualExplosion() {
-    return explosion.play();
+void SFXManager::manualExplosion() {
+    explosion.play();
 }
 
-int SFXManager::manualTankFire() {
-    return tankFire.play();
+void SFXManager::manualTankFire() {
+    tankFire.play();
 }
 
-int SFXManager::manualTankTread() {
-    if tankTread.isPlaying() {
-        return tankTread.stop();
-    }
-    return tankTread.play();
+void SFXManager::manualTankTread() {
+    if (tankTread.isPlaying()) { return; }
+    else{ tankTread.play(); }
 }
 
-int SFXManager::manualCollide() {
+void SFXManager::manualStopTankTread() {
+    tankTread.stop();
+}
+
+void SFXManager::manualCollide() {
     return collide.play();
 }
