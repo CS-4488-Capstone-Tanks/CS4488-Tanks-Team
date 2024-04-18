@@ -36,10 +36,10 @@ void EnemyTank::doUpdate(float deltaTime) {
     }
 
     if (spd > 0.0) {
-        // sfxManager->playTankTread();
+        sfxManager->playSound(SFXManager::Sounds::EnemyTreads);
     }
     else {
-        sfxManager->stopTankTread();
+        sfxManager->stopSound(SFXManager::Sounds::EnemyTreads);
     }
 
     shotAccumulator += deltaTime;
@@ -48,9 +48,9 @@ void EnemyTank::doUpdate(float deltaTime) {
 
 void EnemyTank::doCollision(GameObject* other) {
     if (other->getType() != GameObjectType::EnemyProjectile)
-        sfxManager->playCollide();
-        sfxManager->playExplosion();
-        sfxManager->stopTankTread();
+        sfxManager->playSound(SFXManager::Sounds::Collision);
+        sfxManager->playSound(SFXManager::Sounds::Explosion);
+        sfxManager->stopSound(SFXManager::Sounds::EnemyTreads);
         selfDestruct();
 }
 
@@ -69,7 +69,7 @@ void EnemyTank::shoot(glm::vec3 direction) {
     auto bullet = new Projectile(nullptr, gamestate->getNextFreeEntityID(), bulletPos, bulletDir, GameObjectType::EnemyProjectile);
 
     gamestate->addObject(bullet);
-    sfxManager->playTankFire();
+    sfxManager->playSound(SFXManager::Sounds::Firing);
 }
 
 EnemyTank::EnemyTank(uint32_t entityID, const vec3& position, const vec3& direction, QObject* parent)

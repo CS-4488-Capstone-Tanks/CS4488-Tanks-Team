@@ -3,45 +3,57 @@
 //
 
 #include "sfxmanager.h"
+#include <iostream>
 
-SFXManager::SFXManager(): explosion(this), tankFire(this), tankTread(this), collide(this){
-    explosion.setSource(QUrl::fromLocalFile("./assets/sfx/explosion.wav"));
-    explosion.setVolume(0.5f);
 
-    tankFire.setSource(QUrl::fromLocalFile("./assets/sfx/tankFire.wav"));
-    tankFire.setVolume(0.5f);
+SFXManager::SFXManager() {
+    sounds = {
+        {Sounds::Explosion, new QSoundEffect()},
+        {Sounds::Firing, new QSoundEffect()},
+        {Sounds::PlayerTreads, new QSoundEffect()},
+        {Sounds::EnemyTreads, new QSoundEffect()},
+        {Sounds::Collision, new QSoundEffect}
+    };
 
-    tankTread.setSource(QUrl::fromLocalFile("./assets/sfx/tankTread.wav"));
-    tankTread.setLoopCount(QSoundEffect::Infinite);
-    tankTread.setVolume(1.0f);
+    sounds[Sounds::Explosion]->setSource(QUrl::fromLocalFile("./assets/sfx/explosion.wav"));
+    sounds[Sounds::Explosion]->setVolume(0.5f);
 
-    collide.setSource(QUrl::fromLocalFile("./assets/sfx/collide.wav"));
-    collide.setVolume(0.25f);
+    sounds[Sounds::Firing]->setSource(QUrl::fromLocalFile("./assets/sfx/tankFire.wav"));
+    sounds[Sounds::Firing]->setVolume(0.5f);
 
-    connect(this, &SFXManager::playExplosion, &explosion, &QSoundEffect::play);
-    connect(this, &SFXManager::playTankFire, &tankFire, &QSoundEffect::play);
-    connect(this, &SFXManager::playTankTread, &tankTread, &QSoundEffect::play);
-    connect(this, &SFXManager::playCollide, &collide, &QSoundEffect::play);
-    connect(this, &SFXManager::stopTankTread, &tankTread, &QSoundEffect::stop);
+    sounds[Sounds::PlayerTreads]->setSource(QUrl::fromLocalFile("./assets/sfx/tankTread.wav"));
+    sounds[Sounds::PlayerTreads]->setLoopCount(QSoundEffect::Infinite);
+    sounds[Sounds::PlayerTreads]->setVolume(1.0f);
+
+    sounds[Sounds::EnemyTreads]->setSource(QUrl::fromLocalFile("./assets/sfx/tankTread.wav"));
+    sounds[Sounds::EnemyTreads]->setLoopCount(QSoundEffect::Infinite);
+    sounds[Sounds::EnemyTreads]->setVolume(1.0f);
+
+    sounds[Sounds::Collision]->setSource(QUrl::fromLocalFile("./assets/sfx/collide.wav"));
+    sounds[Sounds::Collision]->setVolume(0.25f);
+
 }
 
-void SFXManager::manualExplosion() {
-    explosion.play();
+void SFXManager::playSound(SFXManager::Sounds sound) {
+    QSoundEffect* sfx = sounds.at(sound);
+
+    if (!sfx->isPlaying()) {
+        sfx->play();
+    }
 }
 
-void SFXManager::manualTankFire() {
-    tankFire.play();
+void SFXManager::stopSound(SFXManager::Sounds sound) {
+    QSoundEffect* sfx = sounds.at(sound);
+
+    if (sfx->isPlaying()) {
+        sfx->stop();
+    }
 }
 
-void SFXManager::manualTankTread() {
-    if (tankTread.isPlaying()) { return; }
-    else{ tankTread.play(); }
+SFXManager::~SFXManager() {
+    for(auto& pair : sounds) { delete pair.second; }
+    sounds.clear();
 }
 
-void SFXManager::manualStopTankTread() {
-    tankTread.stop();
-}
 
-void SFXManager::manualCollide() {
-    return collide.play();
-}
+

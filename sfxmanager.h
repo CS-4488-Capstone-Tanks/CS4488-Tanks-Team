@@ -8,29 +8,25 @@
 #include <QSoundEffect>
 #include <QObject>
 
-class SFXManager: public QSoundEffect {
-Q_OBJECT
-signals:
-    void playExplosion();
-    void playTankFire();
-    void playTankTread();
-    void playCollide();
-    void stopTankTread();
+class SFXManager  {
+
 public:
-    SFXManager();
-    ~SFXManager() = default;
-    void manualExplosion(); // Manual functions in case slots fail
-    void manualTankFire();
-    void manualTankTread();
-    void manualCollide();
-    void manualStopTankTread();
-
+    enum class Sounds {
+        Explosion,
+        Firing,
+        PlayerTreads,
+        EnemyTreads,
+        Collision
+    };
 private:
-    QSoundEffect explosion;
-    QSoundEffect tankFire;
-    QSoundEffect tankTread;
-    QSoundEffect collide;
+    std::unordered_map<Sounds, QSoundEffect*> sounds;
+public:
 
+    SFXManager();
+    ~SFXManager();
+
+    void playSound(Sounds sound);
+    void stopSound(Sounds sound);
 };
 
 

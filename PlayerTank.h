@@ -5,7 +5,7 @@
 #include <QTimer>
 #include <QKeyEvent>
 #include "Tank.h"
-#include "SFXManager.h"
+#include "sfxmanager.h"
 
 class PlayerTank : public Tank {
 Q_OBJECT
