@@ -4,7 +4,7 @@
 #include <QObject>
 #include <glm/vec3.hpp>
 #include "gameobjecttype.h"
-#include "circlecollider.h"
+#include "CircleCollider.h"
 
 using namespace glm;
 

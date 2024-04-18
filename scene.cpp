@@ -6,11 +6,14 @@ Scene::Scene(float dT, std::string stateFilename, QObject *parent)
     : QObject{parent}
 {
     deltaTime = dT;
-    try {
-        gameState->loadState(stateFilename);
-    }
-    catch (std::string errStr){
-        std::cout << "GameState failed to load: " + errStr << std::endl;
+
+    if (!stateFilename.empty()) {
+        try {
+            gameState->loadState(stateFilename);
+        }
+        catch (const std::exception& ex){
+            std::cout << "GameState failed to load: " << ex.what() << std::endl;
+        }
     }
 }
 

@@ -26,14 +26,10 @@ GameState::GameState() {}
 
 GameState::~GameState()
 {
-    for (GameObject *const obj : objs)
-        delete obj;
-    objs.clear();
+    clearGameState();
 
-    if (instance != nullptr)
-        delete instance;
+    delete instance; // it is safe to delete a nullptr if it is one
     instance = nullptr;
-    nextFreeEntityID = 0;
 }
 
 GameState *GameState::instance = nullptr;
@@ -85,6 +81,9 @@ void GameState::updateState(float deltaTime)
 
 void GameState::loadState(std::string filename)
 {
+    // The only time we'd be interested in loading a scene is into an empty scene
+    clearGameState();
+
     QString filepath = LEVELS_PATH + QString::fromStdString(filename) + ".json";
     QFile stateFile(filepath);
 
@@ -272,10 +271,23 @@ std::vector<GameObject *>::const_iterator GameState::end() const
     return objs.end();
 }
 
-double GameState::getZLength() {
+double GameState::getZLength()
+{
     return MapZLength;
 }
 
-double GameState::getXLength(){
+double GameState::getXLength()
+{
     return MapXLength;
+}
+
+void GameState::clearGameState()
+{
+    for (GameObject *const obj : objs)
+    {
+        delete obj;
+    }
+
+    objs.clear();
+    nextFreeEntityID = 0;
 }

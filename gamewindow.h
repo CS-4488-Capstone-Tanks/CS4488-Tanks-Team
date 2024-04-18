@@ -5,6 +5,8 @@
 #include "mainmenu.h"
 #include "ingamemenu.h"
 #include "optionsmenu.h"
+#include "levelmenu.h"
+
 #include <QMainWindow>
 #include <unordered_map>
 #include <iostream>
@@ -13,9 +15,10 @@
 #define MAIN_MENU_KEY 1
 #define INGAME_MENU_KEY 2
 #define OPTIONS_MENU_KEY 3
-#define MULTIPLAYER_MENU_KEY 4 // unimplemented
-#define HOST_MENU_KEY 5 // unimplemented
-#define JOINIP_MENU_KEY 6 // unimplemented
+#define LEVEL_MENU_KEY 4
+#define MULTIPLAYER_MENU_KEY 5 // unimplemented
+#define HOST_MENU_KEY 6 // unimplemented
+#define JOINIP_MENU_KEY 7 // unimplemented
 
 class GameWindow : public QMainWindow {
     Q_OBJECT
@@ -26,6 +29,7 @@ private:
     MainMenu *mainMenu;
     InGameMenu *inGameMenu;
     OptionsMenu *optionsMenu;
+    LevelMenu* levelMenu;
 
     std::unordered_map<int, QWidget *> widgets;
     int activeKey;
@@ -34,6 +38,7 @@ public:
     // Public Functions
     explicit GameWindow(QObject *parent = nullptr, int startKey = MAIN_MENU_KEY);
     QWidget* changeWidget(int key);
+    QWidget* getWidget(int key);
     void displayWidget();
     void hideWidget();
 

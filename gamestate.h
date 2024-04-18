@@ -166,6 +166,13 @@ private:
 	*/
     ~GameState();
 
+    /**
+     * @brief Destroys all objects in the game state. Used when loading a new game state, or when cleaning up
+     * @author Tyson Cox
+     * @date SPRING 2024
+     */
+    void clearGameState();
+
     static GameState *instance;
 };
 

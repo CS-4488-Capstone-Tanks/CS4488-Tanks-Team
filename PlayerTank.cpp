@@ -76,6 +76,7 @@ wantFire(false)
     }
 
     this->setSpeed(0.8);
+
 }
 
 bool PlayerTank::handleKeyEvent(QKeyEvent* event) {

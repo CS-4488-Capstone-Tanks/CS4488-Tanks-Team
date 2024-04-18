@@ -16,14 +16,21 @@ Game::Game(int argc, char** argv) : QApplication(argc, argv), timer(new QTimer(t
     QSize qsize = QSize(800, 600); // Set the size of the window
     gw->setFixedSize(qsize); // Set the fixed size of the window (no resizing allowed
     gw->show();
-    std::string stateFilename = "test_game_state";
+
+    // Note! This string intentionally left blank so as to not load a scene in the menu, now
+    // that menus are loading the scene at the correct time
+    std::string stateFilename = "";
     sc = new Scene(60.0f/1000, stateFilename);
+
     inGame = false;
 
-    connect(gw, &GameWindow::keySignal, this, &Game::filterKeyEvent); // Connect the GameWindow's keySignal to the Game's filterKeyEvent
+    connect(gw, &GameWindow::keySignal, this, &Game::filterKeyEvent); // Connect the GameWindow's keySignal to the Game's fi
+    /*
+     * // lterKeyEvent
     auto* playerTank = sc->getPlayerTank(); // The scene holds a reference to the player tank, so we retrieve it
     if (!playerTank)
         throw std::runtime_error("Player tank not found in scene");
+    */
 
     installEventFilter(this);
 }
@@ -57,7 +64,7 @@ int Game::start() {
 
     inGame = true;
 
-    activeKey = GAME_KEY;
+    activeKey = LEVEL_MENU_KEY;
     gw->changeWidget(activeKey);
     gw->show();
 
@@ -121,7 +128,7 @@ void Game::end() {
 void Game::tick() {
     sc->update();
 
-    QWidget* widg = gw->changeWidget(GAME_KEY);
+    QWidget* widg = gw->getWidget(GAME_KEY);
     auto* rend = dynamic_cast<Renderer*>(widg);
 
     for (const GameObject* obj : *sc){
@@ -222,4 +229,24 @@ bool Game::filterKeyEvent(QKeyEvent* event) {
         else return false;
     }
     else return false;
+}
+
+GameWindow* Game::getWindow() {
+    return gw;
+}
+
+Game* Game::instance = nullptr;
+
+Game* Game::getInstance(int argc, char** argv) {
+    if (Game::instance) {
+        return Game::instance;
+    }
+    else {
+        return Game::instance = new Game(argc, argv);
+    }
+}
+
+void Game::destroyInstance() {
+    delete instance;
+    instance = nullptr;
 }

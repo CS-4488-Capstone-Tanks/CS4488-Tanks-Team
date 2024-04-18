@@ -17,12 +17,14 @@ GameWindow::GameWindow(QObject *parent, int startKey)
     mainMenu = new MainMenu();
     inGameMenu = new InGameMenu();
     optionsMenu = new OptionsMenu();
+    levelMenu = new LevelMenu();
 
     widgets = {
             {GAME_KEY, rend},
             {MAIN_MENU_KEY, mainMenu},
             {INGAME_MENU_KEY, inGameMenu},
-            {OPTIONS_MENU_KEY, optionsMenu}
+            {OPTIONS_MENU_KEY, optionsMenu},
+            {LEVEL_MENU_KEY, levelMenu}
     };
 
     activeKey = startKey;
@@ -112,4 +114,14 @@ void GameWindow::keyPressEvent(QKeyEvent *event)
 void GameWindow::keyReleaseEvent(QKeyEvent *event)
 {
     emit keySignal(event);
+}
+
+/**
+ * @author Tyson Cox
+ * @date Spring 2024
+ * @param key The key of the widget to fetch
+ * @return the QWidget* of the menu that the key represents
+ */
+QWidget* GameWindow::getWidget(int key) {
+    return widgets.at(key);
 }
