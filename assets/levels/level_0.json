@@ -1,12 +1,12 @@
 {
     "playerTank": {
         "position": [10, 0, 0],
-        "direction": [1, 0, 0]
+        "direction": [-1, 0, 0]
     },
     "enemyTank": {
         "type": "scrub",
         "position": [-10, 0, 0],
-        "direction": [0, 0, -1]
+        "direction": [1, 0, 0]
     },
     "obstacles": [],
     "mapProperties":{

@@ -53,7 +53,7 @@ LevelMenu::LevelMenu(QWidget* parent) {
 }
 
 void LevelMenu::buttonClicked(int id) {
-    auto levelname = levels[id].stem().string();
+    std::string levelname = levels[id].stem().string();
     GameState::getInstance()->loadState(levelname);
 
     Game::getInstance()->getWindow()->changeWidget(GAME_KEY);
