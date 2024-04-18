@@ -21,6 +21,11 @@ LevelMenu::LevelMenu(QWidget* parent) {
     this->setLayout(grid);
     grid->addLayout(vbox, 0, 0);
 
+    if (std::filesystem::exists("assets/images/levelmenu.png")) {
+        hasBackground = true;
+        background = QPixmap("assets/images/levelmenu.png");
+    }
+
     size_t fileid = 0;
     for(const auto& entry : std::filesystem::directory_iterator("assets/levels")) {
         if (!entry.is_regular_file()) { continue; }
@@ -56,4 +61,14 @@ void LevelMenu::buttonClicked(int id) {
 
 LevelMenu::~LevelMenu() {
     delete grid;
+}
+
+void LevelMenu::paintEvent(QPaintEvent* event) {
+    if (hasBackground) {
+        QPainter painter(this);
+        painter.drawPixmap(0, 0, this->width(), this->height(), background);
+    }
+    else {
+        QWidget::paintEvent(event);
+    }
 }
