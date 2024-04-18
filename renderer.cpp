@@ -7,9 +7,13 @@
 #include <assimp/postprocess.h>
 
 #include <QImage>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QFile>
 
 #include <iostream>
 #include <filesystem>
+#include <algorithm>
 
 
 
@@ -20,10 +24,13 @@
 static const char* TANK_MESH_FILE = "tank";
 static const char* BULLET_MESH_FILE = "bullet";
 static const char* GROUND_MESH_FILE = "ground";
+static const char* SKY_MESH_FILE = "skybox";
 
 static const char* PLAYER_TEXTURE_FILE = "player";
 static const char* ENEMY_TEXTURE_FILE = "enemy";
 static const char* GROUND_TEXTURE_FILE = "ground";
+
+static const char* SKY_CUBEMAP_FOLDER = "bluecloud";
 
 
 static const char* texturedVertexSource = R"(
@@ -81,6 +88,33 @@ void main() {
         color[2],
         1.0f
     );
+})";
+
+
+static const char* skyboxVertexSource = R"(
+#version 450
+
+layout (location = 0) in vec3 pos;
+out vec3 texcoord;
+
+uniform mat4 vp;
+
+void main() {
+    texcoord = pos;
+    vec4 p = vp * vec4(pos, 1.0f);
+    gl_Position = p.xyww;
+})";
+
+static const char* skyboxFragmentSource = R"(
+#version 450
+
+in vec3 texcoord;
+out vec4 fragColor;
+
+uniform samplerCube skybox;
+
+void main() {
+    fragColor = texture(skybox, texcoord);
 })";
 
 
@@ -392,6 +426,9 @@ void Renderer::paintGL() {
                 break;
         }
     }
+
+    // Always draw the skybox
+    drawSkybox();
 }
 
 void Renderer::resizeGL(int w, int h) {
@@ -412,6 +449,11 @@ void Renderer::initializeGL() {
 
     // Enable depth buffering/testing (so that objects behind others aren't drawn over top of them)
     glEnable(GL_DEPTH_TEST);
+
+    // Enable backface culling, so that the GPU only draws the faces the camera can see
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
 
     // Set the background color of the window when nothing is on it
     glClearColor(backgroundRed, backgroundBlue, backgroundGreen, 1.0f);
@@ -434,11 +476,13 @@ void Renderer::initializeGL() {
     try {
         shaders["textured"] = shaderFromSource(texturedVertexSource, texturedFragmentSource);
         shaders["colored"] = shaderFromSource(texturedVertexSource, coloredFragmentSource);
+        shaders["skybox"] = shaderFromSource(skyboxVertexSource, skyboxFragmentSource);
 
         // Ensure the data exists as an empty mesh, so at worst, if the meshes aren't on disk, we just
         // don't draw them instead of crashing or something
         meshes[TANK_MESH_FILE] = {};
         meshes[BULLET_MESH_FILE] = {};
+        meshes[SKY_MESH_FILE] = {};
 
         if (std::filesystem::exists("assets/models")) {
             for(const auto& entry : std::filesystem::directory_iterator("assets/models")) {
@@ -466,6 +510,17 @@ void Renderer::initializeGL() {
         }
         else {
             std::cerr << "Renderer: No textures available, using coloring instead\n";
+        }
+
+        if (std::filesystem::exists("assets/cubemaps")) {
+            for(const auto& entry : std::filesystem::directory_iterator("assets/cubemaps")) {
+                if (entry.is_directory()) {
+                    const auto& path = entry.path();
+                    unsigned int loaded = cubemapFromFile(path);
+
+                    cubemaps[path.stem().string()] = loaded;
+                }
+            }
         }
 
     }
@@ -496,6 +551,12 @@ Renderer::~Renderer() {
     }
 
     textures.clear();
+
+    for(auto& kvpair : cubemaps) {
+        glDeleteTextures(1, &kvpair.second);
+    }
+
+    cubemaps.clear();
 }
 
 bool Renderer::textureExists(const char* name) {
@@ -532,6 +593,134 @@ unsigned int Renderer::textureFromFile(const std::filesystem::path& path) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, glImage.width(), glImage.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, glImage.bits());
     glGenerateMipmap(GL_TEXTURE_2D);
 
+    return texture;
+}
+
+
+/**
+ * This function is used as part of the sorting process for the faces of a cubemap when loading one
+ * @param path the path of the image
+ * @return the desired position in the list
+ */
+int cubemapFaceOrder(const std::filesystem::path& path) {
+    const static std::unordered_map<std::string, int> order = {
+        {"right", 0},
+        {"left", 1},
+        {"top", 2},
+        {"bottom", 3},
+        {"front", 4},
+        {"back", 5}
+    };
+
+    std::string name = path.stem().string();
+
+    if (order.find(name) == order.end()) {
+        std::string msg = "Unknown face for cubemap: " + path.string();
+        throw std::runtime_error(msg.c_str());
+    }
+
+    return order.at(name);
+}
+
+/**
+ * This is the actual sorting function used as a key to std::sort for the faces of the cubemapw
+ * @param a the first face
+ * @param b the second face
+ * @return whether the first is less than the second
+ */
+bool cubmapFaceCompare(const std::filesystem::path& a, const std::filesystem::path& b) {
+    return cubemapFaceOrder(a) < cubemapFaceOrder(b);
+}
+
+unsigned int Renderer::cubemapFromFile(const std::filesystem::path& path) {
+    if (!is_directory(path)) {
+        throw std::runtime_error("Cubemaps must be a directory containing exactly six images and one optional meta.json file");
+    }
+
+    QFile* metafile = nullptr;
+    QByteArray metabytes;
+    QJsonDocument meta;
+    std::vector<std::filesystem::path> images;
+
+    for(const auto& entry : std::filesystem::directory_iterator(path)) {
+        if (entry.is_regular_file()) {
+            auto imgpath = entry.path();
+
+            if (imgpath.extension() == ".json") {
+                metafile = new QFile(imgpath);
+
+                if (!metafile->open(QIODevice::ReadOnly | QIODevice::Text)) {
+                    delete metafile;
+                    std::cerr << "Renderer: failed to open cubemap json metafile: " << imgpath << "\n";
+                    continue;
+                }
+
+                metabytes = metafile->readAll();
+                meta = QJsonDocument::fromJson(metabytes);
+            }
+            else {
+                images.push_back(entry.path());
+            }
+        }
+    }
+
+    if (images.size() != 6) {
+        throw std::runtime_error("Cubemaps must be a directory containing exactly six images and one optional meta.json file");
+    }
+
+    std::sort(images.begin(), images.end(), cubmapFaceCompare);
+
+    // Generate a texture
+    GLuint texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+
+    for(size_t i = 0; i < images.size(); i++) {
+        const auto& imgpath = images[i];
+
+        // Use QT to load the image
+        QImage image(QString::fromStdString(imgpath.string()));
+        if (image.isNull()) {
+            std::cerr << "Renderer: Failed to load cubemap image " << i << ": " << imgpath << "\n";
+            glDeleteTextures(1, &texture);
+            return 0;
+        }
+
+
+        bool flipHorizontal = true;
+        bool flipVertical = false;
+
+        if (meta.isObject()) {
+            auto mainobj = meta.object();
+
+            if (mainobj.contains(imgpath.stem().c_str())) {
+                auto faceobjvalue = mainobj.value(imgpath.stem().c_str());
+
+                if (faceobjvalue.isObject()) {
+                    auto faceobj = faceobjvalue.toObject();
+
+                    auto fh = faceobj.value("flipHorizontal");
+                    auto fv = faceobj.value("flipVertical");
+
+                    if (fh.isBool()) { flipHorizontal = fh.toBool(); }
+                    if (fv.isBool()) { flipVertical = fv.toBool(); }
+                }
+            }
+        }
+
+        // OpenGL requires specific data formatting
+        QImage glImage = image.mirrored(flipHorizontal, flipVertical).convertToFormat(QImage::Format_RGBA8888);
+
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, glImage.width(), glImage.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, glImage.bits());
+    }
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    delete metafile;
     return texture;
 }
 
@@ -589,8 +778,6 @@ void Renderer::drawMesh(const Renderer::Mesh& mesh, const glm::mat4& mvp, unsign
 
     glUniformMatrix4fv(shader.uniforms["mvp"], 1, GL_FALSE, glm::value_ptr(mvp));  // set our mvp matrix for this draw
     glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, 0);
-
-
 }
 
 void Renderer::specialCaseAdjusment(Renderer::DrawCommand& cmd) {
@@ -734,6 +921,42 @@ void Renderer::frameSetCamera() {
             break;
     }
 }
+
+void Renderer::drawSkybox() {
+    if (shaders.find("skybox") == shaders.end()) { return; }
+    if (cubemaps.find(SKY_CUBEMAP_FOLDER) == cubemaps.end()) { return; }
+    if (meshes.find(SKY_MESH_FILE) == meshes.end()) { return; }
+
+    // Disable writing to the depth buffer, so it draws behind everything always
+    glDepthMask(GL_FALSE);
+    glDepthFunc(GL_LEQUAL);
+
+    const auto& shader = shaders.at("skybox");
+    unsigned int skybox = cubemaps.at(SKY_CUBEMAP_FOLDER);
+    const auto& mesh = meshes.at(SKY_MESH_FILE);
+
+    if (!shader.hasUniform("vp")) {
+        std::cerr << "Renderer: Invalid skybox shader, has no vp uniform\n";
+    }
+
+    if (!shader.hasUniform("skybox")) {
+        std::cerr << "Renderer: Invalid skybox shader, has no skybox samplerCube uniform\n";
+    }
+
+    glm::mat4 vp = projection * view;
+    vp = glm::scale(vp, glm::vec3(skyboxSize, skyboxSize, skyboxSize));
+
+    glUseProgram(shader.program);
+    glBindVertexArray(mesh.vao);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, skybox);
+
+    glUniformMatrix4fv(shader.uniforms.at("vp"), 1, GL_FALSE, glm::value_ptr(vp));  // set our vp matrix for this draw
+    glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, 0);
+
+    glDepthFunc(GL_LESS);
+    glDepthMask(GL_TRUE);
+}
+
 
 bool Renderer::Shader::hasUniform(const char* name) const {
     return uniforms.find(name) != uniforms.end();

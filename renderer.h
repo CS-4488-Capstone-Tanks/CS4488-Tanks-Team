@@ -62,6 +62,7 @@ protected:
     std::unordered_map<std::string, Mesh> meshes;
     std::unordered_map<std::string, Shader> shaders;
     std::unordered_map<std::string, unsigned int> textures;
+    std::unordered_map<std::string, unsigned int> cubemaps;
 
     // The list of draw commands for the last complete frame, and the currently being built frame
     // They are separate to ensure it never draws a half frame
@@ -82,6 +83,13 @@ protected:
      * @return The GL id of the texture
      */
     unsigned int textureFromFile(const std::filesystem::path& path);
+
+    /**
+     * @brief Loads a texture from a file, but stores it as a cubemap
+     * @param path The path to the file
+     * @return The GL id of the texture
+     */
+    unsigned int cubemapFromFile(const std::filesystem::path& path);
 
     /**
      * @brief Load a mesh from a file, and create a Mesh struct for it
@@ -155,10 +163,11 @@ protected:
      */
     void drawObstacle(const DrawCommand& cmd);
 
-    /**
-     * Draws the ground plane
-     */
+    /**  Draws the ground plane */
     void drawGround();
+
+    /** Draws the skybox */
+    void drawSkybox();
 
     /**
      * Handles setting any parameters that any dynamic cameras need for the current frame
@@ -199,6 +208,8 @@ protected:
 
     static const float constexpr groundScale = 25.0f;
     static const float constexpr groundHeight = -0.5f;
+
+    static const float constexpr skyboxSize = 200.0f;
 public:
 
     ~Renderer() override;
