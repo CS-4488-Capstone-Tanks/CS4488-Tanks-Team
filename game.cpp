@@ -81,7 +81,7 @@ int Game::start() {
 void Game::pause() {
     timer.stop();
     inGame = false;
-    activeKey = INGAME_MENU_KEY;
+    activeKey = PAUSE_MENU_KEY;
     gw->changeWidget(activeKey);
     sc->setPaused(true);
 }
@@ -155,7 +155,7 @@ bool Game::filterKeyEvent(QKeyEvent* event) {
                     pause();
                     return true;
                 }
-                else if (activeKey == INGAME_MENU_KEY) { // in in-game menu
+                else if (activeKey == PAUSE_MENU_KEY) { // in in-game menu
                     resume();
                     return true;
                 }

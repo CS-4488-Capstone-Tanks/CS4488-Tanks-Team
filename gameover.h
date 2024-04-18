@@ -8,6 +8,8 @@
 #include <QWidget>
 #include <QGridLayout>
 #include <filesystem>
+#include <QLabel>
+#include <QPainter>
 
 class GameOver : public QWidget {
     Q_OBJECT
@@ -15,6 +17,9 @@ class GameOver : public QWidget {
     std::vector<std::string> buttons;
     QGridLayout* grid;
     QVBoxLayout* vbox;
+    QLabel* title;
+    bool hasBackground;
+    QPixmap background;
 
 public:
     explicit GameOver(QWidget* parent = nullptr);

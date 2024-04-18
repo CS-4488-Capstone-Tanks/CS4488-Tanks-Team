@@ -8,6 +8,8 @@
 #include <QWidget>
 #include <QGridLayout>
 #include <filesystem>
+#include <QLabel>
+#include <QPainter>
 
 class MainMenu : public QWidget {
     Q_OBJECT
@@ -16,6 +18,8 @@ class MainMenu : public QWidget {
     std::vector<std::string> buttons;
     QGridLayout* grid;
     QVBoxLayout* vbox;
+    bool hasBackground;
+    QPixmap background;
 public:
     explicit MainMenu(QWidget* parent = nullptr);
     ~MainMenu() override;
@@ -24,6 +28,7 @@ public:
 
 private slots:
     void buttonClicked(int id);
+
 };
 
 

@@ -8,6 +8,8 @@
 #include <QWidget>
 #include <QGridLayout>
 #include <filesystem>
+#include <QLabel>
+#include <QPainter>
 
 class PauseMenu: public QWidget {
     Q_OBJECT
@@ -15,7 +17,8 @@ class PauseMenu: public QWidget {
     std::vector<std::string> buttons;
     QGridLayout* grid;
     QVBoxLayout* vbox;
-
+    bool hasBackground;
+    QPixmap background;
 public:
     explicit PauseMenu(QWidget* parent = nullptr);
     ~PauseMenu() override;
@@ -23,6 +26,7 @@ public:
     void paintEvent(QPaintEvent *event) override;
 private slots:
     void buttonClicked(int id);
+
 };
 
 

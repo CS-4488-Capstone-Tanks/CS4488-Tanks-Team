@@ -28,6 +28,10 @@ MainMenu::MainMenu(QWidget *parent) {
         hasBackground = true;
         background = QPixmap("assets/images/mainmenu.png");
     }
+    else{
+        hasBackground = false;
+        background = QPixmap();
+    }
 
     title->setText("TANKS");
     title->setAlignment(Qt::AlignCenter);
@@ -46,12 +50,12 @@ MainMenu::MainMenu(QWidget *parent) {
             ss.ignore();
     }
 
-    for (const auto& button : buttons) {
-        QPushButton* button = new QPushButton(QString(button.c_str()));
+    for (const auto& btn : buttons) {
+        QPushButton* qbutton = new QPushButton(QString(btn.c_str()));
 
-        vbox->addWidget(button);
+        vbox->addWidget(qbutton);
 
-        connect(button, &QPushButton::clicked, this, [this, id = id] { buttonClicked(id); });
+        connect(qbutton, &QPushButton::clicked, this, [this, id = id] { buttonClicked(id); });
 
         id++;
     }

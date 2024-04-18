@@ -62,10 +62,10 @@ file(GLOB TANK_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 add_executable(tanks ${TANK_SOURCE_FILES}
         mainmenu.cpp
         mainmenu.h
-        ingamemenu.cpp
-        ingamemenu.h
-        optionsmenu.cpp
-        optionsmenu.h
+
+
+
+
         gameover.cpp
         gameover.h
         pausemenu.cpp

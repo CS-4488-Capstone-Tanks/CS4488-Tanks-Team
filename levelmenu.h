@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QGridLayout>
 #include <filesystem>
+#include <QLabel>
+#include <QPainter>
 
 class LevelMenu : public QWidget {
     Q_OBJECT

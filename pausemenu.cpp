@@ -20,6 +20,10 @@ PauseMenu::PauseMenu(QWidget *parent) {
         hasBackground = true;
         background = QPixmap("assets/images/pausemenu.png");
     }
+    else{
+        hasBackground = false;
+        background = QPixmap();
+    }
 
     size_t id = 0;
     std::string button_string = "Resume,Quit,Main Menu";
@@ -32,12 +36,12 @@ PauseMenu::PauseMenu(QWidget *parent) {
             ss.ignore();
     }
 
-    for (const auto& button : buttons) {
-        QPushButton* button = new QPushButton(QString(button.c_str()));
+    for (const auto& btn : buttons) {
+        QPushButton* qbutton = new QPushButton(QString(btn.c_str()));
 
-        vbox->addWidget(button);
+        vbox->addWidget(qbutton);
 
-        connect(button, &QPushButton::clicked, this, [this, id = id] { buttonClicked(id); });
+        connect(qbutton, &QPushButton::clicked, this, [this, id = id] { buttonClicked(id); });
 
         id++;
     }
@@ -56,5 +60,20 @@ void PauseMenu::buttonClicked(int id) {
             break;
         default:
             break;
+    }
+}
+
+PauseMenu::~PauseMenu() {
+    delete grid;
+}
+
+void PauseMenu::paintEvent(QPaintEvent *event) {
+    QPainter painter(this);
+
+    if (hasBackground) {
+        painter.drawPixmap(0, 0, this->width(), this->height(), background);
+    }
+    else {
+        QWidget::paintEvent(event);
     }
 }

@@ -24,10 +24,15 @@ GameOver::GameOver(QWidget* parent) {
         hasBackground = true;
         background = QPixmap("assets/images/gameover.png");
     }
+    else{
+        hasBackground = false;
+        background = QPixmap();
+    }
+
     // Game Over text
-    QLabel* label = new QLabel("Game Over");
-    label->setAlignment(Qt::AlignCenter);
-    vbox->addWidget(label);
+    title = new QLabel("Game Over");
+    title->setAlignment(Qt::AlignCenter);
+    vbox->addWidget(title);
 
     // Comma Delimited Buttons. Easy to add new buttons, just add ,ButtonName to the string
     size_t id = 0;
@@ -41,12 +46,12 @@ GameOver::GameOver(QWidget* parent) {
             ss.ignore();
     }
 
-    for (const auto& button : buttons) {
-        QPushButton* button = new QPushButton(QString(button.c_str()));
+    for (const auto& btn : buttons) {
+        QPushButton* qbutton = new QPushButton(QString(btn.c_str()));
 
-        vbox->addWidget(button);
+        vbox->addWidget(qbutton);
 
-        connect(button, &QPushButton::clicked, this, [this, id = id] { buttonClicked(id); });
+        connect(qbutton, &QPushButton::clicked, this, [this, id = id] { buttonClicked(id); });
 
         id++;
     }
@@ -61,7 +66,7 @@ void GameOver::buttonClicked(int id) {
             Game::destroyInstance();
             break;
         case 2:
-            Game::getInstance()->getWindow()->changeWidget(MAINMENU_KEY);
+            Game::getInstance()->getWindow()->changeWidget(MAIN_MENU_KEY);
             break;
         default:
             break;
