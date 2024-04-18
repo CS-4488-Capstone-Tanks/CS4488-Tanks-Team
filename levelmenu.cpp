@@ -12,10 +12,14 @@ LevelMenu::LevelMenu(QWidget* parent) {
     }
 
     grid = new QGridLayout();
+    vbox = new QVBoxLayout();
 
-    grid->setContentsMargins(100, 10, 100, 10);
+    const int padding = 200;
+
+    grid->setContentsMargins(padding, padding, padding, padding);
 
     this->setLayout(grid);
+    grid->addLayout(vbox, 0, 0);
 
     size_t fileid = 0;
     for(const auto& entry : std::filesystem::directory_iterator("assets/levels")) {
@@ -33,7 +37,8 @@ LevelMenu::LevelMenu(QWidget* parent) {
 
         QPushButton* button = new QPushButton(QString(stem.c_str()));
 
-        grid->addWidget(button, fileid, 0);
+        //grid->addWidget(button, fileid, 0);
+        vbox->addWidget(button);
 
         connect(button, &QPushButton::clicked, this, [this, id = fileid] { buttonClicked(id); });
 

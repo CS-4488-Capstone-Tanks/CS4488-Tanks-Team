@@ -10,6 +10,7 @@ class LevelMenu : public QWidget {
 
     std::vector<std::filesystem::path> levels;
     QGridLayout* grid;
+    QVBoxLayout* vbox;
 public:
     explicit LevelMenu(QWidget* parent = nullptr);
     ~LevelMenu() override;
