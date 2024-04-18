@@ -57,7 +57,7 @@ int Game::start() {
 
     inGame = true;
 
-    activeKey = GAME_KEY;
+    activeKey = LEVEL_MENU_KEY;
     gw->changeWidget(activeKey);
     gw->show();
 
@@ -121,7 +121,7 @@ void Game::end() {
 void Game::tick() {
     sc->update();
 
-    QWidget* widg = gw->changeWidget(GAME_KEY);
+    QWidget* widg = gw->getWidget(GAME_KEY);
     auto* rend = dynamic_cast<Renderer*>(widg);
 
     for (const GameObject* obj : *sc){

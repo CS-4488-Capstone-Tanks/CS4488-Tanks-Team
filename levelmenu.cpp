@@ -12,6 +12,9 @@ LevelMenu::LevelMenu(QWidget* parent) {
     }
 
     grid = new QGridLayout();
+
+    grid->setContentsMargins(100, 10, 100, 10);
+
     this->setLayout(grid);
 
     size_t fileid = 0;
@@ -19,9 +22,9 @@ LevelMenu::LevelMenu(QWidget* parent) {
         if (!entry.is_regular_file()) { continue; }
 
         auto path = entry.path();
-        auto ext = path.extension();
+        auto ext = path.extension().string();
 
-        if (ext != "json") { continue; }
+        if (ext != ".json") { continue; }
 
         levels.push_back(path);
 
@@ -30,15 +33,19 @@ LevelMenu::LevelMenu(QWidget* parent) {
 
         QPushButton* button = new QPushButton(QString(stem.c_str()));
 
-        grid->addWidget(button, 0, fileid);
+        grid->addWidget(button, fileid, 0);
 
         connect(button, &QPushButton::clicked, this, [this, id = fileid] { buttonClicked(id); });
+
+        fileid++;
     }
 
 }
 
 void LevelMenu::buttonClicked(int id) {
-    GameState::getInstance()->loadState(levels[id].string());
+    auto levelname = levels[id].stem().string();
+    GameState::getInstance()->loadState(levelname);
+
     Game::getInstance()->getWindow()->changeWidget(GAME_KEY);
 }
 
