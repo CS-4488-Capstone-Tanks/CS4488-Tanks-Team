@@ -33,6 +33,7 @@ MainMenu::MainMenu(QWidget *parent) {
         background = QPixmap();
     }
 
+    title = new QLabel();
     title->setText("TANKS");
     title->setAlignment(Qt::AlignCenter);
     title->setStyleSheet("font-size: 50px; font-weight: bold; color: white;");
