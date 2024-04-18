@@ -45,6 +45,9 @@ void PlayerTank::doUpdate(float deltaTime) {
 
 void PlayerTank::doCollision(GameObject* other) {
     if (other->getType() != GameObjectType::PlayerProjectile)
+        sfxManager->playCollide();
+        sfxManager->playExplosion();
+        sfxManager->stopTankTread();
         selfDestruct();
 }
 
@@ -63,13 +66,15 @@ void PlayerTank::shoot(glm::vec3 direction) {
     auto bullet = new Projectile(nullptr, gamestate->getNextFreeEntityID(), bulletPos, bulletDir, GameObjectType::PlayerProjectile);
 
     gamestate->addObject(bullet);
+    sfxManager->playTankFire();
 }
 
 PlayerTank::PlayerTank(uint32_t entityID, const vec3& position, const vec3& direction, QObject* parent)
 : Tank(GameObjectType::PlayerTank, entityID, position, direction, parent),
 shotAccumulator(0),
 shotThreshold(10),
-wantFire(false)
+wantFire(false),
+sfxManager(new SFXManager())
 {
     for(auto& val : dirTable) {
         val = false;
@@ -85,18 +90,22 @@ bool PlayerTank::handleKeyEvent(QKeyEvent* event) {
             case Qt::Key_W:
             case Qt::Key_Up:
                 dirTable[0] = true;
+                sfxManager->playTankTread();
                 return true;
             case Qt::Key_S:
             case Qt::Key_Down:
                 dirTable[1] = true;
+                sfxManager->playTankTread();
                 return true;
             case Qt::Key_A:
             case Qt::Key_Left:
                 dirTable[2] = true;
+                sfxManager->playTankTread();
                 return true;
             case Qt::Key_D:
             case Qt::Key_Right:
                 dirTable[3] = true;
+                sfxManager->playTankTread();
                 return true;
             case Qt::Key_Space:
                 wantFire = true;
@@ -110,18 +119,22 @@ bool PlayerTank::handleKeyEvent(QKeyEvent* event) {
             case Qt::Key_W:
             case Qt::Key_Up:
                 dirTable[0] = false;
+                sfxManager->stopTankTread();
                 return true;
             case Qt::Key_S:
             case Qt::Key_Down:
                 dirTable[1] = false;
+                sfxManager->stopTankTread();
                 return true;
             case Qt::Key_A:
             case Qt::Key_Left:
                 dirTable[2] = false;
+                sfxManager->stopTankTread();
                 return true;
             case Qt::Key_D:
             case Qt::Key_Right:
                 dirTable[3] = false;
+                sfxManager->stopTankTread();
                 return true;
             case Qt::Key_Space:
                 wantFire = false;

@@ -5,6 +5,7 @@
 #include <QTimer>
 #include <QKeyEvent>
 #include "Tank.h"
+#include "SFXManager.h"
 
 class PlayerTank : public Tank {
 Q_OBJECT
@@ -25,6 +26,7 @@ private:
     bool wantFire;
     float shotAccumulator;
     float shotThreshold;
+    SFXManager* sfxManager;
     void shoot(glm::vec3 direction) override;
 
 };
