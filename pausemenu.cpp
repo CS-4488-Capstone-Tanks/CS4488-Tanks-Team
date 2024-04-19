@@ -16,6 +16,10 @@ PauseMenu::PauseMenu(QWidget *parent) {
     const int padding = 200;
 
     grid->setContentsMargins(padding, padding, padding, padding);
+
+    this->setLayout(grid);
+    grid->addLayout(vbox, 0, 0);
+
     if (std::filesystem::exists("assets/images/pausemenu.png")) {
         hasBackground = true;
         background = QPixmap("assets/images/pausemenu.png");
@@ -26,7 +30,7 @@ PauseMenu::PauseMenu(QWidget *parent) {
     }
 
     size_t id = 0;
-    std::string button_string = "Resume,Quit,Main Menu";
+    std::string button_string = "Resume,Quit,MainMenu";
 
     std::stringstream ss(button_string);
 
@@ -36,7 +40,7 @@ PauseMenu::PauseMenu(QWidget *parent) {
             ss.ignore();
     }
 
-    for (const auto& btn : buttons) {
+    for (auto& btn : buttons) {
         QPushButton* qbutton = new QPushButton(QString(btn.c_str()));
 
         vbox->addWidget(qbutton);

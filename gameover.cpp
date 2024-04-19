@@ -36,7 +36,7 @@ GameOver::GameOver(QWidget* parent) {
 
     // Comma Delimited Buttons. Easy to add new buttons, just add ,ButtonName to the string
     size_t id = 0;
-    std::string button_string = "Restart,Quit,Main Menu";
+    std::string button_string = "Restart,Quit,MainMenu";
 
     std::stringstream ss(button_string);
 
@@ -46,7 +46,7 @@ GameOver::GameOver(QWidget* parent) {
             ss.ignore();
     }
 
-    for (const auto& btn : buttons) {
+    for (auto& btn : buttons) {
         QPushButton* qbutton = new QPushButton(QString(btn.c_str()));
 
         vbox->addWidget(qbutton);

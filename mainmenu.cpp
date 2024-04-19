@@ -24,6 +24,9 @@ MainMenu::MainMenu(QWidget *parent) {
     const int padding = 200;
 
     grid->setContentsMargins(padding, padding, padding, padding);
+    this->setLayout(grid);
+    grid->addLayout(vbox, 0, 0);
+
     if (std::filesystem::exists("assets/images/mainmenu.png")) {
         hasBackground = true;
         background = QPixmap("assets/images/mainmenu.png");
@@ -51,7 +54,7 @@ MainMenu::MainMenu(QWidget *parent) {
             ss.ignore();
     }
 
-    for (const auto& btn : buttons) {
+    for (auto& btn : buttons) {
         QPushButton* qbutton = new QPushButton(QString(btn.c_str()));
 
         vbox->addWidget(qbutton);
