@@ -34,16 +34,18 @@ public:
     static GameState *getInstance();
 
     /**
-     * @brief Should be once at the start of the game. This method will call the doStart()
-        method for each GameObject in the GameState.
+     * @brief This method allows GameObjects to initialize themselves before the level begins.
+         This method should be once at the start of the level. Specifically, this method will call the doStart()
+         method for each GameObject in the GameState.
      * @author Koda Koziol
      * @date SPRING 2024
      */
     void startState();
 
     /**
-     * @brief Should be called once per frame. This method will call the doUpdate() method
-        for each GameObject in the GameState.
+     * @brief This method updates the states of all GameObjects in the GameState by calling doUpdate() on them,
+         and then checking for collisions. It will also remove any GameObjects that are queued for destruction. 
+     * This method should be called once per frame through the duration of a level.
      * @param deltaTime: The time elapsed since the last update in seconds(?).
         This is a fixed value. See doUpdate() in GameObject for more information.
      * @author Koda Koziol
@@ -52,7 +54,7 @@ public:
     void updateState(float deltaTime);
 
     /**
-     * @brief Given a the name of a .json state file, this method will load the state.
+     * @brief Given a the name of a .json state file, this method will load the state, creating GameObjects and adding them to the GameState.
         Note that the state file must be located in the "assets/levels/"
         directory. Do not include ".json" in the filename.
      * @param filename
