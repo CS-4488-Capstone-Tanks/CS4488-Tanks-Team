@@ -127,7 +127,7 @@ void main() {
 }
 )";
 
-// The noise functions from this shader taken from https://www.shadertoy.com/view/tlcBRl
+// The noise functions from this shader taken from https://www.shadertoy.com/view/fsf3DN
 static const char* groundFragmentSource = R"(
 #version 450
 
