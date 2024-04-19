@@ -1,17 +1,10 @@
 #include "renderer.h"
 
-#include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
-#include <QImage>
 
 #include <iostream>
 #include <filesystem>
-
-
+#include <algorithm>
 
 #include "gameobject.h"
 
@@ -20,10 +13,13 @@
 static const char* TANK_MESH_FILE = "tank";
 static const char* BULLET_MESH_FILE = "bullet";
 static const char* GROUND_MESH_FILE = "ground";
+static const char* SKY_MESH_FILE = "skybox";
 
 static const char* PLAYER_TEXTURE_FILE = "player";
 static const char* ENEMY_TEXTURE_FILE = "enemy";
 static const char* GROUND_TEXTURE_FILE = "ground";
+
+static const char* SKY_CUBEMAP_FOLDER = "bluecloud";
 
 
 static const char* texturedVertexSource = R"(
@@ -37,11 +33,12 @@ out vec2 texCoord;
 out vec3 normal;
 
 uniform mat4 mvp;
+uniform mat4 mv;
 
 void main() {
     gl_Position = mvp * vec4(pos, 1.0f);
     texCoord = tex;
-    normal = norm;
+    normal = mat3(mv) * norm;
 })";
 
 static const char* coloredFragmentSource = R"(
@@ -66,9 +63,8 @@ in vec3 normal;
 out vec4 fragColor;
 
 uniform sampler2D albedo;
-
-vec3 lightPos = vec3(10, 5, 7);
-float ambient = 0.2;
+uniform vec3 lightPos;
+uniform float ambient;
 
 void main() {
     float surfaceAlignment = clamp(dot(normalize(normal), normalize(lightPos)), 0.0f, 1.0f);
@@ -84,217 +80,98 @@ void main() {
 })";
 
 
+static const char* skyboxVertexSource = R"(
+#version 450
 
-Renderer::Mesh Renderer::meshFromFile(const std::filesystem::path& path) {
-    Mesh m{};
+layout (location = 0) in vec3 pos;
+out vec3 texcoord;
 
-    Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(path.string(), aiProcess_Triangulate);
+uniform mat4 vp;
 
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-        std::string msg = "Failed to load mesh: ";
-        msg += path.string();
-        throw std::runtime_error(msg);
-    }
+void main() {
+    texcoord = pos;
+    vec4 p = vp * vec4(pos, 1.0f);
+    gl_Position = p.xyww;
+})";
 
-    if (scene->mNumMeshes > 1) {
-        std::cout << "WARN: Model file " << path << " has more than 1 mesh, only the first will be used\n";
-    }
+static const char* skyboxFragmentSource = R"(
+#version 450
 
-    // Create the vertex array and buffer
-    glGenVertexArrays(1, &m.vao);
-    glGenBuffers(1, &m.vbo);
-    glGenBuffers(1, &m.ebo);
+in vec3 texcoord;
+out vec4 fragColor;
 
-    // Bind them, and upload the data to the GPU buffer
-    glBindVertexArray(m.vao);
-    glBindBuffer(GL_ARRAY_BUFFER, m.vbo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m.ebo);
+uniform samplerCube skybox;
 
-    const aiMesh* mesh = scene->mMeshes[0];
+void main() {
+    fragColor = texture(skybox, texcoord);
+})";
 
-    // OpenGL now needs all that data in one big buffer. Easier to interleave it now,
-    // then deal with the math of storing them separately
+static const char* groundVertexSource = R"(
+#version 450
 
-    std::vector<float> interleavedBuffer;
-    for(size_t i = 0; i < mesh->mNumVertices; i++) {
-        interleavedBuffer.push_back(mesh->mVertices[i].x);
-        interleavedBuffer.push_back(mesh->mVertices[i].y);
-        interleavedBuffer.push_back(mesh->mVertices[i].z);
+layout (location = 0) in vec3 pos;
+layout (location = 1) in vec2 tex;
+layout (location = 2) in vec3 norm;
 
-        if (mesh->HasTextureCoords(0)) { // Assuming the first set of texture coordinates
-            interleavedBuffer.push_back(mesh->mTextureCoords[0][i].x);
-            interleavedBuffer.push_back(mesh->mTextureCoords[0][i].y);
-        }
-        if (mesh->HasNormals()) {
-            interleavedBuffer.push_back(mesh->mNormals[i].x);
-            interleavedBuffer.push_back(mesh->mNormals[i].y);
-            interleavedBuffer.push_back(mesh->mNormals[i].z);
-        }
-    }
+out vec2 texCoord;
+out vec3 worldPos;
 
-    std::vector<unsigned int> indices;
-    for(size_t i = 0; i < mesh->mNumFaces; i++) {
-        const auto& face = mesh->mFaces[i];
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
 
-        for(size_t j = 0; j < face.mNumIndices; j++) {
-            indices.push_back(face.mIndices[j]);
-        }
-    }
+void main() {
+    gl_Position = projection * view * model * vec4(pos, 1.0f);
+    texCoord = tex;
+    worldPos = vec3(model * vec4(pos, 1.0));
+}
+)";
 
+// The noise functions from this shader taken from https://www.shadertoy.com/view/fsf3DN
+static const char* groundFragmentSource = R"(
+#version 450
 
-    // Upload our data to the GPU
-    // Store it in the array buffer
-    // Pass how big our data is, and the pointer to it
-    // Lastly, it won't change often, so we use static draw
-    glBufferData(GL_ARRAY_BUFFER, interleavedBuffer.size() * sizeof(float), interleavedBuffer.data(), GL_STATIC_DRAW);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+in vec2 texCoord;
+in vec3 worldPos;
 
-    // Stride is the total size of a vertex in bytes
-    GLsizei stride = 3 * sizeof(float);
+uniform float grassDensity;
+uniform float grassScale;
+uniform vec3 color;
+//uniform sampler2D albedo;
 
-    if (mesh->HasTextureCoords(0)) { stride += 2 * sizeof(float); }
-    if (mesh->HasNormals()) { stride += 3 * sizeof(float); }
+out vec4 fragColor;
 
-
-    size_t bufferOffset = 0;
-
-    // Tell the vertex array that we want to:
-    // Enable attribute 0
-    // Which has three components (a vec3)
-    // of type float
-    // that is not normalized
-    // has total data size per vertex of stride
-    // and starts at a certain offset in the buffer
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)bufferOffset);
-    glEnableVertexAttribArray(0);
-    bufferOffset += 3 * sizeof(float);
-
-    if (mesh->HasTextureCoords(0)) {
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)bufferOffset);
-        glEnableVertexAttribArray(1);
-        bufferOffset += 2 * sizeof(float);
-    }
-
-    if (mesh->HasNormals()) {
-        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, (void*)bufferOffset);
-        glEnableVertexAttribArray(2);
-    }
-
-    // Unbind our VAO so we don't accidentally modify it later
-    glBindVertexArray(0);
-
-    m.vertexCount = mesh->mNumVertices;
-    m.indexCount = indices.size();
-
-    return m;
+float random(vec2 uv){
+    return fract(sin(dot(uv, vec2(12.9898,78.233))) * 43758.5453);
 }
 
-void Renderer::meshDestroy(Renderer::Mesh& mesh) {
-    glDeleteVertexArrays(1, &mesh.vao);
-    glDeleteBuffers(1, &mesh.vbo);
-
-    mesh = {};
+float noise(in vec2 st) {
+    vec2 i = floor(st);
+    vec2 f = fract(st);
+    float a = random(i);
+    float b = random(i + vec2(1.0, 0.0));
+    float c = random(i + vec2(0.0, 1.0));
+    float d = random(i + vec2(1.0, 1.0));
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    return mix(a, b, u.x) + (c - a)* u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
 }
 
-Renderer::Shader Renderer::shaderFromSource(const char* vertex, const char* fragment) {
-    // Create the two shader modules
-    unsigned int vshader = glCreateShader(GL_VERTEX_SHADER);
-    unsigned int fshader = glCreateShader(GL_FRAGMENT_SHADER);
+void main() {
+    float noiseValue = noise(texCoord * grassScale);
 
-    // Set their source to the passed in strings
-    glShaderSource(vshader, 1, &vertex, nullptr);
-    glShaderSource(fshader, 1, &fragment, nullptr);
+    //fragColor = vec4(noiseValue, noiseValue, noiseValue, 1.0f);
 
-    // Compile the shaders modules
-    glCompileShader(vshader);
-    glCompileShader(fshader);
-
-    // Ensure they compiled correctly
-    int success;
-    const int logSize = 2048;
-    char compilerOutput[logSize];
-
-    glGetShaderiv(vshader, GL_COMPILE_STATUS, &success);
-
-    if (!success) {
-        glGetShaderInfoLog(vshader, logSize, nullptr, compilerOutput);
-        std::string message = "Vertex shader failed to compile:\n\n";
-        message += compilerOutput;
-
-        glDeleteShader(vshader);
-        glDeleteShader(fshader);
-
-        throw std::runtime_error(message);
+    if (noiseValue < grassDensity) {
+        discard;
     }
 
-    glGetShaderiv(fshader, GL_COMPILE_STATUS, &success);
+    //fragColor = texture(albedo, texCoord);
+    fragColor = vec4(color * grassDensity + 0.1, 1.0);
+})";
 
-    if (!success) {
-        glGetShaderInfoLog(fshader, logSize, nullptr, compilerOutput);
-        std::string message = "Fragment shader failed to compile:\n\n";
-        message += compilerOutput;
 
-        glDeleteShader(vshader);
-        glDeleteShader(fshader);
 
-        throw std::runtime_error(message);
-    }
 
-    // Now that we know they compiled correctly, link the modules into the final shader program
-    unsigned int program = glCreateProgram();
-    glAttachShader(program, vshader);
-    glAttachShader(program, fshader);
-
-    glLinkProgram(program);
-
-    // Ensure it linked correctly
-    glGetProgramiv(program, GL_LINK_STATUS, &success);
-
-    if (!success) {
-        glGetProgramInfoLog(program, logSize, nullptr, compilerOutput);
-
-        std::string message = "Shader program failed to link:\n\n";
-        message += compilerOutput;
-
-        glDeleteShader(vshader);
-        glDeleteShader(fshader);
-        glDeleteProgram(program);
-
-        throw std::runtime_error(message);
-    }
-
-    // The shader modules are no longer required
-    glDeleteShader(vshader);
-    glDeleteShader(fshader);
-
-    Shader shader {
-        .program = program
-    };
-
-    // Read out all the uniforms (variables we can set on the shader)
-
-    GLint numUniforms = 0;
-    glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &numUniforms);
-
-    GLchar uniformName[256];
-    for(GLint i = 0; i < numUniforms; i++) {
-        GLsizei length;
-        GLint size;
-        GLenum type;
-
-        glGetActiveUniform(program, i, sizeof(uniformName), &length, & size, &type, uniformName);
-        GLint location = glGetUniformLocation(program, uniformName);
-
-        shader.uniforms[uniformName] = location;
-    }
-
-    return shader;
-}
-
-void Renderer::shaderDestroy(Shader& shader) {
-    glDeleteProgram(shader.program);
-}
 
 void Renderer::doneWithFrame() {
     lastFrame = curFrame;
@@ -392,6 +269,9 @@ void Renderer::paintGL() {
                 break;
         }
     }
+
+    // Always draw the skybox
+    drawSkybox();
 }
 
 void Renderer::resizeGL(int w, int h) {
@@ -413,6 +293,11 @@ void Renderer::initializeGL() {
     // Enable depth buffering/testing (so that objects behind others aren't drawn over top of them)
     glEnable(GL_DEPTH_TEST);
 
+    // Enable backface culling, so that the GPU only draws the faces the camera can see
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
+
     // Set the background color of the window when nothing is on it
     glClearColor(backgroundRed, backgroundBlue, backgroundGreen, 1.0f);
 
@@ -432,21 +317,22 @@ void Renderer::initializeGL() {
     setCameraMode(CameraMode::Static);
 
     try {
-        shaders["textured"] = shaderFromSource(texturedVertexSource, texturedFragmentSource);
-        shaders["colored"] = shaderFromSource(texturedVertexSource, coloredFragmentSource);
+        shaders["textured"] = Shader::fromSource(texturedVertexSource, texturedFragmentSource);
+        shaders["colored"] = Shader::fromSource(texturedVertexSource, coloredFragmentSource);
+        shaders["skybox"] = Shader::fromSource(skyboxVertexSource, skyboxFragmentSource);
+        shaders["ground"] = Shader::fromSource(groundVertexSource, groundFragmentSource);
 
         // Ensure the data exists as an empty mesh, so at worst, if the meshes aren't on disk, we just
         // don't draw them instead of crashing or something
         meshes[TANK_MESH_FILE] = {};
         meshes[BULLET_MESH_FILE] = {};
+        meshes[SKY_MESH_FILE] = {};
 
         if (std::filesystem::exists("assets/models")) {
             for(const auto& entry : std::filesystem::directory_iterator("assets/models")) {
                 if (entry.is_regular_file()) {
                     const auto& path = entry.path();
-                    Mesh loaded = meshFromFile(path);
-
-                    meshes[path.stem().string()] = loaded;
+                    meshes[path.stem().string()] = Mesh(path);
                 }
             }
         }
@@ -458,14 +344,21 @@ void Renderer::initializeGL() {
             for(const auto& entry : std::filesystem::directory_iterator("assets/textures")) {
                 if (entry.is_regular_file()) {
                     const auto& path = entry.path();
-                    unsigned int loaded = textureFromFile(path);
-
-                    textures[path.stem().string()] = loaded;
+                    textures[path.stem().string()] = Texture::fromFile(path);
                 }
             }
         }
         else {
             std::cerr << "Renderer: No textures available, using coloring instead\n";
+        }
+
+        if (std::filesystem::exists("assets/cubemaps")) {
+            for(const auto& entry : std::filesystem::directory_iterator("assets/cubemaps")) {
+                if (entry.is_directory()) {
+                    const auto& path = entry.path();
+                    textures[path.stem().string()] = Texture::cubemapFromFolder(path);
+                }
+            }
         }
 
     }
@@ -478,23 +371,9 @@ void Renderer::initializeGL() {
 }
 
 Renderer::~Renderer() {
-    // Clean up after yourself
-    for(auto& kvpair : meshes) {
-        meshDestroy(kvpair.second);
-    }
-
+    // These classes' destructors handle the cleanup
     meshes.clear();
-
-    for(auto& kvpair : shaders) {
-        shaderDestroy(kvpair.second);
-    }
-
     shaders.clear();
-
-    for(auto& kvpair : textures) {
-        glDeleteTextures(1, &kvpair.second);
-    }
-
     textures.clear();
 }
 
@@ -506,34 +385,7 @@ bool Renderer::textureExists(const std::string& name) {
     return textures.find(name) != textures.end();
 }
 
-unsigned int Renderer::textureFromFile(const std::filesystem::path& path) {
-    // Use QT to load the image
-    QImage image(QString::fromStdString(path.string()));
-    if (image.isNull()) {
-        std::cerr << "Renderer: Failed to load image: " << path << "\n";
-        return 0;
-    }
 
-    // OpenGL requires specific data formatting
-    QImage glImage = image.mirrored().convertToFormat(QImage::Format_RGBA8888);
-
-    // Generate a texture
-    GLuint texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    // Set texture parameters, like how the texture should be resized and what to do if it doesn't quite fit right
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    // Upload the image data to the texture
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, glImage.width(), glImage.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, glImage.bits());
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    return texture;
-}
 
 void Renderer::advanceCamera() {
     glm::vec3 cameraPos = cameraTopPosition;
@@ -552,45 +404,32 @@ void Renderer::setCameraMode(Renderer::CameraMode mode) {
     }
 }
 
-void Renderer::drawMesh(const Renderer::Mesh& mesh, const glm::mat4& mvp, unsigned int texture, float* passedColor) {
-    float color[] = { 1.0f, 1.0f, 1.0f };
+void Renderer::drawMesh(Mesh& mesh, const glm::mat4& meshTransform, Texture* texture, float* passedColor) {
+    glm::vec3 color(1.0f, 1.0f, 1.0f);
 
     if (passedColor != nullptr) {
-        memcpy(color, passedColor, 3 * sizeof(float));
+        color[0] = passedColor[0];
+        color[1] = passedColor[1];
+        color[2] = passedColor[2];
     }
 
-    bool hasTexture = texture != 0;
+    bool hasTexture = texture != nullptr;
 
-    Shader shader = hasTexture ? shaders["textured"] : shaders["colored"];
+    Shader& shader = hasTexture ? shaders.at("textured") : shaders.at("colored");
 
-    // Use the appropriate shader for drawing
-    glUseProgram(shader.program);
+    shader.use();
 
-    if (!shader.hasUniform("mvp")) {
-        std::cerr << "Renderer: Invalid shader, has no mvp uniform\n";
-    }
+    glm::mat4 mvp = projection * view * meshTransform;
+    glm::mat4 mv = view * meshTransform;
 
-    if (shader.hasUniform("color")) {
-        glUniform3fv(shader.uniforms["color"], 1, color);
-    }
+    shader.setUniformIf("mvp", mvp);
+    shader.setUniformIf("mv", mv);
+    shader.setUniformIf("color", color);
+    shader.setUniformIf("lightPos", lightPos);
+    shader.setUniformIf("ambient", ambientLightIntensity);
+    shader.bindTexture("albedo", 0, texture);
 
-    if (shader.hasUniform("albedo")) {
-        if (!hasTexture) {
-            std::cerr << "Renderer: Shader requested a texture, but not found\n";
-            return;
-        }
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glUniform1i(shader.uniforms["albedo"], 0);
-    }
-
-    glBindVertexArray(mesh.vao);
-
-    glUniformMatrix4fv(shader.uniforms["mvp"], 1, GL_FALSE, glm::value_ptr(mvp));  // set our mvp matrix for this draw
-    glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, 0);
-
-
+    mesh.draw();
 }
 
 void Renderer::specialCaseAdjusment(Renderer::DrawCommand& cmd) {
@@ -613,50 +452,44 @@ void Renderer::drawPlayerTank(const Renderer::DrawCommand& cmd) {
         return;
     }
 
-    Mesh m = meshes[TANK_MESH_FILE];
+    Mesh& m = meshes[TANK_MESH_FILE];
 
     float color[] = {0.0f, 1.0f, 0.0f}; // green
-    unsigned int texture = 0;
-    glm::mat4 mvp = projection * view * cmd.transform;
+    Texture* texture = nullptr;
 
     if (textureExists(PLAYER_TEXTURE_FILE)) {
-        texture = textures[PLAYER_TEXTURE_FILE];
+        texture = &textures[PLAYER_TEXTURE_FILE];
     }
 
-    drawMesh(m, mvp, texture, color);
+    drawMesh(m, cmd.transform, texture, color);
 }
 
 void Renderer::drawEnemyTank(const Renderer::DrawCommand& cmd) {
-    Mesh m = meshes[TANK_MESH_FILE];
+    Mesh& m = meshes[TANK_MESH_FILE];
 
     float color[] = {1.0f, 0.0f, 0.0f}; // red
-    unsigned int texture = 0;
-    glm::mat4 mvp = projection * view * cmd.transform;
+    Texture* texture = nullptr;
 
     if (textureExists(ENEMY_TEXTURE_FILE)) {
-        texture = textures[ENEMY_TEXTURE_FILE];
+        texture = &textures[ENEMY_TEXTURE_FILE];
     }
 
-    drawMesh(m, mvp, texture, color);
+    drawMesh(m, cmd.transform, texture, color);
 }
 
 void Renderer::drawProjectile(const Renderer::DrawCommand& cmd) {
-    Mesh m = meshes[BULLET_MESH_FILE];
+    Mesh& m = meshes[BULLET_MESH_FILE];
 
     float color[] = {1.0f, 1.0f, 0.0f}; // yellow
-    glm::mat4 mvp = projection * view * cmd.transform;
 
-
-    drawMesh(m, mvp, 0, color);
+    drawMesh(m, cmd.transform, 0, color);
 }
 
 void Renderer::drawObstacle(const Renderer::DrawCommand& cmd) {
-    Mesh m{};
     std::string obstacleTypeName = Obstacle::convertObstacleTypeToName(cmd.obstacleType);
 
     float color[] {0.58, 0.29f, 0.0f}; // brown
-    glm::mat4 mvp = projection * view * cmd.transform;
-    unsigned int texture = 0;
+    Texture* texture = nullptr;
 
     if (obstacleTypeName.empty() || meshes.find(obstacleTypeName) == meshes.end()) {
         std::string errorName = obstacleTypeName.empty() ? "(empty)" : obstacleTypeName;
@@ -664,32 +497,51 @@ void Renderer::drawObstacle(const Renderer::DrawCommand& cmd) {
         return;
     }
     else {
-        m = meshes[obstacleTypeName];
-
         if (textureExists(obstacleTypeName)) {
-            texture = textures[obstacleTypeName];
+            texture = &textures[obstacleTypeName];
         }
+
+        drawMesh(meshes[obstacleTypeName], cmd.transform, texture, color);
     }
 
-    drawMesh(m, mvp, texture, color);
 }
 
 void Renderer::drawGround() {
     if (meshes.find(GROUND_MESH_FILE) != meshes.end()) {
-        const auto& mesh = meshes[GROUND_MESH_FILE];
+        auto& mesh = meshes[GROUND_MESH_FILE];
 
         mat4 groundTransform = mat4(1.0f);
-        groundTransform = glm::scale(groundTransform, glm::vec3(groundScale, 0.0f, groundScale));
+        groundTransform = glm::scale(groundTransform, glm::vec3(groundScale, 1.0f, groundScale));
+        groundTransform = glm::translate(groundTransform, glm::vec3(0, groundHeight, 0));
 
-        groundTransform[3][1] = groundHeight;
+        Texture* groundTex = textureExists(GROUND_TEXTURE_FILE) ? nullptr : &textures[GROUND_TEXTURE_FILE];
+        glm::vec3 groundColor(0.0f, 0.75f, 0.0f);
 
-        glm::mat4 mvp = projection * view * groundTransform;
+        auto& shader = shaders.at("ground");
+        shader.use();
 
-        float groundColor[] = {0.25, 0.25, 0.25};
+        float grassDensitySum = 0.0f;
+        float grassHeightSum = 0.0f;
+        for(size_t i = 0; i < grassShells; i++) {
 
-        int groundTex = textures.find(GROUND_TEXTURE_FILE) == textures.end() ? 0 : textures[GROUND_TEXTURE_FILE];
+            glm::mat4 model = glm::translate(groundTransform, glm::vec3(0, grassHeightSum, 0));
+            glm::mat4 mvp = projection * view * model;
 
-        drawMesh(mesh, mvp, groundTex, groundColor);
+            shader.setUniformIf("grassDensity", grassDensitySum);
+            shader.setUniformIf("grassScale", grassScale);
+            shader.setUniformIf("mvp", mvp);
+            shader.setUniformIf("model", model);
+            shader.setUniformIf("view", view);
+            shader.setUniformIf("projection", projection);
+            shader.setUniformIf("color", groundColor);
+
+            shader.bindTexture("albedo", 0, groundTex);
+
+            mesh.draw();
+
+            grassDensitySum += grassShellDensityStep;
+            grassHeightSum += grassShellHeightStep;
+        }
     }
 }
 
@@ -735,6 +587,40 @@ void Renderer::frameSetCamera() {
     }
 }
 
-bool Renderer::Shader::hasUniform(const char* name) const {
-    return uniforms.find(name) != uniforms.end();
+void Renderer::drawSkybox() {
+    if (shaders.find("skybox") == shaders.end()) { return; }
+    if (textures.find(SKY_CUBEMAP_FOLDER) == textures.end()) { return; }
+    if (meshes.find(SKY_MESH_FILE) == meshes.end()) { return; }
+
+    // Disable writing to the depth buffer, because we're going to draw behind
+    // everything else, so we don't want to overwrite the depth buffer (and screw up
+    // the visible order). Done this way to minimize overdraw
+    glDepthMask(GL_FALSE);
+    glDepthFunc(GL_LEQUAL);
+
+    auto& shader = shaders.at("skybox");
+    Texture& skybox = textures.at(SKY_CUBEMAP_FOLDER);
+    auto& mesh = meshes.at(SKY_MESH_FILE);
+
+    if (!shader.hasUniform("vp")) {
+        std::cerr << "Renderer: Invalid skybox shader, has no vp uniform\n";
+    }
+
+    if (!shader.hasUniform("skybox")) {
+        std::cerr << "Renderer: Invalid skybox shader, has no skybox samplerCube uniform\n";
+    }
+
+    glm::mat4 vp = projection * view;
+    vp = glm::scale(vp, glm::vec3(skyboxSize, skyboxSize, skyboxSize));
+
+    shader.use();
+    shader.bindTexture("skybox", 0, skybox);
+    shader.setUniformIf("vp", vp);
+
+    mesh.draw();
+
+    glDepthFunc(GL_LESS);
+    glDepthMask(GL_TRUE);
 }
+
+
