@@ -3,6 +3,7 @@
 #include "Obstacle.h"
 #include "PlayerTank.h"
 #include "jsonhelpers.h"
+#include "collisionMatrix.h"
 
 const char LEVELS_PATH[] = "assets/levels/";
 
@@ -21,6 +22,8 @@ const char XLENGTH_KEY[] = "XLength";
 const char ZLENGTH_KEY[] = "ZLength";
 
 const vec3 DEFAULT_DIRECTION = vec3(0.0f, 0.0f, 1.0f);
+
+CollisionMatrix collisionMatrix = CollisionMatrix();
 
 GameState::GameState() {}
 
@@ -63,7 +66,7 @@ void GameState::updateState(float deltaTime)
     foreach (GameObject *const obj, objs) {
         if (obj->hasChanged()) {
             foreach (GameObject *const other, objs) {
-                if (obj != other && obj->getCollider().collidesWith(other->getCollider())) {
+                if (obj != other && collisionMatrix.canCollide(obj->getType(), other->getType()) && obj->getCollider().collidesWith(other->getCollider())) {
                     qWarning("Collision detected between a %s(%u) and %s(%u)",
                              gameObjectTypeToString(obj->getType()).c_str(),
                              obj->getEntityID(),
