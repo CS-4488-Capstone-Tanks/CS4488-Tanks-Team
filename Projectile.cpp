@@ -36,11 +36,7 @@ void Projectile::doUpdate(float deltaTime) {
 //Called when the projectile collides with another GameObject
 void Projectile::doCollision(GameObject* other) {
     // *cool explosion effects and noises*
-    if (
-        type == GameObjectType::PlayerProjectile && other->getType() != GameObjectType::PlayerTank
-        || type == GameObjectType::EnemyProjectile && other->getType() != GameObjectType::EnemyTank
-    )
-        selfDestruct();
+    selfDestruct();
 }
 
 //Checks whether the projectile's lifetime has run out

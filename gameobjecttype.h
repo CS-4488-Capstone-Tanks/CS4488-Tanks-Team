@@ -13,6 +13,8 @@ enum class GameObjectType
     None
 };
 
+const int NUM_GAME_OBJECT_TYPES = 5; // IMPORTANT: Update this if you add more types (do not include None)
+
 inline std::string gameObjectTypeToString(GameObjectType type)
 {
     switch (type)

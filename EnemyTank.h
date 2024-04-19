@@ -8,7 +8,6 @@
 
 #include <QTimer>
 #include "Tank.h"
-#include "sfxmanager.h"
 
 class EnemyTank : public Tank {
     Q_OBJECT
@@ -28,7 +27,6 @@ private:
     void shoot(glm::vec3 direction) override;
     float shotAccumulator;
     float shotThreshold;
-    SFXManager* sfxManager;
 
 //TODO: implement collider to detect when an obstacle has been hit. Use this for AI logic
 //TODO: Implement shooting at player

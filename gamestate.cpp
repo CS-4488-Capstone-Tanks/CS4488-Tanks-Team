@@ -3,6 +3,7 @@
 #include "Obstacle.h"
 #include "PlayerTank.h"
 #include "jsonhelpers.h"
+#include "collisionMatrix.h"
 
 const char LEVELS_PATH[] = "assets/levels/";
 
@@ -22,18 +23,16 @@ const char ZLENGTH_KEY[] = "ZLength";
 
 const vec3 DEFAULT_DIRECTION = vec3(0.0f, 0.0f, 1.0f);
 
+CollisionMatrix collisionMatrix = CollisionMatrix();
+
 GameState::GameState() {}
 
 GameState::~GameState()
 {
-    for (GameObject *const obj : objs)
-        delete obj;
-    objs.clear();
+    clearGameState();
 
-    if (instance != nullptr)
-        delete instance;
+    delete instance; // it is safe to delete a nullptr if it is one
     instance = nullptr;
-    nextFreeEntityID = 0;
 }
 
 GameState *GameState::instance = nullptr;
@@ -67,7 +66,7 @@ void GameState::updateState(float deltaTime)
     foreach (GameObject *const obj, objs) {
         if (obj->hasChanged()) {
             foreach (GameObject *const other, objs) {
-                if (obj != other && obj->getCollider().collidesWith(other->getCollider())) {
+                if (obj != other && collisionMatrix.canCollide(obj->getType(), other->getType()) && obj->getCollider().collidesWith(other->getCollider())) {
                     qWarning("Collision detected between a %s(%u) and %s(%u)",
                              gameObjectTypeToString(obj->getType()).c_str(),
                              obj->getEntityID(),
@@ -85,6 +84,9 @@ void GameState::updateState(float deltaTime)
 
 void GameState::loadState(std::string filename)
 {
+    // The only time we'd be interested in loading a scene is into an empty scene
+    clearGameState();
+
     QString filepath = LEVELS_PATH + QString::fromStdString(filename) + ".json";
     QFile stateFile(filepath);
 
@@ -272,10 +274,23 @@ std::vector<GameObject *>::const_iterator GameState::end() const
     return objs.end();
 }
 
-double GameState::getZLength() {
+double GameState::getZLength()
+{
     return MapZLength;
 }
 
-double GameState::getXLength(){
+double GameState::getXLength()
+{
     return MapXLength;
+}
+
+void GameState::clearGameState()
+{
+    for (GameObject *const obj : objs)
+    {
+        delete obj;
+    }
+
+    objs.clear();
+    nextFreeEntityID = 0;
 }
