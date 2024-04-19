@@ -62,7 +62,7 @@ int Game::start() {
 
     inGame = true;
 
-    activeKey = LEVEL_MENU_KEY;
+    activeKey = MAIN_MENU_KEY;
     gw->changeWidget(activeKey);
     gw->show();
 
@@ -110,7 +110,7 @@ void Game::end() {
     timer.stop();
     inGame = false;
     sc->~Scene();
-    activeKey = MAIN_MENU_KEY;
+    activeKey = GAME_OVER_KEY;
     gw->changeWidget(activeKey);
 }
 
