@@ -927,7 +927,9 @@ void Renderer::drawSkybox() {
     if (cubemaps.find(SKY_CUBEMAP_FOLDER) == cubemaps.end()) { return; }
     if (meshes.find(SKY_MESH_FILE) == meshes.end()) { return; }
 
-    // Disable writing to the depth buffer, so it draws behind everything always
+    // Disable writing to the depth buffer, because we're going to draw behind
+    // everything else, so we don't want to overwrite the depth buffer (and screw up
+    // the visible order). Done this way to minimize overdraw
     glDepthMask(GL_FALSE);
     glDepthFunc(GL_LEQUAL);
 
