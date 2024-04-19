@@ -40,11 +40,22 @@ void PlayerTank::doUpdate(float deltaTime) {
         shoot(dir);
     }
 
+    if (std::any_of(std::begin(dirTable), std::end(dirTable), [](bool b){return b; })) {
+        sfxManager->playSound(SFXManager::Sounds::PlayerTreads);
+    }
+    else {
+        sfxManager->stopSound(SFXManager::Sounds::PlayerTreads);
+    }
+
     shotAccumulator += deltaTime;
 }
 
 void PlayerTank::doCollision(GameObject* other) {
-    selfDestruct();
+    if (other->getType() != GameObjectType::PlayerProjectile)
+        sfxManager->playSound(SFXManager::Sounds::Collision);
+        sfxManager->playSound(SFXManager::Sounds::Explosion);
+        sfxManager->stopSound(SFXManager::Sounds::PlayerTreads);
+        selfDestruct();
 }
 
 void PlayerTank::shoot(glm::vec3 direction) {
@@ -62,20 +73,21 @@ void PlayerTank::shoot(glm::vec3 direction) {
     auto bullet = new Projectile(nullptr, gamestate->getNextFreeEntityID(), bulletPos, bulletDir, GameObjectType::PlayerProjectile);
 
     gamestate->addObject(bullet);
+    sfxManager->playSound(SFXManager::Sounds::Firing);
 }
 
 PlayerTank::PlayerTank(uint32_t entityID, const vec3& position, const vec3& direction, QObject* parent)
 : Tank(GameObjectType::PlayerTank, entityID, position, direction, parent),
 shotAccumulator(0),
 shotThreshold(10),
-wantFire(false)
+wantFire(false),
+sfxManager(new SFXManager())
 {
     for(auto& val : dirTable) {
         val = false;
     }
 
     this->setSpeed(0.8);
-
 }
 
 bool PlayerTank::handleKeyEvent(QKeyEvent* event) {
