@@ -44,11 +44,12 @@ out vec2 texCoord;
 out vec3 normal;
 
 uniform mat4 mvp;
+uniform mat4 mv;
 
 void main() {
     gl_Position = mvp * vec4(pos, 1.0f);
     texCoord = tex;
-    normal = norm;
+    normal = mat3(mv) * norm;
 })";
 
 static const char* coloredFragmentSource = R"(
@@ -73,9 +74,8 @@ in vec3 normal;
 out vec4 fragColor;
 
 uniform sampler2D albedo;
-
-vec3 lightPos = vec3(10, 5, 7);
-float ambient = 0.2;
+uniform vec3 lightPos;
+uniform float ambient;
 
 void main() {
     float surfaceAlignment = clamp(dot(normalize(normal), normalize(lightPos)), 0.0f, 1.0f);
@@ -115,6 +115,69 @@ uniform samplerCube skybox;
 
 void main() {
     fragColor = texture(skybox, texcoord);
+})";
+
+static const char* groundVertexSource = R"(
+#version 450
+
+layout (location = 0) in vec3 pos;
+layout (location = 1) in vec2 tex;
+layout (location = 2) in vec3 norm;
+
+out vec2 texCoord;
+out vec3 worldPos;
+
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
+void main() {
+    gl_Position = projection * view * model * vec4(pos, 1.0f);
+    texCoord = tex;
+    worldPos = vec3(model * vec4(pos, 1.0));
+}
+)";
+
+// The noise functions from this shader taken from https://www.shadertoy.com/view/tlcBRl
+static const char* groundFragmentSource = R"(
+#version 450
+
+in vec2 texCoord;
+in vec3 worldPos;
+
+uniform float grassDensity;
+uniform float grassScale;
+uniform vec3 color;
+//uniform sampler2D albedo;
+
+out vec4 fragColor;
+
+float random(vec2 uv){
+    return fract(sin(dot(uv, vec2(12.9898,78.233))) * 43758.5453);
+}
+
+float noise(in vec2 st) {
+    vec2 i = floor(st);
+    vec2 f = fract(st);
+    float a = random(i);
+    float b = random(i + vec2(1.0, 0.0));
+    float c = random(i + vec2(0.0, 1.0));
+    float d = random(i + vec2(1.0, 1.0));
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    return mix(a, b, u.x) + (c - a)* u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+}
+
+void main() {
+    float noiseValue = noise(texCoord * grassScale);
+
+    //fragColor = vec4(noiseValue, noiseValue, noiseValue, 1.0f);
+
+    if (noiseValue < grassDensity) {
+        discard;
+    }
+
+    //fragColor = texture(albedo, texCoord);
+    fragColor = vec4(color * grassDensity + 0.1, 1.0);
 })";
 
 
@@ -231,104 +294,6 @@ void Renderer::meshDestroy(Renderer::Mesh& mesh) {
     mesh = {};
 }
 
-Renderer::Shader Renderer::shaderFromSource(const char* vertex, const char* fragment) {
-    // Create the two shader modules
-    unsigned int vshader = glCreateShader(GL_VERTEX_SHADER);
-    unsigned int fshader = glCreateShader(GL_FRAGMENT_SHADER);
-
-    // Set their source to the passed in strings
-    glShaderSource(vshader, 1, &vertex, nullptr);
-    glShaderSource(fshader, 1, &fragment, nullptr);
-
-    // Compile the shaders modules
-    glCompileShader(vshader);
-    glCompileShader(fshader);
-
-    // Ensure they compiled correctly
-    int success;
-    const int logSize = 2048;
-    char compilerOutput[logSize];
-
-    glGetShaderiv(vshader, GL_COMPILE_STATUS, &success);
-
-    if (!success) {
-        glGetShaderInfoLog(vshader, logSize, nullptr, compilerOutput);
-        std::string message = "Vertex shader failed to compile:\n\n";
-        message += compilerOutput;
-
-        glDeleteShader(vshader);
-        glDeleteShader(fshader);
-
-        throw std::runtime_error(message);
-    }
-
-    glGetShaderiv(fshader, GL_COMPILE_STATUS, &success);
-
-    if (!success) {
-        glGetShaderInfoLog(fshader, logSize, nullptr, compilerOutput);
-        std::string message = "Fragment shader failed to compile:\n\n";
-        message += compilerOutput;
-
-        glDeleteShader(vshader);
-        glDeleteShader(fshader);
-
-        throw std::runtime_error(message);
-    }
-
-    // Now that we know they compiled correctly, link the modules into the final shader program
-    unsigned int program = glCreateProgram();
-    glAttachShader(program, vshader);
-    glAttachShader(program, fshader);
-
-    glLinkProgram(program);
-
-    // Ensure it linked correctly
-    glGetProgramiv(program, GL_LINK_STATUS, &success);
-
-    if (!success) {
-        glGetProgramInfoLog(program, logSize, nullptr, compilerOutput);
-
-        std::string message = "Shader program failed to link:\n\n";
-        message += compilerOutput;
-
-        glDeleteShader(vshader);
-        glDeleteShader(fshader);
-        glDeleteProgram(program);
-
-        throw std::runtime_error(message);
-    }
-
-    // The shader modules are no longer required
-    glDeleteShader(vshader);
-    glDeleteShader(fshader);
-
-    Shader shader {
-        .program = program
-    };
-
-    // Read out all the uniforms (variables we can set on the shader)
-
-    GLint numUniforms = 0;
-    glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &numUniforms);
-
-    GLchar uniformName[256];
-    for(GLint i = 0; i < numUniforms; i++) {
-        GLsizei length;
-        GLint size;
-        GLenum type;
-
-        glGetActiveUniform(program, i, sizeof(uniformName), &length, & size, &type, uniformName);
-        GLint location = glGetUniformLocation(program, uniformName);
-
-        shader.uniforms[uniformName] = location;
-    }
-
-    return shader;
-}
-
-void Renderer::shaderDestroy(Shader& shader) {
-    glDeleteProgram(shader.program);
-}
 
 void Renderer::doneWithFrame() {
     lastFrame = curFrame;
@@ -474,9 +439,10 @@ void Renderer::initializeGL() {
     setCameraMode(CameraMode::Static);
 
     try {
-        shaders["textured"] = shaderFromSource(texturedVertexSource, texturedFragmentSource);
-        shaders["colored"] = shaderFromSource(texturedVertexSource, coloredFragmentSource);
-        shaders["skybox"] = shaderFromSource(skyboxVertexSource, skyboxFragmentSource);
+        shaders["textured"] = Shader::fromSource(texturedVertexSource, texturedFragmentSource);
+        shaders["colored"] = Shader::fromSource(texturedVertexSource, coloredFragmentSource);
+        shaders["skybox"] = Shader::fromSource(skyboxVertexSource, skyboxFragmentSource);
+        shaders["ground"] = Shader::fromSource(groundVertexSource, groundFragmentSource);
 
         // Ensure the data exists as an empty mesh, so at worst, if the meshes aren't on disk, we just
         // don't draw them instead of crashing or something
@@ -540,10 +506,7 @@ Renderer::~Renderer() {
 
     meshes.clear();
 
-    for(auto& kvpair : shaders) {
-        shaderDestroy(kvpair.second);
-    }
-
+    // Shader's destructor will handle cleaning up the programs
     shaders.clear();
 
     for(auto& kvpair : textures) {
@@ -741,42 +704,34 @@ void Renderer::setCameraMode(Renderer::CameraMode mode) {
     }
 }
 
-void Renderer::drawMesh(const Renderer::Mesh& mesh, const glm::mat4& mvp, unsigned int texture, float* passedColor) {
-    float color[] = { 1.0f, 1.0f, 1.0f };
+void Renderer::drawMesh(const Renderer::Mesh& mesh, const glm::mat4& meshTransform, unsigned int texture, float* passedColor) {
+    glm::vec3 color(1.0f, 1.0f, 1.0f);
 
     if (passedColor != nullptr) {
-        memcpy(color, passedColor, 3 * sizeof(float));
+        color[0] = passedColor[0];
+        color[1] = passedColor[1];
+        color[2] = passedColor[2];
     }
 
     bool hasTexture = texture != 0;
 
-    Shader shader = hasTexture ? shaders["textured"] : shaders["colored"];
+    Shader& shader = hasTexture ? shaders.at("textured") : shaders.at("colored");
 
-    // Use the appropriate shader for drawing
-    glUseProgram(shader.program);
+    shader.use();
 
-    if (!shader.hasUniform("mvp")) {
-        std::cerr << "Renderer: Invalid shader, has no mvp uniform\n";
-    }
+    glm::mat4 mvp = projection * view * meshTransform;
+    glm::mat4 mv = view * meshTransform;
 
-    if (shader.hasUniform("color")) {
-        glUniform3fv(shader.uniforms["color"], 1, color);
-    }
+    shader.setUniformIf("mvp", mvp);
+    shader.setUniformIf("mv", mv);
+    shader.setUniformIf("color", color);
+    shader.setUniformIf("lightPos", lightPos);
+    shader.setUniformIf("ambient", ambientLightIntensity);
+    shader.bindTexture("albedo", 0, GL_TEXTURE_2D, texture);
 
-    if (shader.hasUniform("albedo")) {
-        if (!hasTexture) {
-            std::cerr << "Renderer: Shader requested a texture, but not found\n";
-            return;
-        }
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glUniform1i(shader.uniforms["albedo"], 0);
-    }
 
     glBindVertexArray(mesh.vao);
 
-    glUniformMatrix4fv(shader.uniforms["mvp"], 1, GL_FALSE, glm::value_ptr(mvp));  // set our mvp matrix for this draw
     glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, 0);
 }
 
@@ -804,13 +759,12 @@ void Renderer::drawPlayerTank(const Renderer::DrawCommand& cmd) {
 
     float color[] = {0.0f, 1.0f, 0.0f}; // green
     unsigned int texture = 0;
-    glm::mat4 mvp = projection * view * cmd.transform;
 
     if (textureExists(PLAYER_TEXTURE_FILE)) {
         texture = textures[PLAYER_TEXTURE_FILE];
     }
 
-    drawMesh(m, mvp, texture, color);
+    drawMesh(m, cmd.transform, texture, color);
 }
 
 void Renderer::drawEnemyTank(const Renderer::DrawCommand& cmd) {
@@ -818,23 +772,20 @@ void Renderer::drawEnemyTank(const Renderer::DrawCommand& cmd) {
 
     float color[] = {1.0f, 0.0f, 0.0f}; // red
     unsigned int texture = 0;
-    glm::mat4 mvp = projection * view * cmd.transform;
 
     if (textureExists(ENEMY_TEXTURE_FILE)) {
         texture = textures[ENEMY_TEXTURE_FILE];
     }
 
-    drawMesh(m, mvp, texture, color);
+    drawMesh(m, cmd.transform, texture, color);
 }
 
 void Renderer::drawProjectile(const Renderer::DrawCommand& cmd) {
     Mesh m = meshes[BULLET_MESH_FILE];
 
     float color[] = {1.0f, 1.0f, 0.0f}; // yellow
-    glm::mat4 mvp = projection * view * cmd.transform;
 
-
-    drawMesh(m, mvp, 0, color);
+    drawMesh(m, cmd.transform, 0, color);
 }
 
 void Renderer::drawObstacle(const Renderer::DrawCommand& cmd) {
@@ -842,7 +793,6 @@ void Renderer::drawObstacle(const Renderer::DrawCommand& cmd) {
     std::string obstacleTypeName = Obstacle::convertObstacleTypeToName(cmd.obstacleType);
 
     float color[] {0.58, 0.29f, 0.0f}; // brown
-    glm::mat4 mvp = projection * view * cmd.transform;
     unsigned int texture = 0;
 
     if (obstacleTypeName.empty() || meshes.find(obstacleTypeName) == meshes.end()) {
@@ -858,7 +808,7 @@ void Renderer::drawObstacle(const Renderer::DrawCommand& cmd) {
         }
     }
 
-    drawMesh(m, mvp, texture, color);
+    drawMesh(m, cmd.transform, texture, color);
 }
 
 void Renderer::drawGround() {
@@ -866,17 +816,39 @@ void Renderer::drawGround() {
         const auto& mesh = meshes[GROUND_MESH_FILE];
 
         mat4 groundTransform = mat4(1.0f);
-        groundTransform = glm::scale(groundTransform, glm::vec3(groundScale, 0.0f, groundScale));
-
-        groundTransform[3][1] = groundHeight;
-
-        glm::mat4 mvp = projection * view * groundTransform;
-
-        float groundColor[] = {0.25, 0.25, 0.25};
+        groundTransform = glm::scale(groundTransform, glm::vec3(groundScale, 1.0f, groundScale));
+        groundTransform = glm::translate(groundTransform, glm::vec3(0, groundHeight, 0));
 
         int groundTex = textures.find(GROUND_TEXTURE_FILE) == textures.end() ? 0 : textures[GROUND_TEXTURE_FILE];
+        glm::vec3 groundColor(0.0f, 0.75f, 0.0f);
 
-        drawMesh(mesh, mvp, groundTex, groundColor);
+        auto& shader = shaders.at("ground");
+        shader.use();
+
+        glBindVertexArray(mesh.vao);
+
+        float grassDensitySum = 0.0f;
+        float grassHeightSum = 0.0f;
+        for(size_t i = 0; i < grassShells; i++) {
+
+            glm::mat4 model = glm::translate(groundTransform, glm::vec3(0, grassHeightSum, 0));
+            glm::mat4 mvp = projection * view * model;
+
+            shader.setUniformIf("grassDensity", grassDensitySum);
+            shader.setUniformIf("grassScale", grassScale);
+            shader.setUniformIf("mvp", mvp);
+            shader.setUniformIf("model", model);
+            shader.setUniformIf("view", view);
+            shader.setUniformIf("projection", projection);
+            shader.setUniformIf("color", groundColor);
+
+            shader.bindTexture("albedo", 0, GL_TEXTURE_2D, groundTex);
+
+            glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, 0);
+
+            grassDensitySum += grassShellDensityStep;
+            grassHeightSum += grassShellHeightStep;
+        }
     }
 }
 
@@ -933,7 +905,7 @@ void Renderer::drawSkybox() {
     glDepthMask(GL_FALSE);
     glDepthFunc(GL_LEQUAL);
 
-    const auto& shader = shaders.at("skybox");
+    auto& shader = shaders.at("skybox");
     unsigned int skybox = cubemaps.at(SKY_CUBEMAP_FOLDER);
     const auto& mesh = meshes.at(SKY_MESH_FILE);
 
@@ -948,11 +920,12 @@ void Renderer::drawSkybox() {
     glm::mat4 vp = projection * view;
     vp = glm::scale(vp, glm::vec3(skyboxSize, skyboxSize, skyboxSize));
 
-    glUseProgram(shader.program);
-    glBindVertexArray(mesh.vao);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, skybox);
+    shader.use();
+    shader.bindTexture("skybox", 0, GL_TEXTURE_CUBE_MAP, skybox);
+    shader.setUniformIf("vp", vp);
 
-    glUniformMatrix4fv(shader.uniforms.at("vp"), 1, GL_FALSE, glm::value_ptr(vp));  // set our vp matrix for this draw
+    glBindVertexArray(mesh.vao);
+
     glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, 0);
 
     glDepthFunc(GL_LESS);
@@ -960,6 +933,3 @@ void Renderer::drawSkybox() {
 }
 
 
-bool Renderer::Shader::hasUniform(const char* name) const {
-    return uniforms.find(name) != uniforms.end();
-}
