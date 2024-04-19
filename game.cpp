@@ -55,8 +55,6 @@ Game::~Game() {
  * @details Start the game when prompted by the signal. Changes the active widget to the renderer and sets inGame to true.
  */
 int Game::start() {
-    sc->start();
-
     connect(&timer, &QTimer::timeout, this, &Game::tick);
 
     timer.setInterval(16); // 16 msec, roughly 60 fps
@@ -112,7 +110,6 @@ void Game::end() {
     timer.stop();
     inGame = false;
     sc->~Scene();
-    sc = new Scene(60.0f / 1000, "test_game_state");
     activeKey = MAIN_MENU_KEY;
     gw->changeWidget(activeKey);
 }

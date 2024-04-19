@@ -59,17 +59,7 @@ add_subdirectory(external/assimp)
 file(GLOB TANK_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
 # Create our executable
-add_executable(tanks ${TANK_SOURCE_FILES}
-        mainmenu.cpp
-        mainmenu.h
-
-
-
-
-        gameover.cpp
-        gameover.h
-        pausemenu.cpp
-        pausemenu.h)
+add_executable(tanks ${TANK_SOURCE_FILES})
 
 # Declare the system libraries we need to link with
 target_link_libraries(tanks PRIVATE ${QT_LIBRARIES} glm::glm assimp)

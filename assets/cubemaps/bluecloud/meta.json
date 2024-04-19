@@ -1,0 +1,26 @@
+{
+  "left": {
+    "flipHorizontal": true,
+    "flipVertical": false
+  },
+  "right": {
+    "flipHorizontal": true,
+    "flipVertical": false
+  },
+  "front": {
+    "flipHorizontal": true,
+    "flipVertical": false
+  },
+  "back": {
+    "flipHorizontal": true,
+    "flipVertical": false
+  },
+  "top": {
+    "flipHorizontal": true,
+    "flipVertical": false
+  },
+  "bottom": {
+    "flipHorizontal": false,
+    "flipVertical": false
+  }
+}
