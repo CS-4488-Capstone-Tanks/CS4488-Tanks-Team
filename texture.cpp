@@ -57,7 +57,7 @@ void Texture::loadTex(const std::filesystem::path& path) {
     QImage image(QString::fromStdString(path.string()));
     if (image.isNull()) {
         std::string msg = "Renderer: Failed to load image: ";
-        msg += path;
+        msg += path.string();
         throw std::runtime_error(msg);
     }
 
@@ -164,7 +164,7 @@ void Texture::loadCubemap(const std::filesystem::path& path) {
         if (image.isNull()) {
             std::string msg = "Renderer: Failed to load cubemap image ";
             msg += ": ";
-            msg += imgpath;
+            msg += imgpath.string();
 
             glDeleteTextures(1, &texture);
 
