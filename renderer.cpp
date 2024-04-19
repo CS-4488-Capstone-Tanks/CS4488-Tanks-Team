@@ -1,18 +1,10 @@
 #include "renderer.h"
 
-#include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-
-#include <QImage>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QFile>
 
 #include <iostream>
 #include <filesystem>
 #include <algorithm>
-
-
 
 #include "gameobject.h"
 
@@ -352,9 +344,7 @@ void Renderer::initializeGL() {
             for(const auto& entry : std::filesystem::directory_iterator("assets/textures")) {
                 if (entry.is_regular_file()) {
                     const auto& path = entry.path();
-                    unsigned int loaded = textureFromFile(path);
-
-                    textures[path.stem().string()] = loaded;
+                    textures[path.stem().string()] = Texture::fromFile(path);
                 }
             }
         }
@@ -366,9 +356,7 @@ void Renderer::initializeGL() {
             for(const auto& entry : std::filesystem::directory_iterator("assets/cubemaps")) {
                 if (entry.is_directory()) {
                     const auto& path = entry.path();
-                    unsigned int loaded = cubemapFromFile(path);
-
-                    cubemaps[path.stem().string()] = loaded;
+                    textures[path.stem().string()] = Texture::cubemapFromFolder(path);
                 }
             }
         }
@@ -383,22 +371,10 @@ void Renderer::initializeGL() {
 }
 
 Renderer::~Renderer() {
-
     // These classes' destructors handle the cleanup
     meshes.clear();
     shaders.clear();
-
-    for(auto& kvpair : textures) {
-        glDeleteTextures(1, &kvpair.second);
-    }
-
     textures.clear();
-
-    for(auto& kvpair : cubemaps) {
-        glDeleteTextures(1, &kvpair.second);
-    }
-
-    cubemaps.clear();
 }
 
 bool Renderer::textureExists(const char* name) {
@@ -409,162 +385,7 @@ bool Renderer::textureExists(const std::string& name) {
     return textures.find(name) != textures.end();
 }
 
-unsigned int Renderer::textureFromFile(const std::filesystem::path& path) {
-    // Use QT to load the image
-    QImage image(QString::fromStdString(path.string()));
-    if (image.isNull()) {
-        std::cerr << "Renderer: Failed to load image: " << path << "\n";
-        return 0;
-    }
 
-    // OpenGL requires specific data formatting
-    QImage glImage = image.mirrored().convertToFormat(QImage::Format_RGBA8888);
-
-    // Generate a texture
-    GLuint texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    // Set texture parameters, like how the texture should be resized and what to do if it doesn't quite fit right
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    // Upload the image data to the texture
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, glImage.width(), glImage.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, glImage.bits());
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    return texture;
-}
-
-
-/**
- * This function is used as part of the sorting process for the faces of a cubemap when loading one
- * @param path the path of the image
- * @return the desired position in the list
- */
-int cubemapFaceOrder(const std::filesystem::path& path) {
-    const static std::unordered_map<std::string, int> order = {
-        {"right", 0},
-        {"left", 1},
-        {"top", 2},
-        {"bottom", 3},
-        {"front", 4},
-        {"back", 5}
-    };
-
-    std::string name = path.stem().string();
-
-    if (order.find(name) == order.end()) {
-        std::string msg = "Unknown face for cubemap: " + path.string();
-        throw std::runtime_error(msg.c_str());
-    }
-
-    return order.at(name);
-}
-
-/**
- * This is the actual sorting function used as a key to std::sort for the faces of the cubemapw
- * @param a the first face
- * @param b the second face
- * @return whether the first is less than the second
- */
-bool cubmapFaceCompare(const std::filesystem::path& a, const std::filesystem::path& b) {
-    return cubemapFaceOrder(a) < cubemapFaceOrder(b);
-}
-
-unsigned int Renderer::cubemapFromFile(const std::filesystem::path& path) {
-    if (!is_directory(path)) {
-        throw std::runtime_error("Cubemaps must be a directory containing exactly six images and one optional meta.json file");
-    }
-
-    QFile* metafile = nullptr;
-    QByteArray metabytes;
-    QJsonDocument meta;
-    std::vector<std::filesystem::path> images;
-
-    for(const auto& entry : std::filesystem::directory_iterator(path)) {
-        if (entry.is_regular_file()) {
-            auto imgpath = entry.path();
-
-            if (imgpath.extension() == ".json") {
-                metafile = new QFile(imgpath);
-
-                if (!metafile->open(QIODevice::ReadOnly | QIODevice::Text)) {
-                    delete metafile;
-                    std::cerr << "Renderer: failed to open cubemap json metafile: " << imgpath << "\n";
-                    continue;
-                }
-
-                metabytes = metafile->readAll();
-                meta = QJsonDocument::fromJson(metabytes);
-            }
-            else {
-                images.push_back(entry.path());
-            }
-        }
-    }
-
-    if (images.size() != 6) {
-        throw std::runtime_error("Cubemaps must be a directory containing exactly six images and one optional meta.json file");
-    }
-
-    std::sort(images.begin(), images.end(), cubmapFaceCompare);
-
-    // Generate a texture
-    GLuint texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
-
-    for(size_t i = 0; i < images.size(); i++) {
-        const auto& imgpath = images[i];
-
-        // Use QT to load the image
-        QImage image(QString::fromStdString(imgpath.string()));
-        if (image.isNull()) {
-            std::cerr << "Renderer: Failed to load cubemap image " << i << ": " << imgpath << "\n";
-            glDeleteTextures(1, &texture);
-            return 0;
-        }
-
-
-        bool flipHorizontal = true;
-        bool flipVertical = false;
-
-        if (meta.isObject()) {
-            auto mainobj = meta.object();
-
-            if (mainobj.contains(imgpath.stem().c_str())) {
-                auto faceobjvalue = mainobj.value(imgpath.stem().c_str());
-
-                if (faceobjvalue.isObject()) {
-                    auto faceobj = faceobjvalue.toObject();
-
-                    auto fh = faceobj.value("flipHorizontal");
-                    auto fv = faceobj.value("flipVertical");
-
-                    if (fh.isBool()) { flipHorizontal = fh.toBool(); }
-                    if (fv.isBool()) { flipVertical = fv.toBool(); }
-                }
-            }
-        }
-
-        // OpenGL requires specific data formatting
-        QImage glImage = image.mirrored(flipHorizontal, flipVertical).convertToFormat(QImage::Format_RGBA8888);
-
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, glImage.width(), glImage.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, glImage.bits());
-    }
-
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
-    delete metafile;
-    return texture;
-}
 
 void Renderer::advanceCamera() {
     glm::vec3 cameraPos = cameraTopPosition;
@@ -583,7 +404,7 @@ void Renderer::setCameraMode(Renderer::CameraMode mode) {
     }
 }
 
-void Renderer::drawMesh(Mesh& mesh, const glm::mat4& meshTransform, unsigned int texture, float* passedColor) {
+void Renderer::drawMesh(Mesh& mesh, const glm::mat4& meshTransform, Texture* texture, float* passedColor) {
     glm::vec3 color(1.0f, 1.0f, 1.0f);
 
     if (passedColor != nullptr) {
@@ -592,7 +413,7 @@ void Renderer::drawMesh(Mesh& mesh, const glm::mat4& meshTransform, unsigned int
         color[2] = passedColor[2];
     }
 
-    bool hasTexture = texture != 0;
+    bool hasTexture = texture != nullptr;
 
     Shader& shader = hasTexture ? shaders.at("textured") : shaders.at("colored");
 
@@ -606,7 +427,7 @@ void Renderer::drawMesh(Mesh& mesh, const glm::mat4& meshTransform, unsigned int
     shader.setUniformIf("color", color);
     shader.setUniformIf("lightPos", lightPos);
     shader.setUniformIf("ambient", ambientLightIntensity);
-    shader.bindTexture("albedo", 0, GL_TEXTURE_2D, texture);
+    shader.bindTexture("albedo", 0, texture);
 
     mesh.draw();
 }
@@ -634,10 +455,10 @@ void Renderer::drawPlayerTank(const Renderer::DrawCommand& cmd) {
     Mesh& m = meshes[TANK_MESH_FILE];
 
     float color[] = {0.0f, 1.0f, 0.0f}; // green
-    unsigned int texture = 0;
+    Texture* texture = nullptr;
 
     if (textureExists(PLAYER_TEXTURE_FILE)) {
-        texture = textures[PLAYER_TEXTURE_FILE];
+        texture = &textures[PLAYER_TEXTURE_FILE];
     }
 
     drawMesh(m, cmd.transform, texture, color);
@@ -647,10 +468,10 @@ void Renderer::drawEnemyTank(const Renderer::DrawCommand& cmd) {
     Mesh& m = meshes[TANK_MESH_FILE];
 
     float color[] = {1.0f, 0.0f, 0.0f}; // red
-    unsigned int texture = 0;
+    Texture* texture = nullptr;
 
     if (textureExists(ENEMY_TEXTURE_FILE)) {
-        texture = textures[ENEMY_TEXTURE_FILE];
+        texture = &textures[ENEMY_TEXTURE_FILE];
     }
 
     drawMesh(m, cmd.transform, texture, color);
@@ -668,7 +489,7 @@ void Renderer::drawObstacle(const Renderer::DrawCommand& cmd) {
     std::string obstacleTypeName = Obstacle::convertObstacleTypeToName(cmd.obstacleType);
 
     float color[] {0.58, 0.29f, 0.0f}; // brown
-    unsigned int texture = 0;
+    Texture* texture = nullptr;
 
     if (obstacleTypeName.empty() || meshes.find(obstacleTypeName) == meshes.end()) {
         std::string errorName = obstacleTypeName.empty() ? "(empty)" : obstacleTypeName;
@@ -677,7 +498,7 @@ void Renderer::drawObstacle(const Renderer::DrawCommand& cmd) {
     }
     else {
         if (textureExists(obstacleTypeName)) {
-            texture = textures[obstacleTypeName];
+            texture = &textures[obstacleTypeName];
         }
 
         drawMesh(meshes[obstacleTypeName], cmd.transform, texture, color);
@@ -693,7 +514,7 @@ void Renderer::drawGround() {
         groundTransform = glm::scale(groundTransform, glm::vec3(groundScale, 1.0f, groundScale));
         groundTransform = glm::translate(groundTransform, glm::vec3(0, groundHeight, 0));
 
-        int groundTex = textures.find(GROUND_TEXTURE_FILE) == textures.end() ? 0 : textures[GROUND_TEXTURE_FILE];
+        Texture* groundTex = textureExists(GROUND_TEXTURE_FILE) ? nullptr : &textures[GROUND_TEXTURE_FILE];
         glm::vec3 groundColor(0.0f, 0.75f, 0.0f);
 
         auto& shader = shaders.at("ground");
@@ -714,7 +535,7 @@ void Renderer::drawGround() {
             shader.setUniformIf("projection", projection);
             shader.setUniformIf("color", groundColor);
 
-            shader.bindTexture("albedo", 0, GL_TEXTURE_2D, groundTex);
+            shader.bindTexture("albedo", 0, groundTex);
 
             mesh.draw();
 
@@ -768,7 +589,7 @@ void Renderer::frameSetCamera() {
 
 void Renderer::drawSkybox() {
     if (shaders.find("skybox") == shaders.end()) { return; }
-    if (cubemaps.find(SKY_CUBEMAP_FOLDER) == cubemaps.end()) { return; }
+    if (textures.find(SKY_CUBEMAP_FOLDER) == textures.end()) { return; }
     if (meshes.find(SKY_MESH_FILE) == meshes.end()) { return; }
 
     // Disable writing to the depth buffer, because we're going to draw behind
@@ -778,7 +599,7 @@ void Renderer::drawSkybox() {
     glDepthFunc(GL_LEQUAL);
 
     auto& shader = shaders.at("skybox");
-    unsigned int skybox = cubemaps.at(SKY_CUBEMAP_FOLDER);
+    Texture& skybox = textures.at(SKY_CUBEMAP_FOLDER);
     auto& mesh = meshes.at(SKY_MESH_FILE);
 
     if (!shader.hasUniform("vp")) {
@@ -793,7 +614,7 @@ void Renderer::drawSkybox() {
     vp = glm::scale(vp, glm::vec3(skyboxSize, skyboxSize, skyboxSize));
 
     shader.use();
-    shader.bindTexture("skybox", 0, GL_TEXTURE_CUBE_MAP, skybox);
+    shader.bindTexture("skybox", 0, skybox);
     shader.setUniformIf("vp", vp);
 
     mesh.draw();

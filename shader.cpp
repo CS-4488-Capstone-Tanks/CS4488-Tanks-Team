@@ -182,3 +182,13 @@ unsigned int Shader::location(const char* name) const {
         throw std::logic_error(msg);
     }
 }
+
+void Shader::bindTexture(const char* name, int location, Texture* texture) {
+    if (!texture) { return; }
+
+    bindTexture(name, location, texture->type(), texture->handle());
+}
+
+void Shader::bindTexture(const char* name, int location, Texture& texture) {
+    bindTexture(name, location, texture.type(), texture.handle());
+}

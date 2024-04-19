@@ -15,6 +15,7 @@ class GameObject;
 #include "Obstacle.h"
 #include "shader.h"
 #include "mesh.h"
+#include "texture.h"
 
 /**
  * @brief The renderer is a QWidget responsible for drawing 3D graphics to the window
@@ -49,8 +50,7 @@ protected:
 
     std::unordered_map<std::string, Mesh> meshes;
     std::unordered_map<std::string, Shader> shaders;
-    std::unordered_map<std::string, unsigned int> textures;
-    std::unordered_map<std::string, unsigned int> cubemaps;
+    std::unordered_map<std::string, Texture> textures;
 
     // The list of draw commands for the last complete frame, and the currently being built frame
     // They are separate to ensure it never draws a half frame
@@ -65,19 +65,6 @@ protected:
     glm::mat4 view;
     glm::mat4 projection;
 
-    /**
-     * @brief Load a texture from a file, and create a GL texture for it
-     * @param path The path to the file
-     * @return The GL id of the texture
-     */
-    unsigned int textureFromFile(const std::filesystem::path& path);
-
-    /**
-     * @brief Loads a texture from a file, but stores it as a cubemap
-     * @param path The path to the file
-     * @return The GL id of the texture
-     */
-    unsigned int cubemapFromFile(const std::filesystem::path& path);
 
     /**
      * @brief a utility function to check if a texture is known to the renderer
@@ -140,7 +127,7 @@ protected:
      * @param texture The texture, if available, or 0 (the GL id for no texture) if not
      * @param color an array of three floats for RGB, of nullptr if not available
      */
-    void drawMesh(Mesh& mesh, const glm::mat4& mvp, unsigned int texture = 0, float* color = nullptr);
+    void drawMesh(Mesh& mesh, const glm::mat4& mvp, Texture* texture = nullptr, float* color = nullptr);
 
     /**
      * @brief Handles any special case adjustments that some draw calls may require (such as nudging some meshes)

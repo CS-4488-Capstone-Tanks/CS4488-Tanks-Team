@@ -10,6 +10,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "texture.h"
+
 /**
  * Shaders used to live inside the Renderer, but grew too complicated and became their own class.
  * They use just a touch of template metaprogramming, which I'll heavily document, since it's an extremely
@@ -72,6 +74,8 @@ public:
      * @param texture The index of the texture
      */
     void bindTexture(const char* name, int location, GLenum type, unsigned int texture);
+    void bindTexture(const char* name, int location, Texture* texture);
+    void bindTexture(const char* name, int location, Texture& texture);
 
 
     /* So, this is a template. They're a special type of function/class/method you can make in C++, declared
