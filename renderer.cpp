@@ -2,9 +2,6 @@
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
 
 #include <QImage>
 #include <QJsonDocument>
@@ -182,117 +179,6 @@ void main() {
 
 
 
-Renderer::Mesh Renderer::meshFromFile(const std::filesystem::path& path) {
-    Mesh m{};
-
-    Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(path.string(), aiProcess_Triangulate);
-
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-        std::string msg = "Failed to load mesh: ";
-        msg += path.string();
-        throw std::runtime_error(msg);
-    }
-
-    if (scene->mNumMeshes > 1) {
-        std::cout << "WARN: Model file " << path << " has more than 1 mesh, only the first will be used\n";
-    }
-
-    // Create the vertex array and buffer
-    glGenVertexArrays(1, &m.vao);
-    glGenBuffers(1, &m.vbo);
-    glGenBuffers(1, &m.ebo);
-
-    // Bind them, and upload the data to the GPU buffer
-    glBindVertexArray(m.vao);
-    glBindBuffer(GL_ARRAY_BUFFER, m.vbo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m.ebo);
-
-    const aiMesh* mesh = scene->mMeshes[0];
-
-    // OpenGL now needs all that data in one big buffer. Easier to interleave it now,
-    // then deal with the math of storing them separately
-
-    std::vector<float> interleavedBuffer;
-    for(size_t i = 0; i < mesh->mNumVertices; i++) {
-        interleavedBuffer.push_back(mesh->mVertices[i].x);
-        interleavedBuffer.push_back(mesh->mVertices[i].y);
-        interleavedBuffer.push_back(mesh->mVertices[i].z);
-
-        if (mesh->HasTextureCoords(0)) { // Assuming the first set of texture coordinates
-            interleavedBuffer.push_back(mesh->mTextureCoords[0][i].x);
-            interleavedBuffer.push_back(mesh->mTextureCoords[0][i].y);
-        }
-        if (mesh->HasNormals()) {
-            interleavedBuffer.push_back(mesh->mNormals[i].x);
-            interleavedBuffer.push_back(mesh->mNormals[i].y);
-            interleavedBuffer.push_back(mesh->mNormals[i].z);
-        }
-    }
-
-    std::vector<unsigned int> indices;
-    for(size_t i = 0; i < mesh->mNumFaces; i++) {
-        const auto& face = mesh->mFaces[i];
-
-        for(size_t j = 0; j < face.mNumIndices; j++) {
-            indices.push_back(face.mIndices[j]);
-        }
-    }
-
-
-    // Upload our data to the GPU
-    // Store it in the array buffer
-    // Pass how big our data is, and the pointer to it
-    // Lastly, it won't change often, so we use static draw
-    glBufferData(GL_ARRAY_BUFFER, interleavedBuffer.size() * sizeof(float), interleavedBuffer.data(), GL_STATIC_DRAW);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
-
-    // Stride is the total size of a vertex in bytes
-    GLsizei stride = 3 * sizeof(float);
-
-    if (mesh->HasTextureCoords(0)) { stride += 2 * sizeof(float); }
-    if (mesh->HasNormals()) { stride += 3 * sizeof(float); }
-
-
-    size_t bufferOffset = 0;
-
-    // Tell the vertex array that we want to:
-    // Enable attribute 0
-    // Which has three components (a vec3)
-    // of type float
-    // that is not normalized
-    // has total data size per vertex of stride
-    // and starts at a certain offset in the buffer
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)bufferOffset);
-    glEnableVertexAttribArray(0);
-    bufferOffset += 3 * sizeof(float);
-
-    if (mesh->HasTextureCoords(0)) {
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)bufferOffset);
-        glEnableVertexAttribArray(1);
-        bufferOffset += 2 * sizeof(float);
-    }
-
-    if (mesh->HasNormals()) {
-        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, (void*)bufferOffset);
-        glEnableVertexAttribArray(2);
-    }
-
-    // Unbind our VAO so we don't accidentally modify it later
-    glBindVertexArray(0);
-
-    m.vertexCount = mesh->mNumVertices;
-    m.indexCount = indices.size();
-
-    return m;
-}
-
-void Renderer::meshDestroy(Renderer::Mesh& mesh) {
-    glDeleteVertexArrays(1, &mesh.vao);
-    glDeleteBuffers(1, &mesh.vbo);
-
-    mesh = {};
-}
 
 
 void Renderer::doneWithFrame() {
@@ -454,9 +340,7 @@ void Renderer::initializeGL() {
             for(const auto& entry : std::filesystem::directory_iterator("assets/models")) {
                 if (entry.is_regular_file()) {
                     const auto& path = entry.path();
-                    Mesh loaded = meshFromFile(path);
-
-                    meshes[path.stem().string()] = loaded;
+                    meshes[path.stem().string()] = Mesh(path);
                 }
             }
         }
@@ -499,14 +383,9 @@ void Renderer::initializeGL() {
 }
 
 Renderer::~Renderer() {
-    // Clean up after yourself
-    for(auto& kvpair : meshes) {
-        meshDestroy(kvpair.second);
-    }
 
+    // These classes' destructors handle the cleanup
     meshes.clear();
-
-    // Shader's destructor will handle cleaning up the programs
     shaders.clear();
 
     for(auto& kvpair : textures) {
@@ -704,7 +583,7 @@ void Renderer::setCameraMode(Renderer::CameraMode mode) {
     }
 }
 
-void Renderer::drawMesh(const Renderer::Mesh& mesh, const glm::mat4& meshTransform, unsigned int texture, float* passedColor) {
+void Renderer::drawMesh(Mesh& mesh, const glm::mat4& meshTransform, unsigned int texture, float* passedColor) {
     glm::vec3 color(1.0f, 1.0f, 1.0f);
 
     if (passedColor != nullptr) {
@@ -729,10 +608,7 @@ void Renderer::drawMesh(const Renderer::Mesh& mesh, const glm::mat4& meshTransfo
     shader.setUniformIf("ambient", ambientLightIntensity);
     shader.bindTexture("albedo", 0, GL_TEXTURE_2D, texture);
 
-
-    glBindVertexArray(mesh.vao);
-
-    glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, 0);
+    mesh.draw();
 }
 
 void Renderer::specialCaseAdjusment(Renderer::DrawCommand& cmd) {
@@ -755,7 +631,7 @@ void Renderer::drawPlayerTank(const Renderer::DrawCommand& cmd) {
         return;
     }
 
-    Mesh m = meshes[TANK_MESH_FILE];
+    Mesh& m = meshes[TANK_MESH_FILE];
 
     float color[] = {0.0f, 1.0f, 0.0f}; // green
     unsigned int texture = 0;
@@ -768,7 +644,7 @@ void Renderer::drawPlayerTank(const Renderer::DrawCommand& cmd) {
 }
 
 void Renderer::drawEnemyTank(const Renderer::DrawCommand& cmd) {
-    Mesh m = meshes[TANK_MESH_FILE];
+    Mesh& m = meshes[TANK_MESH_FILE];
 
     float color[] = {1.0f, 0.0f, 0.0f}; // red
     unsigned int texture = 0;
@@ -781,7 +657,7 @@ void Renderer::drawEnemyTank(const Renderer::DrawCommand& cmd) {
 }
 
 void Renderer::drawProjectile(const Renderer::DrawCommand& cmd) {
-    Mesh m = meshes[BULLET_MESH_FILE];
+    Mesh& m = meshes[BULLET_MESH_FILE];
 
     float color[] = {1.0f, 1.0f, 0.0f}; // yellow
 
@@ -789,7 +665,6 @@ void Renderer::drawProjectile(const Renderer::DrawCommand& cmd) {
 }
 
 void Renderer::drawObstacle(const Renderer::DrawCommand& cmd) {
-    Mesh m{};
     std::string obstacleTypeName = Obstacle::convertObstacleTypeToName(cmd.obstacleType);
 
     float color[] {0.58, 0.29f, 0.0f}; // brown
@@ -801,19 +676,18 @@ void Renderer::drawObstacle(const Renderer::DrawCommand& cmd) {
         return;
     }
     else {
-        m = meshes[obstacleTypeName];
-
         if (textureExists(obstacleTypeName)) {
             texture = textures[obstacleTypeName];
         }
+
+        drawMesh(meshes[obstacleTypeName], cmd.transform, texture, color);
     }
 
-    drawMesh(m, cmd.transform, texture, color);
 }
 
 void Renderer::drawGround() {
     if (meshes.find(GROUND_MESH_FILE) != meshes.end()) {
-        const auto& mesh = meshes[GROUND_MESH_FILE];
+        auto& mesh = meshes[GROUND_MESH_FILE];
 
         mat4 groundTransform = mat4(1.0f);
         groundTransform = glm::scale(groundTransform, glm::vec3(groundScale, 1.0f, groundScale));
@@ -824,8 +698,6 @@ void Renderer::drawGround() {
 
         auto& shader = shaders.at("ground");
         shader.use();
-
-        glBindVertexArray(mesh.vao);
 
         float grassDensitySum = 0.0f;
         float grassHeightSum = 0.0f;
@@ -844,7 +716,7 @@ void Renderer::drawGround() {
 
             shader.bindTexture("albedo", 0, GL_TEXTURE_2D, groundTex);
 
-            glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, 0);
+            mesh.draw();
 
             grassDensitySum += grassShellDensityStep;
             grassHeightSum += grassShellHeightStep;
@@ -907,7 +779,7 @@ void Renderer::drawSkybox() {
 
     auto& shader = shaders.at("skybox");
     unsigned int skybox = cubemaps.at(SKY_CUBEMAP_FOLDER);
-    const auto& mesh = meshes.at(SKY_MESH_FILE);
+    auto& mesh = meshes.at(SKY_MESH_FILE);
 
     if (!shader.hasUniform("vp")) {
         std::cerr << "Renderer: Invalid skybox shader, has no vp uniform\n";
@@ -924,9 +796,7 @@ void Renderer::drawSkybox() {
     shader.bindTexture("skybox", 0, GL_TEXTURE_CUBE_MAP, skybox);
     shader.setUniformIf("vp", vp);
 
-    glBindVertexArray(mesh.vao);
-
-    glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, 0);
+    mesh.draw();
 
     glDepthFunc(GL_LESS);
     glDepthMask(GL_TRUE);

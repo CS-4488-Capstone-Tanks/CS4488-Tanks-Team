@@ -14,6 +14,7 @@ class GameObject;
 
 #include "Obstacle.h"
 #include "shader.h"
+#include "mesh.h"
 
 /**
  * @brief The renderer is a QWidget responsible for drawing 3D graphics to the window
@@ -43,14 +44,6 @@ protected:
         ObstacleType obstacleType;
         glm::mat4 transform;
         glm::vec3 forwardPoint;
-    };
-
-    struct Mesh {
-        unsigned int vao;
-        unsigned int vbo;
-        unsigned int ebo;
-        int vertexCount;
-        int indexCount;
     };
 
 
@@ -85,20 +78,6 @@ protected:
      * @return The GL id of the texture
      */
     unsigned int cubemapFromFile(const std::filesystem::path& path);
-
-    /**
-     * @brief Load a mesh from a file, and create a Mesh struct for it
-     * @param path The path to the file
-     * @return A mesh struct containing the mesh's GL buffers/vertex array
-     * @throws std::runtime_error if the mesh fails to load
-     */
-    Mesh meshFromFile(const std::filesystem::path& path);
-
-    /**
-     * @brief Destroys a mesh, cleaning up any GPU buffers/vertex arrays
-     * @param mesh the mesh to destroy
-     */
-    void meshDestroy(Mesh& mesh);
 
     /**
      * @brief a utility function to check if a texture is known to the renderer
@@ -161,7 +140,7 @@ protected:
      * @param texture The texture, if available, or 0 (the GL id for no texture) if not
      * @param color an array of three floats for RGB, of nullptr if not available
      */
-    void drawMesh(const Mesh& mesh, const glm::mat4& mvp, unsigned int texture = 0, float* color = nullptr);
+    void drawMesh(Mesh& mesh, const glm::mat4& mvp, unsigned int texture = 0, float* color = nullptr);
 
     /**
      * @brief Handles any special case adjustments that some draw calls may require (such as nudging some meshes)
