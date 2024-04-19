@@ -40,8 +40,7 @@ void EnemyTank::doUpdate(float deltaTime) {
 }
 
 void EnemyTank::doCollision(GameObject* other) {
-    if (other->getType() != GameObjectType::EnemyProjectile)
-        selfDestruct();
+    selfDestruct();
 }
 
 void EnemyTank::shoot(glm::vec3 direction) {
