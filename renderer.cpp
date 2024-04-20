@@ -572,7 +572,7 @@ void Renderer::frameSetCamera() {
 
                     glm::vec3 forwardDir = cmd.forwardPoint - camPos;
 
-                    camPos += glm::vec3(0.0f, cameraTopPosition[1], 0.0f);
+                    camPos += glm::vec3(0.0f, cameraChaseHeight, 0.0f);
                     camPos -= forwardDir * cameraChaseDistance;
 
                     view = glm::lookAt(camPos, lookPoint, up);
