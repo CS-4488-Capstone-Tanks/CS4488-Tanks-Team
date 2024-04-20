@@ -136,13 +136,6 @@ void Game::tick() {
     }
 
     rend->doneWithFrame();
-
-    if (Scene::getInstance()->getGameObjects(GameObjectType::PlayerTank).size() == 0) {
-        gameOver();
-    }
-    else if (Scene::getInstance()->getGameObjects(GameObjectType::EnemyTank).size() == 0) {
-        wonGame();
-    }
 }
 
 /**
