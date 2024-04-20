@@ -59,6 +59,8 @@ public:
     void gameOver();
     void wonGame();
 
+    void beginNewScene(std::string stateFilename);
+
     GameWindow* getWindow();
 
 public slots:

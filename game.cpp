@@ -120,6 +120,27 @@ void Game::end() {
 }
 
 
+/**
+ * @brief Game::beginNewScene: Begin a new scene
+ * @details Begin a new scene by resetting the scene, loading the state, starting the scene, setting inGame to true, starting the timer, and changing the active widget to the game.
+ * @param stateFilename The filename of the state to load
+ * @author Koda Koziol (mostly refactoring Luna's code though)
+ * @date Spring 2024
+*/
+void Game::beginNewScene(std::string stateFilename) {
+    Scene* sc = Scene::getInstance();
+    sc->getInstance()->reset();
+    sc->getInstance()->load(stateFilename);
+    sc->getInstance()->start();
+    sc->getInstance()->setPaused(false);
+    isAlive = true;
+    inGame = true;
+    timer.start();
+    activeKey = GAME_KEY;
+    gw->changeWidget(activeKey);
+}
+
+
 // PRIVATE Q Slots: tick();
 /**
  * @author Tyson Cox, Luna Steed
