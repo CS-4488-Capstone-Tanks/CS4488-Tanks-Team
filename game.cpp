@@ -18,9 +18,10 @@ Game::Game(int argc, char** argv) : QApplication(argc, argv), timer(new QTimer(t
     gw->show();
 
     sc = Scene::getInstance();
+    sc->setPaused(true);
 
     inGame = false;
-    isAlive = false;
+    isAlive = true;
 
     connect(gw, &GameWindow::keySignal, this, &Game::filterKeyEvent); // Connect the GameWindow's keySignal to the Game's fi
     /*
@@ -63,6 +64,7 @@ int Game::start() {
     activeKey = MAIN_MENU_KEY;
     gw->changeWidget(activeKey);
     gw->show();
+    sc->setPaused(false);
 
     return Game::exec();
 }
@@ -107,6 +109,7 @@ void Game::resume() {
 void Game::end() {
     timer.stop();
     inGame = false;
+    sc->setPaused(true);
     if (isAlive){
         // If alive load level menu
         getWindow()->changeWidget(LEVEL_MENU_KEY);
@@ -136,6 +139,10 @@ void Game::tick() {
     }
 
     rend->doneWithFrame();
+
+    if (!isAlive){
+        this->end();
+    }
 }
 
 /**
