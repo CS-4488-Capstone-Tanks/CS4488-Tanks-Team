@@ -64,15 +64,15 @@ void PlayerTank::shoot(glm::vec3 direction) {
     }
 
     shotAccumulator = 0.0;
-    GameState* gamestate = GameState::getInstance();
+    Scene* scene = Scene::getInstance();
 
     // Don't spawn the bullet right on top of us
     auto bulletPos = this->getPosition() + this->getDirection();
     auto bulletDir = this->getDirection();
 
-    auto bullet = new Projectile(nullptr, gamestate->getNextFreeEntityID(), bulletPos, bulletDir, GameObjectType::PlayerProjectile);
+    auto bullet = new Projectile(nullptr, scene->getNextFreeEntityID(), bulletPos, bulletDir, GameObjectType::PlayerProjectile);
 
-    gamestate->addObject(bullet);
+    scene->addObject(bullet);
     sfxManager->playSound(SFXManager::Sounds::Firing);
 }
 

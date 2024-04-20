@@ -17,10 +17,7 @@ Game::Game(int argc, char** argv) : QApplication(argc, argv), timer(new QTimer(t
     gw->setFixedSize(qsize); // Set the fixed size of the window (no resizing allowed
     gw->show();
 
-    // Note! This string intentionally left blank so as to not load a scene in the menu, now
-    // that menus are loading the scene at the correct time
-    std::string stateFilename = "";
-    sc = new Scene(60.0f/1000, stateFilename);
+    sc = Scene::getInstance();
 
     inGame = false;
 
@@ -44,7 +41,6 @@ Game::Game(int argc, char** argv) : QApplication(argc, argv), timer(new QTimer(t
  */
 Game::~Game() {
     delete gw;
-    delete sc;
 }
 
 
@@ -109,7 +105,6 @@ void Game::resume() {
 void Game::end() {
     timer.stop();
     inGame = false;
-    sc->~Scene();
     activeKey = MAIN_MENU_KEY;
     gw->changeWidget(activeKey);
 }
@@ -123,7 +118,7 @@ void Game::end() {
  * @details Update the game by calling the Scene's update method.
  */
 void Game::tick() {
-    sc->update();
+    sc->update(60.0f/1000);
 
     QWidget* widg = gw->getWidget(GAME_KEY);
     auto* rend = dynamic_cast<Renderer*>(widg);
@@ -177,7 +172,7 @@ bool Game::filterKeyEvent(QKeyEvent* event) {
             case Qt::Key_Right:
             case Qt::Key_Space:
                 if (inGame) {
-                    PlayerTank* player = dynamic_cast<PlayerTank*>(sc->getPlayerTank());
+                    PlayerTank* player = dynamic_cast<PlayerTank*>(sc->getGameObject(GameObjectType::PlayerTank));
                     if (player)
                         return player->handleKeyEvent(event);
                     else
@@ -217,7 +212,7 @@ bool Game::filterKeyEvent(QKeyEvent* event) {
     }
     else if (event->type() == QEvent::KeyRelease) {
         if (inGame) {
-            PlayerTank* player = dynamic_cast<PlayerTank*>(sc->getPlayerTank());
+            PlayerTank* player = dynamic_cast<PlayerTank*>(sc->getGameObject(GameObjectType::PlayerTank));
             if (player)
                 return player->handleKeyEvent(event);
             else

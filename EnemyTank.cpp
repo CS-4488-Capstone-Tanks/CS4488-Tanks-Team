@@ -16,7 +16,7 @@ void EnemyTank::doUpdate(float deltaTime) {
     
     vec3 dir = glm::normalize(glm::vec3(cos(angleInRadians), 0.0, sin(angleInRadians)));
     this->setDirection(dir);
-    PlayerTank* player = dynamic_cast<PlayerTank*>(GameState::getInstance()->getGameObject(GameObjectType::PlayerTank));
+    PlayerTank* player = dynamic_cast<PlayerTank*>(Scene::getInstance()->getGameObject(GameObjectType::PlayerTank));
     if (!player)
         return;
     auto playerPos = player->getPosition();
@@ -60,15 +60,15 @@ void EnemyTank::shoot(glm::vec3 direction) {
     }
 
     shotAccumulator = 0.0;
-    GameState* gamestate = GameState::getInstance();
+    Scene* scene = Scene::getInstance();
 
     // Don't spawn the bullet right on top of us
     auto bulletPos = this->getPosition() + this->getDirection();
     auto bulletDir = this->getDirection();
 
-    auto bullet = new Projectile(nullptr, gamestate->getNextFreeEntityID(), bulletPos, bulletDir, GameObjectType::EnemyProjectile);
+    auto bullet = new Projectile(nullptr, scene->getNextFreeEntityID(), bulletPos, bulletDir, GameObjectType::EnemyProjectile);
 
-    gamestate->addObject(bullet);
+    scene->addObject(bullet);
     sfxManager->playSound(SFXManager::Sounds::Firing);
 }
 

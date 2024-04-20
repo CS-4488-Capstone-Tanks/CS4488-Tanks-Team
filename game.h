@@ -5,7 +5,8 @@
 #ifndef TANKS_GAME_H
 #define TANKS_GAME_H
 
-#include "scene.h"
+// #include "scene.h"
+#include "gamestate.h"
 #include "gamewindow.h"
 #include <QObject>
 #include <QApplication>

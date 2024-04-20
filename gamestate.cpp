@@ -25,41 +25,44 @@ const vec3 DEFAULT_DIRECTION = vec3(0.0f, 0.0f, 1.0f);
 
 CollisionMatrix collisionMatrix = CollisionMatrix();
 
-GameState::GameState() {}
+Scene::Scene() {}
 
-GameState::~GameState()
+Scene::~Scene()
 {
-    clearGameState();
+    clearScene();
 
     delete instance; // it is safe to delete a nullptr if it is one
     instance = nullptr;
 }
 
-GameState *GameState::instance = nullptr;
+Scene *Scene::instance = nullptr;
 
-GameState *GameState::getInstance()
+Scene *Scene::getInstance()
 {
     if (instance == nullptr)
-        instance = new GameState();
+        instance = new Scene();
 
     return instance;
 }
 
-void GameState::startState()
+void Scene::start()
 {
     foreach (GameObject *const obj, objs) {
-        obj->startState();
+        obj->start();
     }
 }
 
-void GameState::updateState(float deltaTime)
+void Scene::update(float deltaTime)
 {
+    if (isPaused)
+        return;
+
     // Update all objects, or remove them if they are queued for destruction
     foreach (GameObject *const obj, objs) {
         if (obj->isQueuedForDestruction())
             removeObject(obj->getEntityID());
         else
-            obj->updateState(deltaTime);
+            obj->update(deltaTime);
     }
 
     // Check and handle collisions between objects
@@ -82,10 +85,10 @@ void GameState::updateState(float deltaTime)
     }
 }
 
-void GameState::loadState(std::string filename)
+void Scene::load(std::string filename)
 {
     // The only time we'd be interested in loading a scene is into an empty scene
-    clearGameState();
+    clearScene();
 
     QString filepath = LEVELS_PATH + QString::fromStdString(filename) + ".json";
     QFile stateFile(filepath);
@@ -214,18 +217,24 @@ void GameState::loadState(std::string filename)
     }
 }
 
-int GameState::getNextFreeEntityID()
+void Scene::setPaused(bool p)
+{
+    isPaused = p;
+}
+
+
+int Scene::getNextFreeEntityID()
 {
     return nextFreeEntityID++;
 }
 
-int GameState::addObject(GameObject *const obj)
+int Scene::addObject(GameObject *const obj)
 {
     objs.push_back(obj);
     return obj->getEntityID();
 }
 
-void GameState::removeObject(uint32_t entityID)
+void Scene::removeObject(uint32_t entityID)
 {
     for (auto it = objs.begin(); it != objs.end(); ++it) {
         if ((*it)->getEntityID() == entityID) {
@@ -236,7 +245,7 @@ void GameState::removeObject(uint32_t entityID)
     }
 }
 
-GameObject *GameState::getGameObject(uint32_t entityID) const
+GameObject *Scene::getGameObject(uint32_t entityID) const
 {
     for (GameObject *const obj : objs) {
         if (obj->getEntityID() == entityID)
@@ -245,7 +254,7 @@ GameObject *GameState::getGameObject(uint32_t entityID) const
     return nullptr;
 }
 
-GameObject *GameState::getGameObject(GameObjectType type) const
+GameObject *Scene::getGameObject(GameObjectType type) const
 {
     for (GameObject *const obj : objs) {
         if (obj->getType() == type)
@@ -254,7 +263,7 @@ GameObject *GameState::getGameObject(GameObjectType type) const
     return nullptr;
 }
 
-std::vector<GameObject *> GameState::getGameObjects(GameObjectType type) const
+std::vector<GameObject *> Scene::getGameObjects(GameObjectType type) const
 {
     std::vector<GameObject *> result;
     for (GameObject *const obj : objs) {
@@ -264,27 +273,27 @@ std::vector<GameObject *> GameState::getGameObjects(GameObjectType type) const
     return result;
 }
 
-std::vector<GameObject *>::const_iterator GameState::begin() const
+std::vector<GameObject *>::const_iterator Scene::begin() const
 {
     return objs.begin();
 }
 
-std::vector<GameObject *>::const_iterator GameState::end() const
+std::vector<GameObject *>::const_iterator Scene::end() const
 {
     return objs.end();
 }
 
-double GameState::getZLength()
+double Scene::getZLength()
 {
     return MapZLength;
 }
 
-double GameState::getXLength()
+double Scene::getXLength()
 {
     return MapXLength;
 }
 
-void GameState::clearGameState()
+void Scene::clearScene()
 {
     for (GameObject *const obj : objs)
     {
