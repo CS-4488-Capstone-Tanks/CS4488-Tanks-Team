@@ -8,7 +8,6 @@
 #include "scene.h"
 #include "Projectile.h"
 #include "glm/ext/matrix_transform.inl"
-#include "game.h"
 
 
 void PlayerTank::doUpdate(float deltaTime) {

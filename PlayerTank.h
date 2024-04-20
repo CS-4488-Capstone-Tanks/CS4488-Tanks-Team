@@ -6,6 +6,7 @@
 #include <QKeyEvent>
 #include "Tank.h"
 #include "sfxmanager.h"
+#include "game.h"
 
 class PlayerTank : public Tank {
 Q_OBJECT
