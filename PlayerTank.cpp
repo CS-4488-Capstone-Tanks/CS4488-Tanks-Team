@@ -8,6 +8,7 @@
 #include "scene.h"
 #include "Projectile.h"
 #include "glm/ext/matrix_transform.inl"
+#include "game.h"
 
 
 void PlayerTank::doUpdate(float deltaTime) {
@@ -55,6 +56,7 @@ void PlayerTank::doCollision(GameObject* other) {
         sfxManager->playSound(SFXManager::Sounds::Collision);
         sfxManager->playSound(SFXManager::Sounds::Explosion);
         sfxManager->stopSound(SFXManager::Sounds::PlayerTreads);
+        Game::getInstance()->gameOver();
         selfDestruct();
 }
 

@@ -20,6 +20,7 @@ Game::Game(int argc, char** argv) : QApplication(argc, argv), timer(new QTimer(t
     sc = Scene::getInstance();
 
     inGame = false;
+    isAlive = false;
 
     connect(gw, &GameWindow::keySignal, this, &Game::filterKeyEvent); // Connect the GameWindow's keySignal to the Game's fi
     /*
@@ -57,6 +58,7 @@ int Game::start() {
     timer.start();
 
     inGame = true;
+    isAlive = true;
 
     activeKey = MAIN_MENU_KEY;
     gw->changeWidget(activeKey);
@@ -105,8 +107,14 @@ void Game::resume() {
 void Game::end() {
     timer.stop();
     inGame = false;
-    activeKey = GAME_OVER_KEY;
-    gw->changeWidget(activeKey);
+    if (isAlive){
+        // If alive load level menu
+        getWindow()->changeWidget(LEVEL_MENU_KEY);
+    }
+    else{
+        // If dead load game over
+        getWindow()->changeWidget(GAME_OVER_KEY);
+    }
 }
 
 
@@ -128,6 +136,10 @@ void Game::tick() {
     }
 
     rend->doneWithFrame();
+
+    if (Scene::getInstance()->getGameObjects(GameObjectType::EnemyTank).size() == 0) {
+        wonGame();
+    }
 }
 
 /**
@@ -221,6 +233,31 @@ bool Game::filterKeyEvent(QKeyEvent* event) {
         else return false;
     }
     else return false;
+}
+
+// These are just to get end() to be runnable.
+// The scene will spit out wonGame() when there are no enemy tanks
+// and gameOver() when the player tank is destroyed.
+
+/**
+ * @author Luna Steed
+ * @time Spring 2024
+ * @brief Game::wonGame - Send the player to the level menu
+ * @details The player defeated all enemies without dying.
+ */
+void Game::wonGame() {
+    if (isAlive) {
+        this->end();
+    }
+}
+
+/**
+ * @brief Game::gameOver - Send the player to the game over screen
+ * @details The player tank was destroyed, so the player loses.
+ */
+void Game::gameOver() {
+    isAlive = false;
+    this->end();
 }
 
 GameWindow* Game::getWindow() {

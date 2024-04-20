@@ -22,6 +22,7 @@ private:
     QTimer timer;
     int activeKey;
     bool inGame;
+    bool isAlive;
 
 
     // Private Functions
@@ -56,6 +57,8 @@ public:
 
     // Public Functions
     int start();
+    void gameOver();
+    void wonGame();
 
     GameWindow* getWindow();
 
