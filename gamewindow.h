@@ -3,8 +3,8 @@
 
 #include "renderer.h"
 #include "mainmenu.h"
-#include "ingamemenu.h"
-#include "optionsmenu.h"
+#include "pausemenu.h"
+#include "gameover.h"
 #include "levelmenu.h"
 
 #include <QMainWindow>
@@ -13,8 +13,8 @@
 
 #define GAME_KEY 0
 #define MAIN_MENU_KEY 1
-#define INGAME_MENU_KEY 2
-#define OPTIONS_MENU_KEY 3
+#define PAUSE_MENU_KEY 2
+#define GAME_OVER_KEY 3
 #define LEVEL_MENU_KEY 4
 #define MULTIPLAYER_MENU_KEY 5 // unimplemented
 #define HOST_MENU_KEY 6 // unimplemented
@@ -27,8 +27,8 @@ private:
     // Private Variables
     Renderer *rend;
     MainMenu *mainMenu;
-    InGameMenu *inGameMenu;
-    OptionsMenu *optionsMenu;
+    PauseMenu *pauseMenu;
+    GameOver *gameOver;
     LevelMenu* levelMenu;
 
     std::unordered_map<int, QWidget *> widgets;

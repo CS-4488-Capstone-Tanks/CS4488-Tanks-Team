@@ -15,15 +15,15 @@ GameWindow::GameWindow(QObject *parent, int startKey)
     // Set up the widget cache
     rend = new Renderer();
     mainMenu = new MainMenu();
-    inGameMenu = new InGameMenu();
-    optionsMenu = new OptionsMenu();
+    pauseMenu = new PauseMenu();
+    gameOver = new GameOver();
     levelMenu = new LevelMenu();
 
     widgets = {
             {GAME_KEY, rend},
             {MAIN_MENU_KEY, mainMenu},
-            {INGAME_MENU_KEY, inGameMenu},
-            {OPTIONS_MENU_KEY, optionsMenu},
+            {PAUSE_MENU_KEY, pauseMenu},
+            {GAME_OVER_KEY, gameOver},
             {LEVEL_MENU_KEY, levelMenu}
     };
 
