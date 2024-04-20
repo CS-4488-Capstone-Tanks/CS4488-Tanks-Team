@@ -1,9 +1,13 @@
 # Renderer
 The Renderer is a class whose responsibility is to take
 game objects and convert them into 3D graphics on the screen.
-It uses Qt's wrapper of the OpenGL graphics api to do so. The
-public interface only has three methods
+It uses Qt's wrapper of the OpenGL graphics api to do so. Because of this,
+much of its design is based around restrictions presented by how OpenGL and 
+graphics hardware function. For one example, OpenGL sets the coordinate system of
++Y being vertically up, so this was not a decision we got to make.
 
+
+The public interface only has three methods
 ```c++
 // queues an object to be drawn on the next frame 
 void drawObject(GameObject* object)
@@ -18,7 +22,8 @@ void setCameraMode(Renderer::CameraMode mode)
 For quick code tweaks, there's a large block of `constexpr` variables at the bottom
 of the header's private region. These control various parameters the renderer
 uses to draw the scene, like how dense the grass is or where
-various cameras are.
+various cameras are. They all have comments explaining their function, along
+with descriptive names.
 
 ### Internal Details
 The rough flow of the rendering process goes like this:
@@ -28,6 +33,12 @@ specifically in models, textures, and cubemaps. It loads all valid assets
 it can find in those directories, and immediately constructs GPU buffers
 to store those assets, and maintains handles to them. It does this via the three
 utility classes listed below, which help manage the lifecycle of GPU assets.
+
+The reason it loads everything on startup is it greatly simplifies lifetime
+management for assets. A more complex game engine would load assets on demand,
+but this would necessitate much more difficult logic to implement. The tradeoff
+is that this approach uses significantly more video RAM, though for the scale
+of game this is, this was deemed acceptable.
 
 Then during the rendering phase, the following loop occurs
 
@@ -40,6 +51,10 @@ back frame, while the front frame is emptied for further objects
    3. Loops over all the objects queued for the frame and draws them
    4. Finally, draws the skybox (this is done last, to minimize overdraw - or pixels drawn to 2+ times)
 
+The reason it queues draw commands is out of an abundance of caution. In many
+graphics APIs, drawing is done when the GPU/monitor say so, and so you may
+end up with half a frame drawn if you're not careful. Because of how Qt works,
+this actually may not be possible, but either way, it doesn't really hurt.
 
 Finally, when the renderer is destroyed, it clears all of its stored buffers
 of utility classes, which handles cleaning up any GPU resources.
@@ -89,7 +104,9 @@ which will update the value of a uniform only if that shader has that uniform.
 This process uses a template to automatically deduce the type of the parameter and call
 the right GL function. In the event it can't do that, it throws an `std::logic_error`,
 which if this happens to you, you'll either have to change the type you're passing, or
-adjust the type deduction of `Shader::setUniform`.
+adjust the type deduction of `Shader::setUniform`. It's done this way because this creates
+a very nice interface where you have a single function you call with the name of a uniform,
+and any value, and it mostly just "figures out" how to set that uniform with that value.
 
 Similarly, textures can be bound to any sampler uniform of the shader, setting which
 texture to use when drawing.
@@ -122,5 +139,9 @@ to the GPU. This results in the following parameters stored in Mesh.
 
 It has one method: `draw()`. It executes a draw call. The correct shader must be bound
 and have its uniforms set first.
+
+Initially, meshes did not use index-based rendering, and only stored vertex buffers. However,
+it was difficult to get the triangle order correct under this approach, so meshes tended to appear
+"exploded". Switching to an EBO based method fixed this issue.
 
 Lastly, as with all the utility classes, its destructor cleans up all of its buffers.
