@@ -28,8 +28,8 @@ public:
          the renderer can differentiate between different types of GameObjects.
       * @param entityID: The Entity ID of the GameObject. This is a unique identifier
          for each GameObject in the game. It is used to differentiate between
-         different GameObjects and is assigned by the GameState when the
-         GameObject is added to the GameState. You should call GameState::getNextFreeEntityID()
+         different GameObjects and is assigned by the Scene when the
+         GameObject is added to the Scene. You should call Scene::getNextFreeEntityID()
          to get a new Entity ID.
       * @param position: The position of the GameObject in 3D space.
       * @param direction: The direction the GameObject is facing in 3D space.
@@ -47,21 +47,21 @@ public:
 
 
 	/**
-	 * @brief initialize the GameObject state. This method is called by the GameState.
-	 * @note This method should not be called directly. It is called by the GameState
+	 * @brief initialize the GameObject state. This method is called by the Scene.
+	 * @note This method should not be called directly. It is called by the Scene
 	 * @author Koda Koziol
 	 * @date SPRING 2024
 	*/
-	virtual void startState();
+	virtual void start();
 
 	/**
-	 * @brief Update the GameObject state. This method is called by the GameState.
+	 * @brief Update the GameObject state. This method is called by the Scene.
 	 * @param deltaTime: The time elapsed since the last update in seconds(?). This is a fixed value.
-	 * @note This method should not be called directly. It is called by the GameState
+	 * @note This method should not be called directly. It is called by the Scene
 	 * @author Koda Koziol
 	 * @date SPRING 2024
 	*/
-	virtual void updateState(float deltaTime);
+	virtual void update(float deltaTime);
 
 
 	/**
@@ -140,8 +140,8 @@ public:
     /**
      * @return The Entity ID of the GameObject. This is a unique identifier
         for each GameObject in the game. It is used to differentiate between
-        different GameObjects and is assigned by the GameState when the
-        GameObject is added to the GameState.
+        different GameObjects and is assigned by the Scene when the
+        GameObject is added to the Scene.
      * @author Koda Koziol
      * @date SPRING 2024
     */
@@ -149,7 +149,7 @@ public:
 
 	/**
 	 * @brief Queue the GameObject for destruction. This will mark the GameObject for
-		destruction and it will be removed from the GameState at the next update.
+		destruction and it will be removed from the Scene at the next update.
 	 * @author Koda Koziol
 	 * @date SPRING 2024
 	*/

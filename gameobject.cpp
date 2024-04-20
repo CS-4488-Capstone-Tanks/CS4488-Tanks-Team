@@ -48,12 +48,12 @@ bool GameObject::isQueuedForDestruction() const { return _isQueuedForDestruction
 bool GameObject::hasChanged() const { return _hasChanged; }
 void GameObject::resetChanged() { _hasChanged = false; }
 
-void GameObject::startState(){
+void GameObject::start(){
 	doStart();
 	collider.updatePosition(position);
 }
 
-void GameObject::updateState(float deltaTime){
+void GameObject::update(float deltaTime){
 	doUpdate(deltaTime);
 	if (hasChanged())
 		collider.updatePosition(position);

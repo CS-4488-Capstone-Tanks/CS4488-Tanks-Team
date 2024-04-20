@@ -1,5 +1,5 @@
 #include "levelmenu.h"
-#include "gamestate.h"
+#include "scene.h"
 #include "game.h"
 
 #include <QPushButton>
@@ -55,8 +55,8 @@ LevelMenu::LevelMenu(QWidget* parent) {
 void LevelMenu::buttonClicked(int id) {
     std::string levelname = levels[id].stem().string();
 
-    GameState::getInstance()->loadState(levelname);
-    GameState::getInstance()->startState();
+    Scene::getInstance()->load(levelname);
+    Scene::getInstance()->start();
 
     Game::getInstance()->getWindow()->changeWidget(GAME_KEY);
 }

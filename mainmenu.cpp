@@ -3,7 +3,6 @@
 //
 
 #include "mainmenu.h"
-#include "gamestate.h"
 #include "game.h"
 
 #include <QPushButton>
