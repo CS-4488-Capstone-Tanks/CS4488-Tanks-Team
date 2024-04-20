@@ -30,15 +30,7 @@ PauseMenu::PauseMenu(QWidget *parent) {
     }
 
     size_t id = 0;
-    std::string button_string = "Resume,Quit,MainMenu";
-
-    std::stringstream ss(button_string);
-
-    for (int i; ss >> i;) {
-        buttons.push_back(std::to_string(i));
-        if (ss.peek() == ',')
-            ss.ignore();
-    }
+    buttons = {"Resume", "Main Menu", "Quit"};
 
     for (auto& btn : buttons) {
         QPushButton* qbutton = new QPushButton(QString(btn.c_str()));
@@ -57,10 +49,10 @@ void PauseMenu::buttonClicked(int id) {
             Game::getInstance()->getWindow()->changeWidget(GAME_KEY);
             break;
         case 1:
-            Game::destroyInstance();
+            Game::getInstance()->getWindow()->changeWidget(MAIN_MENU_KEY);
             break;
         case 2:
-            Game::getInstance()->getWindow()->changeWidget(MAIN_MENU_KEY);
+            Game::destroyInstance();
             break;
         default:
             break;

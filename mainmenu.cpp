@@ -44,15 +44,7 @@ MainMenu::MainMenu(QWidget *parent) {
     vbox->addWidget(title);
 
     size_t id = 0;
-    std::string button_string = "Levels,Exit";
-
-    std::stringstream ss(button_string);
-
-    for (int i; ss >> i;) {
-        buttons.push_back(std::to_string(i));
-        if (ss.peek() == ',')
-            ss.ignore();
-    }
+    buttons = {"Select Level", "Quit"};
 
     for (auto& btn : buttons) {
         QPushButton* qbutton = new QPushButton(QString(btn.c_str()));
@@ -68,7 +60,7 @@ MainMenu::MainMenu(QWidget *parent) {
 void MainMenu::buttonClicked(int id) {
     switch (id) {
         case 0:
-            Game::getInstance()->getWindow()->changeWidget(GAME_KEY);
+            Game::getInstance()->getWindow()->changeWidget(LEVEL_MENU_KEY);
             break;
         case 1:
             Game::destroyInstance();
