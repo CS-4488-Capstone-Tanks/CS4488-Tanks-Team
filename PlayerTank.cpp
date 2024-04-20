@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include <QDataStream>
 #include "PlayerTank.h"
-#include "gamestate.h"
+#include "scene.h"
 #include "Projectile.h"
 #include "glm/ext/matrix_transform.inl"
 

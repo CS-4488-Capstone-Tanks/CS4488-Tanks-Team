@@ -3,7 +3,7 @@
 //
 
 #include "EnemyTank.h"
-#include "gamestate.h"
+#include "scene.h"
 #include "glm/geometric.hpp"
 #include "PlayerTank.h"
 #include "Projectile.h"

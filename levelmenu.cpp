@@ -1,5 +1,5 @@
 #include "levelmenu.h"
-#include "gamestate.h"
+#include "scene.h"
 #include "game.h"
 
 #include <QPushButton>
