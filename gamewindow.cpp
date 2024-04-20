@@ -66,6 +66,7 @@ void GameWindow::displayWidget()
     try {
         QWidget* wpoint = widgets.at(activeKey);
         this->setCentralWidget(wpoint);
+        wpoint->setParent(this);
     }
     catch(std::exception& e) {
         std::cerr << "Error encountered in GameWindow: " << e.what() << std::endl;
@@ -82,7 +83,8 @@ void GameWindow::hideWidget()
 {
     try {
         QWidget *wpoint = widgets.at(activeKey);
-        wpoint->hide();
+        wpoint->setParent(nullptr);
+        this->setCentralWidget(nullptr);
     }
     catch(std::exception& e) {
         std::cerr << "Error encountered in GameWindow: " << e.what() << std::endl;
