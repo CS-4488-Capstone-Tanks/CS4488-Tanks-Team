@@ -151,10 +151,11 @@ protected:
 
     // The position the static camera looks at, and where it is
     static const glm::vec3 constexpr cameraTopLookPos = glm::vec3(0, 0, 0);
-    static const glm::vec3 constexpr cameraTopPosition = glm::vec3(0, 17, -25);
+    static const glm::vec3 constexpr cameraTopPosition = glm::vec3(0, 55, -1);
 
-    // The distance backward the chasing camera follows
+    // The distance backward the chasing camera follows, and at what height
     static const float constexpr cameraChaseDistance = 25.0f;
+    static const float constexpr cameraChaseHeight = 25.0f;
 
     // How high off the ground the first person (periscope) view is set
     static const float constexpr periscopeHeight = 0.25f;

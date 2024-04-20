@@ -58,7 +58,7 @@ int Game::start() {
 
     inGame = true;
 
-    activeKey = LEVEL_MENU_KEY;
+    activeKey = MAIN_MENU_KEY;
     gw->changeWidget(activeKey);
     gw->show();
 
@@ -75,7 +75,7 @@ int Game::start() {
 void Game::pause() {
     timer.stop();
     inGame = false;
-    activeKey = INGAME_MENU_KEY;
+    activeKey = PAUSE_MENU_KEY;
     gw->changeWidget(activeKey);
     sc->setPaused(true);
 }
@@ -105,7 +105,7 @@ void Game::resume() {
 void Game::end() {
     timer.stop();
     inGame = false;
-    activeKey = MAIN_MENU_KEY;
+    activeKey = GAME_OVER_KEY;
     gw->changeWidget(activeKey);
 }
 
@@ -147,7 +147,7 @@ bool Game::filterKeyEvent(QKeyEvent* event) {
                     pause();
                     return true;
                 }
-                else if (activeKey == INGAME_MENU_KEY) { // in in-game menu
+                else if (activeKey == PAUSE_MENU_KEY) { // in in-game menu
                     resume();
                     return true;
                 }
