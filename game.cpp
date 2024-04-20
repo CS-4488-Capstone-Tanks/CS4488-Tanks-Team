@@ -17,8 +17,7 @@ Game::Game(int argc, char** argv) : QApplication(argc, argv), timer(new QTimer(t
     gw->setFixedSize(qsize); // Set the fixed size of the window (no resizing allowed
     gw->show();
 
-    sc = Scene::getInstance();
-    sc->setPaused(true);
+    Scene::getInstance()->setPaused(true);
 
     inGame = false;
     isAlive = true;
@@ -64,7 +63,7 @@ int Game::start() {
     activeKey = MAIN_MENU_KEY;
     gw->changeWidget(activeKey);
     gw->show();
-    sc->setPaused(false);
+    Scene::getInstance()->setPaused(false);
 
     return Game::exec();
 }
@@ -81,7 +80,7 @@ void Game::pause() {
     inGame = false;
     activeKey = PAUSE_MENU_KEY;
     gw->changeWidget(activeKey);
-    sc->setPaused(true);
+    Scene::getInstance()->setPaused(true);
 }
 
 
@@ -96,7 +95,7 @@ void Game::resume() {
     inGame = true;
     activeKey = GAME_KEY;
     gw->changeWidget(activeKey);
-    sc->setPaused(false);
+    Scene::getInstance()->setPaused(false);
 }
 
 
@@ -109,7 +108,7 @@ void Game::resume() {
 void Game::end() {
     timer.stop();
     inGame = false;
-    sc->setPaused(true);
+    Scene::getInstance()->setPaused(true);
     if (isAlive){
         // If alive load level menu
         getWindow()->changeWidget(LEVEL_MENU_KEY);
@@ -129,6 +128,7 @@ void Game::end() {
  * @details Update the game by calling the Scene's update method.
  */
 void Game::tick() {
+    Scene* sc = Scene::getInstance();
     sc->update(60.0f/1000);
 
     QWidget* widg = gw->getWidget(GAME_KEY);
@@ -153,7 +153,6 @@ void Game::tick() {
  * @param event The key event to filter
  */
 bool Game::filterKeyEvent(QKeyEvent* event) {
-
     if (event->type() == QEvent::KeyPress) {
         switch (event->key())
         {
@@ -187,7 +186,7 @@ bool Game::filterKeyEvent(QKeyEvent* event) {
             case Qt::Key_Right:
             case Qt::Key_Space:
                 if (inGame) {
-                    PlayerTank* player = dynamic_cast<PlayerTank*>(sc->getGameObject(GameObjectType::PlayerTank));
+                    PlayerTank* player = dynamic_cast<PlayerTank*>(Scene::getInstance()->getGameObject(GameObjectType::PlayerTank));
                     if (player)
                         return player->handleKeyEvent(event);
                     else
@@ -227,7 +226,7 @@ bool Game::filterKeyEvent(QKeyEvent* event) {
     }
     else if (event->type() == QEvent::KeyRelease) {
         if (inGame) {
-            PlayerTank* player = dynamic_cast<PlayerTank*>(sc->getGameObject(GameObjectType::PlayerTank));
+            PlayerTank* player = dynamic_cast<PlayerTank*>(Scene::getInstance()->getGameObject(GameObjectType::PlayerTank));
             if (player)
                 return player->handleKeyEvent(event);
             else

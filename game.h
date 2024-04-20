@@ -18,7 +18,6 @@ class Game : public QApplication{
 private:
     // Private Variables
     GameWindow* gw;
-    Scene* sc;
     QTimer timer;
     int activeKey;
     bool inGame;

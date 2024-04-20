@@ -34,6 +34,13 @@ public:
     static Scene *getInstance();
 
     /**
+     * @brief Wipe the Scene and reset it to its initial state. This will delete all GameObjects in the Scene.
+     * @author Koda Koziol
+     * @date SPRING 2024
+     */
+    void reset();
+
+    /**
      * @brief This method allows GameObjects to initialize themselves before the level begins.
          This method should be once at the start of the level. Specifically, this method will call the doStart()
          method for each GameObject in the Scene.

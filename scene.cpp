@@ -45,6 +45,12 @@ Scene *Scene::getInstance()
     return instance;
 }
 
+void Scene::reset()
+{
+    clearScene();
+    nextFreeEntityID = 0;
+}
+
 void Scene::start()
 {
     foreach (GameObject *const obj, objs) {
@@ -87,9 +93,6 @@ void Scene::update(float deltaTime)
 
 void Scene::load(std::string filename)
 {
-    // The only time we'd be interested in loading a scene is into an empty scene
-    clearScene();
-
     QString filepath = LEVELS_PATH + QString::fromStdString(filename) + ".json";
     QFile stateFile(filepath);
 
