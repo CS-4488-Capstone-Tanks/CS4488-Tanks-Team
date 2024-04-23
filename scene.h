@@ -34,18 +34,18 @@ public:
     static Scene *getInstance();
 
     /**
-     * @brief This method allows GameObjects to initialize themselves before the level begins.
-         This method should be once at the start of the level. Specifically, this method will call the doStart()
-         method for each GameObject in the Scene.
+     * @brief This method allows GameObjects to initialize themselves before
+        the scene begins updating, and it should be once at the start of the scene.
+        Precisely, this method will call the start() method for each GameObject in the Scene.
      * @author Koda Koziol
      * @date SPRING 2024
      */
     void start();
 
     /**
-     * @brief This method updates the states of all GameObjects in the Scene by calling doUpdate() on them,
+     * @brief This method updates the states of all GameObjects in the Scene by calling update() on them,
          and then checking for collisions. It will also remove any GameObjects that are queued for destruction. 
-     * This method should be called once per frame through the duration of a level.
+     * This method should be called regularly (usually once per frame) through the duration of a scene.
      * @param deltaTime: The time elapsed since the last update in seconds(?).
         This is a fixed value. See doUpdate() in GameObject for more information.
      * @author Koda Koziol
