@@ -29,7 +29,7 @@ Scene::Scene() {}
 
 Scene::~Scene()
 {
-    clearScene();
+    reset();
 
     delete instance; // it is safe to delete a nullptr if it is one
     instance = nullptr;
@@ -43,12 +43,6 @@ Scene *Scene::getInstance()
         instance = new Scene();
 
     return instance;
-}
-
-void Scene::reset()
-{
-    clearScene();
-    nextFreeEntityID = 0;
 }
 
 void Scene::start()
@@ -296,7 +290,7 @@ double Scene::getXLength()
     return MapXLength;
 }
 
-void Scene::clearScene()
+void Scene::reset()
 {
     for (GameObject *const obj : objs)
     {

@@ -34,8 +34,8 @@ public:
     static Scene *getInstance();
 
     /**
-     * @brief Wipe the Scene and reset it to its initial state. This will delete all GameObjects in the Scene.
-     * @author Koda Koziol
+     * @brief Destroys all objects in the Scene. Used when loading a new Scene, or when cleaning up
+     * @author Tyson Cox
      * @date SPRING 2024
      */
     void reset();
@@ -183,13 +183,6 @@ private:
 	* @date SPRING 2024
 	*/
     ~Scene();
-
-    /**
-     * @brief Destroys all objects in the Scene. Used when loading a new Scene, or when cleaning up
-     * @author Tyson Cox
-     * @date SPRING 2024
-     */
-    void clearScene();
 
     static Scene *instance;
 };
