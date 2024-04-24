@@ -17,9 +17,10 @@ Game::Game(int argc, char** argv) : QApplication(argc, argv), timer(new QTimer(t
     gw->setFixedSize(qsize); // Set the fixed size of the window (no resizing allowed
     gw->show();
 
-    sc = Scene::getInstance();
+    Scene::getInstance()->setPaused(true);
 
     inGame = false;
+    isAlive = true;
 
     connect(gw, &GameWindow::keySignal, this, &Game::filterKeyEvent); // Connect the GameWindow's keySignal to the Game's fi
     /*
@@ -57,10 +58,12 @@ int Game::start() {
     timer.start();
 
     inGame = true;
+    isAlive = true;
 
     activeKey = MAIN_MENU_KEY;
     gw->changeWidget(activeKey);
     gw->show();
+    Scene::getInstance()->setPaused(false);
 
     return Game::exec();
 }
@@ -77,7 +80,7 @@ void Game::pause() {
     inGame = false;
     activeKey = PAUSE_MENU_KEY;
     gw->changeWidget(activeKey);
-    sc->setPaused(true);
+    Scene::getInstance()->setPaused(true);
 }
 
 
@@ -92,7 +95,7 @@ void Game::resume() {
     inGame = true;
     activeKey = GAME_KEY;
     gw->changeWidget(activeKey);
-    sc->setPaused(false);
+    Scene::getInstance()->setPaused(false);
 }
 
 
@@ -105,7 +108,35 @@ void Game::resume() {
 void Game::end() {
     timer.stop();
     inGame = false;
-    activeKey = GAME_OVER_KEY;
+    Scene::getInstance()->setPaused(true);
+    if (isAlive){
+        // If alive load level menu
+        getWindow()->changeWidget(LEVEL_MENU_KEY);
+    }
+    else{
+        // If dead load game over
+        getWindow()->changeWidget(GAME_OVER_KEY);
+    }
+}
+
+
+/**
+ * @brief Game::beginNewScene: Begin a new scene
+ * @details Begin a new scene by resetting the scene, loading the state, starting the scene, setting inGame to true, starting the timer, and changing the active widget to the game.
+ * @param stateFilename The filename of the state to load
+ * @author Koda Koziol (mostly refactoring Luna's code though)
+ * @date Spring 2024
+*/
+void Game::beginNewScene(std::string stateFilename) {
+    Scene* sc = Scene::getInstance();
+    sc->getInstance()->reset();
+    sc->getInstance()->load(stateFilename);
+    sc->getInstance()->start();
+    sc->getInstance()->setPaused(false);
+    isAlive = true;
+    inGame = true;
+    timer.start();
+    activeKey = GAME_KEY;
     gw->changeWidget(activeKey);
 }
 
@@ -118,6 +149,7 @@ void Game::end() {
  * @details Update the game by calling the Scene's update method.
  */
 void Game::tick() {
+    Scene* sc = Scene::getInstance();
     sc->update(60.0f/1000);
 
     QWidget* widg = gw->getWidget(GAME_KEY);
@@ -128,6 +160,10 @@ void Game::tick() {
     }
 
     rend->doneWithFrame();
+
+    if (!isAlive){
+        this->end();
+    }
 }
 
 /**
@@ -138,7 +174,6 @@ void Game::tick() {
  * @param event The key event to filter
  */
 bool Game::filterKeyEvent(QKeyEvent* event) {
-
     if (event->type() == QEvent::KeyPress) {
         switch (event->key())
         {
@@ -172,7 +207,7 @@ bool Game::filterKeyEvent(QKeyEvent* event) {
             case Qt::Key_Right:
             case Qt::Key_Space:
                 if (inGame) {
-                    PlayerTank* player = dynamic_cast<PlayerTank*>(sc->getGameObject(GameObjectType::PlayerTank));
+                    PlayerTank* player = dynamic_cast<PlayerTank*>(Scene::getInstance()->getGameObject(GameObjectType::PlayerTank));
                     if (player)
                         return player->handleKeyEvent(event);
                     else
@@ -212,7 +247,7 @@ bool Game::filterKeyEvent(QKeyEvent* event) {
     }
     else if (event->type() == QEvent::KeyRelease) {
         if (inGame) {
-            PlayerTank* player = dynamic_cast<PlayerTank*>(sc->getGameObject(GameObjectType::PlayerTank));
+            PlayerTank* player = dynamic_cast<PlayerTank*>(Scene::getInstance()->getGameObject(GameObjectType::PlayerTank));
             if (player)
                 return player->handleKeyEvent(event);
             else
@@ -221,6 +256,31 @@ bool Game::filterKeyEvent(QKeyEvent* event) {
         else return false;
     }
     else return false;
+}
+
+// These are just to get end() to be runnable.
+// The scene will spit out wonGame() when there are no enemy tanks
+// and gameOver() when the player tank is destroyed.
+
+/**
+ * @author Luna Steed
+ * @time Spring 2024
+ * @brief Game::wonGame - Send the player to the level menu
+ * @details The player defeated all enemies without dying.
+ */
+void Game::wonGame() {
+    if (isAlive) {
+        this->end();
+    }
+}
+
+/**
+ * @brief Game::gameOver - Send the player to the game over screen
+ * @details The player tank was destroyed, so the player loses.
+ */
+void Game::gameOver() {
+    isAlive = false;
+    this->end();
 }
 
 GameWindow* Game::getWindow() {

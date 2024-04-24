@@ -29,7 +29,7 @@ Scene::Scene() {}
 
 Scene::~Scene()
 {
-    clearScene();
+    reset();
 
     delete instance; // it is safe to delete a nullptr if it is one
     instance = nullptr;
@@ -87,9 +87,6 @@ void Scene::update(float deltaTime)
 
 void Scene::load(std::string filename)
 {
-    // The only time we'd be interested in loading a scene is into an empty scene
-    clearScene();
-
     QString filepath = LEVELS_PATH + QString::fromStdString(filename) + ".json";
     QFile stateFile(filepath);
 
@@ -293,7 +290,7 @@ double Scene::getXLength()
     return MapXLength;
 }
 
-void Scene::clearScene()
+void Scene::reset()
 {
     for (GameObject *const obj : objs)
     {

@@ -4,6 +4,7 @@
 
 #include "EnemyTank.h"
 #include "scene.h"
+#include "game.h"
 #include "glm/geometric.hpp"
 #include "PlayerTank.h"
 #include "Projectile.h"
@@ -47,11 +48,13 @@ void EnemyTank::doUpdate(float deltaTime) {
 }
 
 void EnemyTank::doCollision(GameObject* other) {
-    if (other->getType() != GameObjectType::EnemyProjectile)
-        sfxManager->playSound(SFXManager::Sounds::Collision);
-        sfxManager->playSound(SFXManager::Sounds::Explosion);
-        sfxManager->stopSound(SFXManager::Sounds::EnemyTreads);
-        selfDestruct();
+    sfxManager->playSound(SFXManager::Sounds::Collision);
+    sfxManager->playSound(SFXManager::Sounds::Explosion);
+    sfxManager->stopSound(SFXManager::Sounds::EnemyTreads);
+    selfDestruct();
+    //Show explosion
+    //wait a second or two
+    Game::getInstance()->wonGame();
 }
 
 void EnemyTank::shoot(glm::vec3 direction) {
