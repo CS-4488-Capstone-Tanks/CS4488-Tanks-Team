@@ -31,6 +31,7 @@ GameOver::GameOver(QWidget* parent) {
     // Game Over text
     title = new QLabel("Game Over");
     title->setAlignment(Qt::AlignCenter);
+    title->setStyleSheet("font-size: 50px; font-weight: bold; color: white;");
     vbox->addWidget(title);
 
     // Comma Delimited Buttons. Easy to add new buttons, just add ,ButtonName to the string

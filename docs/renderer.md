@@ -10,13 +10,13 @@ graphics hardware function. For one example, OpenGL sets the coordinate system o
 The public interface only has three methods
 ```c++
 // queues an object to be drawn on the next frame 
-void drawObject(GameObject* object)
+void drawObject(GameObject* object);
 
 // called when all objects desired to be drawn are queued 
-void doneWithFrame()
+void doneWithFrame();
 
 //change what camera the renderer is using
-void setCameraMode(Renderer::CameraMode mode)
+void setCameraMode(Renderer::CameraMode mode);
 ```
 
 For quick code tweaks, there's a large block of `constexpr` variables at the bottom
@@ -90,7 +90,7 @@ Lastly, as with all the utility classes, its destructor cleans up the texture da
 
 ## Shader
 Shader manages three aspects of shaders, which is compilation, uniforms, and cleanup.
-As with all the rendere utility classes, it is movable, but not copyable.
+As with all the renderer utility classes, it is movable, but not copyable.
 
 The static method `fromSource` will compile a shader from passed in shader source code,
 and the static method `fromFile` will compile a shader from a path to two files. If compilation

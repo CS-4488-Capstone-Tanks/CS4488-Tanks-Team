@@ -50,9 +50,9 @@ public:
     void start();
 
     /**
-     * @brief This method updates the states of all GameObjects in the Scene by calling doUpdate() on them,
+     * @brief This method updates the states of all GameObjects in the Scene by calling update() on them,
          and then checking for collisions. It will also remove any GameObjects that are queued for destruction. 
-     * This method should be called once per frame through the duration of a level.
+     * This method should be called regularly (usually once per frame) through the duration of a scene.
      * @param deltaTime: The time elapsed since the last update in seconds(?).
         This is a fixed value. See doUpdate() in GameObject for more information.
      * @author Koda Koziol
