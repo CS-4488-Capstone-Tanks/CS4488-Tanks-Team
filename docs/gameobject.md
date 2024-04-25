@@ -2,11 +2,11 @@
 
 _Primary Author: Koda Koziol, SPRING 2024_
 
-The GameObject class is the base class for all objects in the [Scene](scene.md). It holds the properties that all objects have, such as position and direction. It also has methods for updating the object's state and for initializing the object.
+The GameObject class defined in [gameobject.h](../gameobject.h) and [gameobject.cpp](../gameobject.cpp) is the base class for all objects in the [Scene](scene.md). It holds the properties that all objects have, such as position and direction. It also has methods for updating the object's state and for initializing the object.
 
 ## Types of GameObjects
 
-The GameObject class has an enum called `GameObjectType` that defines the different types of GameObjects. The following types are currently defined:
+The GameObject class uses an enum called `GameObjectType` defined in [gameobjecttype.h](../gameobjecttype.h) that marks the different types of GameObjects. The following types are currently defined:
 
 - `PlayerTank` - This type is used for the player GameObject in the Scene. The player GameObject is the GameObject that the player controls.
 

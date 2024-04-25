@@ -2,7 +2,7 @@
 
 _Primary Author: Koda Koziol, SPRING 2024_
 
-The scene class holds and manages the game objects in a virtual scene. It is responsible for loading (and saving later) the state of the game. It also updates all game objects in the scene.
+The scene class defined in [scene.h](../scene.h) and [scene.cpp](../scene.cpp) holds and manages the game objects in a virtual scene. It is responsible for loading (and saving later) the state of the game. It also updates all game objects in the scene.
 
 Be aware that this is a singleton class, so you should not create an instance of it, but instead use the `getInstance()` method to get the instance of the Scene. Also be aware that this class is not currently thread-safe.
 
@@ -14,9 +14,9 @@ To create a scene, you can use the `getInstance()` method to get the instance of
 
 Setting a scene from scratch will involve these steps:
 - Get the instance of the Scene using `getInstance()`
-- Reset the Scene using the `reset()` method to clear any existing GameObjects and reset the `nextFreeEntityID` counter to 0.
+- Reset the Scene using the [`reset()`](#resetting-the-scene) method, which will clear any existing GameObjects and reset the `nextFreeEntityID` counter to 0.
 - Load GameObjects from a file(s) using the [`load()`](#loading-the-scene-from-file) method.
-- Add any additional GameObjects to the scene using the `addObject()` method (you should avoid this, [it's what scene state files are for](#loading-the-scene-from-file)).
+- Add any additional GameObjects to the scene using the [`addObject()`](#adding-gameobjects-to-the-scene) method (you should avoid this, [it's what scene state files are for](#loading-the-scene-from-file)).
 - Call `start()` on the scene to initialize GameObjects.
 - Call `setPaused(false)` if the scene isn't already unpaused.
 
@@ -28,7 +28,7 @@ The `reset()` method can be used to clear the scene of all GameObjects and reset
 
 ## Adding GameObjects to the Scene
 
-GameObjects are added to the scene using the `addObject()` method. The Scene assumes that every GameObject added has a unique entityID, and you should use the `getNextFreeEntityID()` method on the Scene to generate a unique id. No checking is done though to ensure that the GameObject's entityID is unique before it is added though, so use a custom entityID at your own risk.
+GameObjects are added to the scene using the `addObject()` method. The Scene assumes that every GameObject added has a unique entityID, and you should use the `getNextFreeEntityID()` method on the Scene to generate a unique id. No checking is done to ensure that the GameObject's entityID is unique before it is added though, so use a custom entityID at your own risk.
 
 The `load()` method can also be used to add GameObjects to the scene from a file. See the [Loading the Scene from file](#loading-the-scene-from-file) section for more information.
 
@@ -51,7 +51,7 @@ GameObjects are removed from the scene using the `removeObject()` method. Given 
 
 There are two methods, `getXLength()` and `getZLength()`, that return the size of the map in the scene. This is useful for determining the bounds of the map when setting GameObject positions.
 
-Note that the the renderer is not actually using these values to determine the size of the map as of writing, but instead has hardcoded values in `renderer.h`. The Scene's map size concerns only objects in the simulation. This is a potential area for improvement.
+Note that currently, the renderer is not actually using these values to determine the size of the ground drawn, but instead has hardcoded values in [`renderer.h`](../renderer.h). In fact, as of writing, these methods and propertied are not actually used anywhere in the codebase, so what these values mean is undefined.
 
 ## The Scene Loop
 
@@ -118,7 +118,7 @@ The enemy tank is loaded from the `enemyTank` object in the JSON file. The `posi
 
 ### Loading obstacles
 
-Obstacles are loaded from the `obstacles` array in the JSON file. Each object in the array should have a `type`, `position`, and `radius` property. The `type` string property is used to determine what type of obstacle to create, the `position` vector property is used to set the position of the obstacle, and the `radius` numeral property is used to set the radius of the obstacle.
+Obstacles are loaded from the `obstacles` array in the JSON file. Each object in the array should have a `type`, `position`, and `radius` property. The `type` string property is used to determine what type of obstacle to create, the `position` vector property is used to set the position of the obstacle, and the `radius` numeral property is used to set the radius of the obstacle's collider.
 
 ## Potential improvements for the future
 
