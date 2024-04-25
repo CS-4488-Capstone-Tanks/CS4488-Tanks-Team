@@ -200,8 +200,7 @@ void Scene::load(std::string filename)
                 else
                     throw std::invalid_argument("Expected a string for \"type\"");
 
-                auto obj = new Obstacle(nullptr,
-                                        getNextFreeEntityID(),
+                auto obj = new Obstacle(getNextFreeEntityID(),
                                         position,
                                         radius,
                                         direction,

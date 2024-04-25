@@ -3,7 +3,7 @@
 //
 
 #include "Obstacle.h"
-
+#include <unordered_map>
 #include <iostream>
 
 
@@ -22,14 +22,13 @@ static const std::unordered_map<std::string, ObstacleType> oTypeNames = {
 
 //Constructor for obstacles
 Obstacle::Obstacle(
-    QObject *parent,
     uint32_t entityID,
     const glm::vec3& position,
     float colliderRadius,
     const glm::vec3& direction,
     ObstacleType obstacleType
 ) :
-    GameObject(GameObjectType::Obstacle, entityID, position, direction, parent),
+    GameObject(GameObjectType::Obstacle, entityID, position, direction),
     obstacleType(obstacleType)
 {
     this->collider = CircleCollider(colliderRadius);

@@ -22,7 +22,6 @@
  * @date SPRING 2024
  */
 class Projectile : public GameObject {
-Q_OBJECT
 
 public:
     /**
@@ -38,7 +37,6 @@ public:
      */
 
     explicit Projectile(
-        QObject *parent = nullptr,
         uint32_t entityID = 0,
         const glm::vec3& position = glm::vec3(0.0f),
         const glm::vec3& direction = glm::vec3(0, 0, -1),

@@ -11,14 +11,12 @@
 #include "sfxmanager.h"
 
 class EnemyTank : public Tank {
-    Q_OBJECT
 
 public:
     explicit EnemyTank(
         uint32_t entityID,
         const vec3& position = vec3(0.0f),
-        const vec3& direction = vec3(0.0f, 0.0f, -1.0f),
-        QObject *parent = nullptr
+        const vec3& direction = vec3(0.0f, 0.0f, -1.0f)
     );
 
     void doUpdate(float deltaTime) override;
