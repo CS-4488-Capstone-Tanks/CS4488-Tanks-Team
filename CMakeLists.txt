@@ -6,6 +6,11 @@ project(Tanks)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
+# Don't show console on windows
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(CMAKE_WIN32_EXECUTABLE true)
+endif()
+
 # Use Catch2 for testing
 include(FetchContent)
 FetchContent_Declare(Catch2
