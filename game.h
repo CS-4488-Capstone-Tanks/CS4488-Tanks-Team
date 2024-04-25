@@ -18,10 +18,10 @@ class Game : public QApplication{
 private:
     // Private Variables
     GameWindow* gw;
-    Scene* sc;
     QTimer timer;
     int activeKey;
     bool inGame;
+    bool isAlive;
 
 
     // Private Functions
@@ -56,6 +56,10 @@ public:
 
     // Public Functions
     int start();
+    void gameOver();
+    void wonGame();
+
+    void beginNewScene(std::string stateFilename);
 
     GameWindow* getWindow();
 

@@ -4,10 +4,11 @@
 #include <QKeyEvent>
 #include <glm/glm.hpp>
 #include <QDataStream>
+#include "game.h"
 #include "PlayerTank.h"
 #include "scene.h"
 #include "Projectile.h"
-#include "glm/ext/matrix_transform.inl"
+#include "glm/ext/matrix_transform.hpp"
 
 
 void PlayerTank::doUpdate(float deltaTime) {
@@ -51,11 +52,13 @@ void PlayerTank::doUpdate(float deltaTime) {
 }
 
 void PlayerTank::doCollision(GameObject* other) {
-    if (other->getType() != GameObjectType::PlayerProjectile)
-        sfxManager->playSound(SFXManager::Sounds::Collision);
-        sfxManager->playSound(SFXManager::Sounds::Explosion);
-        sfxManager->stopSound(SFXManager::Sounds::PlayerTreads);
-        selfDestruct();
+    sfxManager->playSound(SFXManager::Sounds::Collision);
+    sfxManager->playSound(SFXManager::Sounds::Explosion);
+    sfxManager->stopSound(SFXManager::Sounds::PlayerTreads);
+    selfDestruct();
+    //Show explosion
+    //wait a second or two
+    Game::getInstance()->gameOver();
 }
 
 void PlayerTank::shoot(glm::vec3 direction) {

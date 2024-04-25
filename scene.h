@@ -34,9 +34,16 @@ public:
     static Scene *getInstance();
 
     /**
-     * @brief This method allows GameObjects to initialize themselves before
-        the scene begins updating, and it should be once at the start of the scene.
-        Precisely, this method will call the start() method for each GameObject in the Scene.
+     * @brief Destroys all objects in the Scene. Used when loading a new Scene, or when cleaning up
+     * @author Tyson Cox
+     * @date SPRING 2024
+     */
+    void reset();
+
+    /**
+     * @brief This method allows GameObjects to initialize themselves before the level begins.
+         This method should be once at the start of the level. Specifically, this method will call the doStart()
+         method for each GameObject in the Scene.
      * @author Koda Koziol
      * @date SPRING 2024
      */
@@ -176,13 +183,6 @@ private:
 	* @date SPRING 2024
 	*/
     ~Scene();
-
-    /**
-     * @brief Destroys all objects in the Scene. Used when loading a new Scene, or when cleaning up
-     * @author Tyson Cox
-     * @date SPRING 2024
-     */
-    void clearScene();
 
     static Scene *instance;
 };
