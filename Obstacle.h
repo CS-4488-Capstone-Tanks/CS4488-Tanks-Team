@@ -7,7 +7,6 @@
 
 #include "gameobject.h"
 #include "CircleCollider.h"
-#include <QObject>
 
 enum class ObstacleType {
     Tree,
@@ -22,7 +21,6 @@ enum class ObstacleType {
  * @date SPRING 2024
  */
 class Obstacle : public GameObject {
-Q_OBJECT
 
 public:
     /**
@@ -35,7 +33,7 @@ public:
      * @author Parker Hyde
      * @date SPRING 2024
      */
-    explicit Obstacle(QObject *parent = nullptr, uint32_t entityID = 0, const glm::vec3& position = glm::vec3(0.0f), float colliderRadius = 1.0f, const glm::vec3& direction = glm::vec3(0, 0, -1), ObstacleType obstacleType = ObstacleType::Tree);
+    explicit Obstacle(uint32_t entityID = 0, const glm::vec3& position = glm::vec3(0.0f), float colliderRadius = 1.0f, const glm::vec3& direction = glm::vec3(0, 0, -1), ObstacleType obstacleType = ObstacleType::Tree);
 
     /**
      * @brief Called before the game starts, so it can be used for initialization

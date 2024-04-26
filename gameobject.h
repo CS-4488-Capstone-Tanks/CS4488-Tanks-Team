@@ -1,7 +1,6 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
-#include <QObject>
 #include <glm/vec3.hpp>
 #include "gameobjecttype.h"
 #include "CircleCollider.h"
@@ -16,9 +15,7 @@ using namespace glm;
  * @author Koda Koziol
  * @date SPRING 2024
  */
-class GameObject : public QObject
-{
-    Q_OBJECT
+class GameObject {
 	
 public:
     
@@ -41,8 +38,7 @@ public:
       GameObjectType type,
       uint32_t entityID,
       const vec3& position = vec3(0.0f),
-      const vec3& direction = vec3(0.0f, 0.0f, -1.0f),
-      QObject *parent = nullptr
+      const vec3& direction = vec3(0.0f, 0.0f, -1.0f)
       );
 
 
@@ -52,7 +48,7 @@ public:
 	 * @author Koda Koziol
 	 * @date SPRING 2024
 	*/
-	virtual void start();
+	void start();
 
 	/**
 	 * @brief Update the GameObject state. This method is called by the Scene.
@@ -61,7 +57,7 @@ public:
 	 * @author Koda Koziol
 	 * @date SPRING 2024
 	*/
-	virtual void update(float deltaTime);
+	void update(float deltaTime);
 
 
 	/**
@@ -176,6 +172,8 @@ public:
 	 * @date SPRING 2024
 	*/
 	void resetChanged();
+
+	~GameObject() = default;
 
 
 protected:

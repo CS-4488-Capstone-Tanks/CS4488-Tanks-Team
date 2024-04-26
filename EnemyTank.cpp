@@ -84,7 +84,7 @@ void EnemyTank::shoot(glm::vec3 direction) {
     auto bulletPos = this->getPosition() + this->getDirection();
     auto bulletDir = this->getDirection();
 
-    auto bullet = new Projectile(nullptr, scene->getNextFreeEntityID(), bulletPos, bulletDir, GameObjectType::EnemyProjectile);
+    auto bullet = new Projectile(scene->getNextFreeEntityID(), bulletPos, bulletDir, GameObjectType::EnemyProjectile);
 
     scene->addObject(bullet);
     sfxManager->playSound(SFXManager::Sounds::Firing);
@@ -98,8 +98,8 @@ void EnemyTank::shoot(glm::vec3 direction) {
  * @param parent
  * @brief The constructor for EnemyTank. Sets internal values and the sfx speed.
  */
-EnemyTank::EnemyTank(uint32_t entityID, const vec3& position, const vec3& direction, QObject* parent)
-: Tank(GameObjectType::EnemyTank, entityID, position, direction, parent),
+EnemyTank::EnemyTank(uint32_t entityID, const vec3& position, const vec3& direction)
+: Tank(GameObjectType::EnemyTank, entityID, position, direction),
 shotAccumulator(0),
 shotThreshold(10),
 sfxManager(new SFXManager())
