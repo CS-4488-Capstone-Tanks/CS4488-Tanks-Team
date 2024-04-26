@@ -9,6 +9,11 @@
 #include "PlayerTank.h"
 #include "Projectile.h"
 
+/**
+ * @authors Tyson Cox, Grant Madson, Koda Koziol, Luna Steed
+ * @param deltaTime
+ * @brief The update function for enemy tank. The tank is always moving in the direction of the player tank.
+ */
 void EnemyTank::doUpdate(float deltaTime) {
 
     vec pos = this->getPosition();
@@ -47,6 +52,11 @@ void EnemyTank::doUpdate(float deltaTime) {
     shoot(dir);
 }
 
+/**
+ * @authors Tyson Cox, Koda Koziol
+ * @param other
+ * @brief Plays sounds when the tank is destroyed and creates a game win.
+ */
 void EnemyTank::doCollision(GameObject* other) {
     sfxManager->playSound(SFXManager::Sounds::Collision);
     sfxManager->playSound(SFXManager::Sounds::Explosion);
@@ -57,6 +67,11 @@ void EnemyTank::doCollision(GameObject* other) {
     Game::getInstance()->wonGame();
 }
 
+/**
+ * @authors Grant Madson, Tyson Cox
+ * @param direction
+ * @brief Uses a tick based timer to say when the tank can shoot next. Always shoots when able.
+ */
 void EnemyTank::shoot(glm::vec3 direction) {
     if (shotAccumulator < shotThreshold) {
         return;
@@ -75,6 +90,14 @@ void EnemyTank::shoot(glm::vec3 direction) {
     sfxManager->playSound(SFXManager::Sounds::Firing);
 }
 
+/**
+ * @authors Grant Madson, Tyson Cox, Luna Steed, Koda Koziol
+ * @param entityID
+ * @param position
+ * @param direction
+ * @param parent
+ * @brief The constructor for EnemyTank. Sets internal values and the sfx speed.
+ */
 EnemyTank::EnemyTank(uint32_t entityID, const vec3& position, const vec3& direction, QObject* parent)
 : Tank(GameObjectType::EnemyTank, entityID, position, direction, parent),
 shotAccumulator(0),

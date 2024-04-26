@@ -10,7 +10,11 @@
 #include "Projectile.h"
 #include "glm/ext/matrix_transform.hpp"
 
-
+/**
+ * @authors Grant Madson, Tyson Cox, Koda Koziol
+ * @param deltaTime
+ * @brief The update logic. Moves the position and rotation of the player tank and increments the shotAccumulator.
+ */
 void PlayerTank::doUpdate(float deltaTime) {
     vec3 pos = this->getPosition();
     float spd = this->getSpeed();
@@ -51,6 +55,11 @@ void PlayerTank::doUpdate(float deltaTime) {
     shotAccumulator += deltaTime;
 }
 
+/**
+ * @authors Tyson Cox, Koda Koziol
+ * @param other
+ * @brief Game over on collision and plays some collision sounds.
+ */
 void PlayerTank::doCollision(GameObject* other) {
     sfxManager->playSound(SFXManager::Sounds::Collision);
     sfxManager->playSound(SFXManager::Sounds::Explosion);
@@ -61,6 +70,11 @@ void PlayerTank::doCollision(GameObject* other) {
     Game::getInstance()->gameOver();
 }
 
+/**
+ * @authors Grant Madson, Tyson Cox
+ * @param direction
+ * @brief checks if the tank is able to fire and then does so if able. Shoots in the same direction the tank is facing.
+ */
 void PlayerTank::shoot(glm::vec3 direction) {
     if (shotAccumulator < shotThreshold) {
         return;
@@ -79,6 +93,14 @@ void PlayerTank::shoot(glm::vec3 direction) {
     sfxManager->playSound(SFXManager::Sounds::Firing);
 }
 
+/**
+ * @authors Grant Madson, Tyson Cox, Luna Steed
+ * @param entityID
+ * @param position
+ * @param direction
+ * @param parent
+ * @brief Sets internal values for the PlayerTank and sets the sfx speed.
+ */
 PlayerTank::PlayerTank(uint32_t entityID, const vec3& position, const vec3& direction, QObject* parent)
 : Tank(GameObjectType::PlayerTank, entityID, position, direction, parent),
 shotAccumulator(0),
@@ -93,6 +115,12 @@ sfxManager(new SFXManager())
     this->setSpeed(0.8);
 }
 
+/**
+ * @authors Grant Madson, Tyson Cox
+ * @param event
+ * @return
+ * @brief Sets the boolean table that controls the movement of the PLayerTank based on input given by the gamewindow. handles both key presses and key releases.
+ */
 bool PlayerTank::handleKeyEvent(QKeyEvent* event) {
     if (event->type() == QEvent::KeyPress) {
         switch (event->key()) {
