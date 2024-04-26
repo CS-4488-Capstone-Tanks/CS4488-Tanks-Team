@@ -1,6 +1,6 @@
 ### Collision System
 
-_Primary Author: Parker Hyde, SPRING 2024_
+_Primary Authors: Parker Hyde, Koda Koziol, SPRING 2024_
 
 #### Overview
 
@@ -57,3 +57,24 @@ For more detailed information, see the document on the CircleCollider class itse
 2. **Handling Collisions**
    - When a collision is detected, the `doCollision(GameObject*)` method is triggered on both objects.
    - Each object handles the collision based on its specific game logic.
+
+#### Workflow
+
+1. Make sure that each game object:
+   - Has a `CircleCollider` attached with the appropriate radius. As of writing, the collider radius property has no relation to the visual size of the object, so this may take some trial and error.
+   - Has been set to the intended GameObjectType. Not only is this critical for rendering, but it also determines which other objects this object can collide with.
+
+2. Modify the constructor of the `CollisionMatrix` in [`collisionMatrix.h`](../collisionMatrix.h) to define which GameObjectTypes can collide. There are a number of methods there to help with this.
+
+3. Implement the `doCollision(GameObject*)` method in each game object class to handle specific collision interactions.
+
+#### Potential Improvements
+
+- Implement a base collider2D class, of which `CircleCollider` is a subclass, and extend it with new collider types like rectangles or polygons.
+
+- 3D colliders (for sphere this should be easy)
+
+- Figure out a better way to set the collision matrix. Maybe it can be loaded from a state file?
+
+- Move beyond mere collision detection with realistic, physics-based collision responses (e.g., blocking, redirecting, bouncing, momentum transfer...).
+
