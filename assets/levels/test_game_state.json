@@ -1,0 +1,32 @@
+{
+    "playerTank": {
+        "position": [1, 0, 3],
+        "direction": [0, 0, 1]
+    },
+    "enemyTank": {
+        "type": "scrub",
+        "position": [0, 0, 50],
+        "direction": [0, 0, -1]
+    },
+    "obstacles": [
+        {
+            "type": "Boulder",
+            "position": [-2, 0, 0],
+            "radius": 1
+        },
+        {
+            "type": "Boulder",
+            "position": [-3, 0, 0],
+            "radius": 0.5
+        },
+        {
+            "type": "Tree",
+            "position": [7, 0, 0],
+            "radius": 0.5
+        }
+    ],
+    "mapProperties":{
+        "XLength": 30.0,
+        "ZLength": 30.0
+    }
+}
