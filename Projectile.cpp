@@ -7,8 +7,8 @@
 
 const float COLLIDER_RADIUS = 0.05f;
 
-Projectile::Projectile(QObject* parent, uint32_t entityID, const vec3& position, const vec3& direction, GameObjectType type) :
-    GameObject(type, entityID, position, direction, parent),
+Projectile::Projectile(uint32_t entityID, const vec3& position, const vec3& direction, GameObjectType type) :
+    GameObject(type, entityID, position, direction),
     lifetime(10.0f)
 {
     this->setSpeed(5.0f);

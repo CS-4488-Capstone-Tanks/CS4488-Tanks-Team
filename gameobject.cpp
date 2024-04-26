@@ -1,13 +1,13 @@
 #include "gameobject.h"
 #include <glm/glm.hpp>
+#include <stdexcept>
 
 
 GameObject::GameObject(
         GameObjectType type,
         uint32_t entityID,
         const vec3 &position,
-        const vec3 &direction,
-        QObject *parent
+        const vec3 &direction
 ) : type(type), entityID(entityID), position(position), direction(direction)
 {
     if (direction == vec3(0.0f))
